@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
             imageUrl: "https://images.unsplash.com/photo-1597158292833-2ab349342240?q=80&w=2070&auto=format&fit=crop",
             shotLists: {
                 wedding: [
-                    { text: 'Bride getting hair done', category: 'Getting Ready', checked: false }, 
+                    { text: 'Bride getting hair done', category: 'Getting Ready', checked: false },
                     { text: 'Bride getting makeup done', category: 'Getting Ready', checked: true },
                     { text: 'Exchange of vows', category: 'Ceremony', checked: false },
                 ]
@@ -63,7 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // ===================================================================
     const projectsListContainer = document.getElementById('projects-list-container');
     const addProjectButton = document.getElementById('add-project-button');
-    
+
     function getCurrentProject() {
         if (!appState.currentProjectId) return null;
         return appState.projects.find(p => p.id === appState.currentProjectId);
@@ -156,20 +156,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function updateProgressBar() {
         const project = getCurrentProject();
-        if (!project) return;
+        
+        const progressBar = document.getElementById('progress-bar');
+        const progressText = document.getElementById('progress-text');
+        const progressCounts = document.getElementById('progress-counts');
+
+        if (!project || !progressBar) { // Check if elements exist
+             if(progressBar) progressBar.style.width = '0%';
+             if(progressText) progressText.querySelector('p').textContent = '0% Complete';
+             if(progressCounts) progressCounts.textContent = 'No project selected';
+             return;
+        };
 
         const shots = project.shotLists.wedding || [];
         const totalShots = shots.length;
         const completedShots = shots.filter(shot => shot.checked).length;
         const percentage = totalShots > 0 ? Math.round((completedShots / totalShots) * 100) : 0;
         
-        const progressBar = document.getElementById('progress-bar');
-        const progressText = document.getElementById('progress-text');
-        const progressCounts = document.getElementById('progress-counts');
-
-        if(progressBar) progressBar.style.width = `${percentage}%`;
-        if(progressText) progressText.querySelector('p').textContent = `${percentage}% Complete`;
-        if(progressCounts) progressCounts.textContent = `${completedShots}/${totalShots} Shots`;
+        progressBar.style.width = `${percentage}%`;
+        progressText.querySelector('p').textContent = `${percentage}% Complete`;
+        progressCounts.textContent = `${completedShots}/${totalShots} Shots`;
     }
     
     function renderDashboard() {
@@ -179,7 +185,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="text-center p-10">
                     <p class="text-white text-lg">No Active Project</p>
                     <p class="text-[#adadad] mt-2">Go to the Projects page to create or select a project.</p>
-                     <button data-target="page-projects" class="nav-link mt-4 text-white bg-blue-600 hover:bg-blue-500 font-bold py-2 px-4 rounded-full">Go to Projects</button>
+                     <button id="dashboard-go-to-projects" class="mt-4 text-white bg-blue-600 hover:bg-blue-500 font-bold py-2 px-4 rounded-full">Go to Projects</button>
                 </div>
             `;
         } else {
@@ -204,7 +210,7 @@ document.addEventListener('DOMContentLoaded', () => {
                  <div data-target="page-wedding-day" class="flex items-center gap-4 px-4 min-h-14 justify-between cursor-pointer hover:bg-[#363636]">
                     <div class="flex items-center gap-4">
                         <div class="text-white flex items-center justify-center rounded-lg bg-[#363636] shrink-0 size-10"><svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256"><path d="M80,64a8,8,0,0,1,8-8H216a8,8,0,0,1,0,16H88A8,8,0,0,1,80,64Zm136,56H88a8,8,0,0,0,0,16H216a8,8,0,0,0,0-16Zm0,64H88a8,8,0,0,0,0,16H216a8,8,0,0,0,0-16ZM44,52A12,12,0,1,0,56,64,12,12,0,0,0,44,52Zm0,64a12,12,0,1,0,12,12A12,12,0,0,0,44,116Zm0,64a12,12,0,1,0,12,12A12,12,0,0,0,44,180Z"></path></svg></div>
-                        <p class="text-white text-base font-normal leading-normal flex-1 truncate">Wedding Shot List</p>
+                        <p class="text-white text-base font-normal leading-normal flex-1 truncate">Shot List</p>
                     </div>
                     <div class="shrink-0"><div class="text-white flex size-7 items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256"><path d="M221.66,133.66l-72,72a8,8,0,0,1-11.32-11.32L196.69,136H40a8,8,0,0,1,0-16H196.69L138.34,61.66a8,8,0,0,1,11.32-11.32l72,72A8,8,0,0,1,221.66,133.66Z"></path></svg></div></div>
                 </div>
@@ -213,6 +219,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // Event Delegation for dynamically created buttons
+    document.body.addEventListener('click', (event) => {
+        if(event.target.id === 'dashboard-go-to-projects') {
+            showPage('page-projects');
+        }
+    });
 
     // ===================================================================
     //  SETTINGS PAGE LOGIC
