@@ -102,9 +102,9 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="px-6">
                 <div class="bg-gray-800 p-6 rounded-2xl flex items-center gap-6">
                     <div class="relative w-24 h-24">
-                        <svg class="w-full h-full" viewBox="0 0 36 36">
+                        <svg class="w-full h-full -rotate-90" viewBox="0 0 36 36">
                             <path class="text-gray-700" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-width="3"></path>
-                            <path class="text-purple-500" stroke-dasharray="${percentage}, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"></path>
+                            <path class="text-purple-500 transition-all duration-500 ease-in-out" stroke-dasharray="${percentage}, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"></path>
                         </svg>
                         <div class="absolute inset-0 flex flex-col items-center justify-center">
                             <span class="text-2xl font-bold">${Math.round(percentage)}%</span>
@@ -122,7 +122,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="px-6 mt-8">
                 <h3 class="text-xl font-bold mb-4">Today's Priority</h3>
                 <div class="flex flex-col gap-3">
-                    ${incompleteTasks.length > 0 ? incompleteTasks.map((shot, index) => generateShotHTML(shot, index)).join('') : '<p class="text-gray-500">All tasks completed! 🎉</p>'}
+                    ${incompleteTasks.length > 0 ? incompleteTasks.map((shot, index) => generateShotHTML(shot, index)).join('') : '<p class="text-gray-500 text-center py-4">All tasks completed! 🎉</p>'}
                 </div>
             </div>
             `;
@@ -140,13 +140,12 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!container) return;
 
         const projects = appState.projects || [];
-        const listContainer = container.querySelector('#projects-list-container');
-        listContainer.innerHTML = '';
+        let listHtml = '';
         
         if (projects.length === 0) {
-            listContainer.innerHTML = `<p class="text-gray-400 text-center col-span-2 py-8">No projects yet.</p>`;
+            listHtml = `<p class="text-gray-400 text-center col-span-2 py-8">No projects yet.</p>`;
         } else {
-             const projectCardsHtml = projects.map((project, index) => {
+             listHtml = projects.map((project, index) => {
                 const isActive = project.id === appState.currentProjectId;
                 return `
                     <div data-project-id="${project.id}" style="animation-delay: ${index * 60}ms" class="project-card animated-card bg-gray-800 rounded-xl overflow-hidden cursor-pointer ${isActive ? 'active-project' : ''}">
@@ -158,29 +157,36 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                 `;
             }).join('');
-            listContainer.innerHTML = projectCardsHtml;
         }
-        const createBtnContainer = container.querySelector('.p-6:last-child');
-        createBtnContainer.innerHTML = `<button data-target="page-add-project" class="w-full flex items-center justify-center rounded-lg h-12 px-5 bg-purple-600 hover:bg-purple-500 text-white text-base font-bold">Create New Project</button>`;
+        
+        container.innerHTML = `
+            <div class="p-6">
+                <h1 class="text-3xl font-bold">Projects</h1>
+                <p class="text-gray-400">Select a project to view its schedule</p>
+            </div>
+            <div id="projects-list-container" class="px-6 grid grid-cols-2 gap-4">${listHtml}</div>
+            <div class="p-6">
+                <button data-target="page-add-project" class="w-full flex items-center justify-center rounded-lg h-12 px-5 bg-purple-600 hover:bg-purple-500 text-white text-base font-bold">Create New Project</button>
+            </div>`;
+        animateList(container.querySelector('.grid'));
     }
 
     // ===================================================================
     //  SHOT LIST / TASK LIST PAGE
     // ===================================================================
     function renderShotListPage() {
-        const header = document.getElementById('shot-list-header');
-        const container = document.getElementById('shot-list-container');
-        if (!container || !header) return;
+        const pageContainer = pageContainers.shotList;
+        if (!pageContainer) return;
         
         const project = getCurrentProject();
-        if (!project) {
-            header.innerHTML = '';
-            container.innerHTML = `<p class="text-gray-400 text-center px-4 py-8">No active project selected.</p>`;
-            return;
-        }
+        let headerHtml = '', listHtml = '';
 
-        const projectDate = new Date((project.date || "2024-01-01") + 'T00:00:00');
-        header.innerHTML = `<div class="p-6">
+        if (!project) {
+            headerHtml = '';
+            listHtml = `<p class="text-gray-400 text-center px-4 py-8">No active project selected.</p>`;
+        } else {
+            const projectDate = new Date((project.date || "2024-01-01") + 'T00:00:00');
+            headerHtml = `<div class="p-6">
                 <button class="nav-link mb-4" data-target="page-dashboard">
                     <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
                 </button>
@@ -188,14 +194,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 <p class="text-gray-400">${projectDate.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</p>
             </div>`;
         
-        const shots = project.shotLists.main || [];
-        if (shots.length === 0) {
-            container.innerHTML = `<p class="text-gray-400 text-center px-4 py-8">No tasks yet. Tap the '+' button to add one.</p>`;
-        } else {
-            shots.sort((a,b) => (a.time || "23:59").localeCompare(b.time || "23:59"));
-            container.innerHTML = shots.map((shot, index) => generateShotHTML(shot, index)).join('');
+            const shots = project.shotLists.main || [];
+            if (shots.length === 0) {
+                listHtml = `<p class="text-gray-400 text-center px-4 py-8">No tasks yet. Tap the '+' button to add one.</p>`;
+            } else {
+                shots.sort((a,b) => (a.time || "23:59").localeCompare(b.time || "23:59"));
+                listHtml = shots.map((shot, index) => generateShotHTML(shot, index)).join('');
+            }
         }
-        animateList(container);
+        
+        pageContainer.innerHTML = `<div id="shot-list-header">${headerHtml}</div><div id="shot-list-container" class="px-6 flex flex-col gap-4">${listHtml}</div>`;
+        animateList(pageContainer.querySelector('#shot-list-container'));
     }
     
     function generateShotHTML(shot, index = 0) {
@@ -220,11 +229,11 @@ document.addEventListener('DOMContentLoaded', () => {
     //  FORMS LOGIC (ADD/EDIT)
     // ===================================================================
     function renderAddTaskForm() {
-        const container = document.getElementById('category-pills-container');
+        const container = pageContainers.addShot.querySelector('#category-pills-container');
         if (!container) return;
         container.innerHTML = CATEGORIES.map(cat => `<button type="button" data-category="${cat}" class="category-pill bg-gray-700 text-gray-300 rounded-full px-4 py-1.5 text-sm">${cat}</button>`).join('');
         container.querySelector('.category-pill')?.classList.add('active');
-        document.getElementById('add-shot-form').reset();
+        pageContainers.addShot.querySelector('form').reset();
     }
     
     function populateEditModal(task) {
@@ -278,7 +287,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
     
-    document.getElementById('add-project-form')?.addEventListener('submit', (e) => {
+    pageContainers.addProject?.querySelector('form')?.addEventListener('submit', (e) => {
         e.preventDefault();
         const title = document.getElementById('project-title').value;
         const category = document.getElementById('project-category').value;
@@ -298,7 +307,7 @@ document.addEventListener('DOMContentLoaded', () => {
         showPage('page-shot-list');
     });
 
-    document.getElementById('add-shot-form')?.addEventListener('submit', e => {
+    pageContainers.addShot?.querySelector('form')?.addEventListener('submit', e => {
         e.preventDefault();
         const project = getCurrentProject();
         if(!project) return;
@@ -340,7 +349,20 @@ document.addEventListener('DOMContentLoaded', () => {
             location.reload();
         }
     });
-
+    
+    document.querySelector('#category-pills-container')?.addEventListener('click', e => {
+        if (e.target.classList.contains('category-pill')) {
+            document.querySelectorAll('#category-pills-container .category-pill').forEach(p => p.classList.remove('active'));
+            e.target.classList.add('active');
+        }
+    });
+    document.querySelector('#edit-category-pills-container')?.addEventListener('click', e => {
+        if (e.target.classList.contains('category-pill')) {
+            document.querySelectorAll('#edit-category-pills-container .category-pill').forEach(p => p.classList.remove('active'));
+            e.target.classList.add('active');
+        }
+    });
+    
     // ===================================================================
     //  HELPERS & INITIALIZATION
     // ===================================================================
