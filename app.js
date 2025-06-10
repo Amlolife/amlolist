@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log("Document loaded. App is starting.");
 
     // ===================================================================
-    //  APP-WIDE STATE & SETUP
+    //  STATE & SETUP
     // ===================================================================
     let appState = {};
     const pages = document.querySelectorAll('.page');
@@ -18,14 +18,25 @@ document.addEventListener('DOMContentLoaded', () => {
             imageUrl: "https://images.unsplash.com/photo-1597158292833-2ab349342240?q=80&w=2070&auto=format&fit=crop",
             shotLists: {
                 main: [
-                    { text: 'Bride getting hair done', category: 'Getting Ready', checked: false },
-                    { text: 'Bride getting makeup done', category: 'Getting Ready', checked: true },
-                    { text: 'Exchange of vows', category: 'Ceremony', checked: false },
+                    { text: 'Wake up Buddy', category: 'Personal', checked: true, time: '07:00' },
+                    { text: 'Morning Run', category: 'Workout', checked: false, time: '08:00' },
+                    { text: 'Shrink project kick off', category: 'Work', checked: false, time: '10:00' },
                 ]
             }
         }],
         currentProjectId: null
     };
+
+    const ICONS = {
+        Workout: `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>`,
+        Work: `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.616V8a2 2 0 00-2-2h-5.384A6.002 6.002 0 0012 2.5a6.002 6.002 0 00-1.616 3.5H5a2 2 0 00-2 2v5.616a4 4 0 00-1.384 2.804A4 4 0 005 21.236V22h14v-.764a4 4 0 003.384-4.816A4 4 0 0021 13.616z"></path></svg>`,
+        Food: `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 17h8m-8 0V5a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2z"></path></svg>`,
+        Personal: `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>`,
+        Design: `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>`,
+        Default: `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path></svg>`
+    };
+
+    const CATEGORIES = ['Food', 'Workout', 'Work', 'Design', 'Personal'];
 
     // ===================================================================
     //  NAVIGATION
@@ -39,7 +50,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         if (pageExists) {
-             // Update active state for nav links
             navLinks.forEach(link => {
                 link.classList.toggle('active', link.dataset.target === targetId);
             });
@@ -50,13 +60,13 @@ document.addEventListener('DOMContentLoaded', () => {
     navLinks.forEach(link => {
         link.addEventListener('click', (event) => {
             event.preventDefault();
-            const targetPageId = link.dataset.target;
-            // If we're opening the shot list, ensure it renders first
-            if (targetPageId === 'page-wedding-day') {
-                renderProjectShotList();
-            }
-            showPage(targetPageId);
+            showPage(link.dataset.target);
         });
+    });
+    
+    document.getElementById('nav-add-button').addEventListener('click', () => {
+        renderAddTaskForm();
+        showPage('page-add-shot');
     });
 
     // ===================================================================
@@ -73,12 +83,10 @@ document.addEventListener('DOMContentLoaded', () => {
     function createNewProject() {
         const title = prompt("Enter project title:", "New Photoshoot");
         if (!title) return;
-        const category = prompt("Enter project category:", "Event");
-        if (!category) return;
-
+        
         const newProject = {
             id: `proj_${new Date().getTime()}`,
-            category: category,
+            category: "General",
             title: title,
             date: new Date().toISOString().split('T')[0],
             imageUrl: `https://placehold.co/600x400/333/fff?text=${title.replace(/\s/g, '+')}`,
@@ -89,33 +97,30 @@ document.addEventListener('DOMContentLoaded', () => {
         appState.currentProjectId = newProject.id;
         saveState();
         renderAll();
-        showPage('page-dashboard');
+        showPage('page-shot-list');
     }
 
     function renderProjectsList() {
         if(!projectsListContainer) return;
         projectsListContainer.innerHTML = '';
         if(!appState.projects || appState.projects.length === 0){
-             projectsListContainer.innerHTML = `<p class="text-[#adadad] text-center px-4 py-8">No projects yet. Click below to create one.</p>`;
+             projectsListContainer.innerHTML = `<p class="text-gray-400 text-center px-4 py-8">No projects yet. Click below to create one.</p>`;
              return;
         }
 
         appState.projects.forEach(project => {
             const isActive = project.id === appState.currentProjectId;
-            const activeClasses = isActive ? 'border-2 border-white' : 'border-2 border-transparent';
-            const buttonText = isActive ? 'Active' : 'Select';
-            const buttonClasses = isActive ? 'bg-green-600 cursor-default' : 'bg-blue-600 hover:bg-blue-500';
-
+            const activeClasses = isActive ? 'border-purple-600' : 'border-gray-700';
+            
             projectsListContainer.innerHTML += `
-                <div data-project-id="${project.id}" class="project-card-clickable bg-[#363636] p-4 rounded-lg flex justify-between items-center cursor-pointer ${activeClasses}">
+                <div data-project-id="${project.id}" class="project-card-clickable bg-[#222] p-4 rounded-lg flex justify-between items-center cursor-pointer border-2 ${activeClasses}">
                     <div>
                         <p class="text-white font-bold text-lg pointer-events-none">${project.title}</p>
-                        <p class="text-[#adadad] text-sm pointer-events-none">${project.category} - ${project.date}</p>
+                        <p class="text-gray-400 text-sm pointer-events-none">${project.category} - ${project.date}</p>
                     </div>
-                    <div class="flex gap-2">
-                        <button data-project-id="${project.id}" class="select-project-btn text-white text-xs font-bold py-1 px-3 rounded-full ${buttonClasses}">${buttonText}</button>
-                        <button data-project-id="${project.id}" class="delete-project-btn text-white text-xs font-bold py-1 px-3 rounded-full bg-red-800 hover:bg-red-700">Delete</button>
-                    </div>
+                    <button data-project-id="${project.id}" class="delete-project-btn text-red-500 hover:text-red-400">
+                         <svg class="w-6 h-6 pointer-events-none" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>
+                    </button>
                 </div>
             `;
         });
@@ -126,20 +131,12 @@ document.addEventListener('DOMContentLoaded', () => {
     if(projectsListContainer) {
         projectsListContainer.addEventListener('click', e => {
             const card = e.target.closest('.project-card-clickable');
-            if (!card) return; // Exit if the click was not inside a card
+            if (!card) return;
 
             const projectId = card.dataset.projectId;
 
-            // Check if a specific button was clicked inside the card
-            if (e.target.closest('.select-project-btn')) {
-                appState.currentProjectId = projectId;
-                saveState();
-                renderAll();
-                showPage('page-dashboard');
-                return;
-            }
-
             if (e.target.closest('.delete-project-btn')) {
+                e.stopPropagation();
                 if(confirm('Are you sure you want to delete this project and all its data?')){
                     appState.projects = appState.projects.filter(p => p.id !== projectId);
                     if(appState.currentProjectId === projectId){
@@ -151,88 +148,124 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            // If no button was clicked, the card itself was clicked
             appState.currentProjectId = projectId;
             saveState();
             renderAll();
-            showPage('page-wedding-day'); // Navigate directly to shot list
+            showPage('page-shot-list');
         });
     }
 
     // ===================================================================
-    //  DASHBOARD LOGIC
+    //  SHOT LIST PAGE LOGIC
     // ===================================================================
-    const dashboardContent = document.getElementById('dashboard-content');
+    const shotListContainer = document.getElementById('shot-list-container');
+    const scheduleDay = document.getElementById('schedule-day');
+    const scheduleDate = document.getElementById('schedule-date');
 
-    function updateProgressBar() {
+    function renderProjectShotList() {
+        if (!shotListContainer) return;
         const project = getCurrentProject();
-        const progressBar = document.getElementById('progress-bar');
-        const progressText = document.getElementById('progress-text');
-        const progressCounts = document.getElementById('progress-counts');
 
-        if (!project || !progressBar) {
-             if(progressBar) progressBar.style.width = '0%';
-             if(progressText) progressText.querySelector('p').textContent = '0% Complete';
-             if(progressCounts) progressCounts.textContent = 'No project selected';
-             return;
-        };
+        if (!project) {
+            shotListContainer.innerHTML = `<p class="text-gray-400 text-center px-4 py-8">No active project selected.</p>`;
+            scheduleDay.textContent = "No Project";
+            scheduleDate.textContent = "Please select a project";
+            return;
+        }
+
+        const projectDate = new Date(project.date + 'T00:00:00');
+        scheduleDay.textContent = project.title;
+        scheduleDate.textContent = projectDate.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
 
         const shots = project.shotLists.main || [];
-        const totalShots = shots.length;
-        const completedShots = shots.filter(shot => shot.checked).length;
-        const percentage = totalShots > 0 ? Math.round((completedShots / totalShots) * 100) : 0;
         
-        progressBar.style.width = `${percentage}%`;
-        progressText.querySelector('p').textContent = `${percentage}% Complete`;
-        progressCounts.textContent = `${completedShots}/${totalShots} Shots`;
+        if (shots.length === 0) {
+            shotListContainer.innerHTML = `<p class="text-gray-400 text-center px-4 py-8">No tasks yet. Tap the '+' to add one.</p>`;
+        } else {
+            shots.sort((a,b) => a.time.localeCompare(b.time)); // Sort by time
+            shotListContainer.innerHTML = shots.map(generateShotHTML).join('');
+        }
     }
     
-    function renderDashboard() {
-        const project = getCurrentProject();
-        if (!project) {
-            dashboardContent.innerHTML = `
-                <div class="text-center p-10">
-                    <p class="text-white text-lg">No Active Project</p>
-                    <p class="text-[#adadad] mt-2">Go to the Projects page to create or select a project.</p>
-                     <button id="dashboard-go-to-projects" class="mt-4 text-white bg-blue-600 hover:bg-blue-500 font-bold py-2 px-4 rounded-full">Go to Projects</button>
-                </div>
-            `;
-        } else {
-             dashboardContent.innerHTML = `
-                <div class="flex flex-col gap-3 p-4">
-                    <div id="progress-text" class="flex gap-6 justify-between"><p class="text-white text-base font-medium leading-normal">0% Complete</p></div>
-                    <div class="rounded bg-[#4d4d4d]"><div id="progress-bar" class="h-2 rounded bg-white" style="width: 0%;"></div></div>
-                    <p id="progress-counts" class="text-[#adadad] text-sm font-normal leading-normal">0/0 Shots</p>
-                </div>
-                <h2 class="text-white text-[22px] font-bold leading-tight tracking-[-0.015em] px-4 pb-3 pt-5">Current Project</h2>
-                <div class="p-4">
-                    <div id="current-project-card" class="flex items-stretch justify-between gap-4 rounded-xl bg-[#363636] p-4">
-                        <div class="flex flex-col gap-1 flex-[2_2_0px]">
-                            <p class="text-[#adadad] text-sm font-normal leading-normal">${project.category}</p>
-                            <p class="text-white text-base font-bold leading-tight">${project.title}</p>
-                            <p class="text-[#adadad] text-sm font-normal leading-normal">${project.date}</p>
-                        </div>
-                        <div class="w-full bg-center bg-no-repeat aspect-video bg-cover rounded-xl flex-1" style='background-image: url("${project.imageUrl}");'></div>
-                    </div>
-                </div>
-                <h2 class="text-white text-[22px] font-bold leading-tight tracking-[-0.015em] px-4 pb-3 pt-5">Shot Lists</h2>
-                 <div data-target="page-wedding-day" class="flex items-center gap-4 px-4 min-h-14 justify-between cursor-pointer hover:bg-[#363636]">
-                    <div class="flex items-center gap-4">
-                        <div class="text-white flex items-center justify-center rounded-lg bg-[#363636] shrink-0 size-10"><svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256"><path d="M80,64a8,8,0,0,1,8-8H216a8,8,0,0,1,0,16H88A8,8,0,0,1,80,64Zm136,56H88a8,8,0,0,0,0,16H216a8,8,0,0,0,0-16Zm0,64H88a8,8,0,0,0,0,16H216a8,8,0,0,0,0-16ZM44,52A12,12,0,1,0,56,64,12,12,0,0,0,44,52Zm0,64a12,12,0,1,0,12,12A12,12,0,0,0,44,116Zm0,64a12,12,0,1,0,12,12A12,12,0,0,0,44,180Z"></path></svg></div>
-                        <p class="text-white text-base font-normal leading-normal flex-1 truncate">Project Shot List</p>
-                    </div>
-                    <div class="shrink-0"><div class="text-white flex size-7 items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256"><path d="M221.66,133.66l-72,72a8,8,0,0,1-11.32-11.32L196.69,136H40a8,8,0,0,1,0-16H196.69L138.34,61.66a8,8,0,0,1,11.32-11.32l72,72A8,8,0,0,1,221.66,133.66Z"></path></svg></div></div>
-                </div>
-            `;
-            updateProgressBar();
-        }
+    function generateShotHTML(shot) {
+        const isComplete = shot.checked ? 'is-complete' : '';
+        const icon = ICONS[shot.category] || ICONS.Default;
+        return `
+            <div data-text="${shot.text}" class="task-card flex items-center gap-4 bg-[#222] p-4 rounded-lg border-l-4 border-gray-700 ${isComplete}">
+                 <div class="task-checkbox w-6 h-6 rounded-md border-2 border-gray-500 flex items-center justify-center shrink-0 cursor-pointer">
+                    ${shot.checked ? ICONS.Check : ''}
+                 </div>
+                 <div class="flex-shrink-0 w-10 h-10 rounded-lg bg-gray-700 flex items-center justify-center">${icon}</div>
+                 <div class="flex-grow">
+                     <p class="task-title text-white font-semibold">${shot.text}</p>
+                 </div>
+                 <p class="text-sm text-gray-400">${shot.time}</p>
+            </div>
+        `;
     }
 
-    document.body.addEventListener('click', (event) => {
-        if(event.target.id === 'dashboard-go-to-projects') {
-            showPage('page-projects');
-        }
-    });
+    if(shotListContainer) {
+        shotListContainer.addEventListener('click', e => {
+            const card = e.target.closest('.task-card');
+            if (card) {
+                const project = getCurrentProject();
+                if(!project || !project.shotLists.main) return;
+                
+                const shotText = card.dataset.text;
+                const shot = project.shotLists.main.find(s => s.text === shotText);
+                if (shot) {
+                    shot.checked = !shot.checked;
+                    renderProjectShotList();
+                    saveState();
+                }
+            }
+        });
+    }
+
+    // ===================================================================
+    //  ADD SHOT FORM LOGIC
+    // ===================================================================
+    const addShotForm = document.getElementById('add-shot-form');
+    const categoryPillsContainer = document.getElementById('category-pills-container');
+
+    function renderAddTaskForm() {
+        if (!categoryPillsContainer) return;
+        categoryPillsContainer.innerHTML = CATEGORIES.map(cat => `
+            <button type="button" data-category="${cat}" class="category-pill bg-gray-700 text-gray-300 rounded-full px-4 py-1.5 text-sm">${cat}</button>
+        `).join('');
+        
+        categoryPillsContainer.querySelector('.category-pill')?.classList.add('active');
+        addShotForm.reset();
+    }
+    
+    if (categoryPillsContainer) {
+        categoryPillsContainer.addEventListener('click', e => {
+            if (e.target.classList.contains('category-pill')) {
+                categoryPillsContainer.querySelectorAll('.category-pill').forEach(p => p.classList.remove('active'));
+                e.target.classList.add('active');
+            }
+        });
+    }
+
+    if (addShotForm) {
+        addShotForm.addEventListener('submit', e => {
+            e.preventDefault();
+            const project = getCurrentProject();
+            if(!project) return;
+            
+            const title = document.getElementById('task-title').value;
+            const time = document.getElementById('task-time').value;
+            const activePill = categoryPillsContainer.querySelector('.category-pill.active');
+            const category = activePill ? activePill.dataset.category : 'Default';
+
+            if (!project.shotLists.main) project.shotLists.main = [];
+            project.shotLists.main.push({ text: title, time: time, category: category, checked: false });
+
+            saveState();
+            renderAll();
+            showPage('page-shot-list');
+        });
+    }
 
     // ===================================================================
     //  SETTINGS PAGE LOGIC
@@ -241,6 +274,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const resetDataButton = document.getElementById('reset-data-button');
 
     function applyTheme() {
+        // Dark mode is default, light mode is the exception
         document.body.classList.toggle('light-mode', !appState.settings.isDarkMode);
         if(darkModeToggle) darkModeToggle.checked = appState.settings.isDarkMode;
     }
@@ -263,111 +297,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     // ===================================================================
-    //  PROJECT SHOT LIST LOGIC
-    // ===================================================================
-    const shotListContainer = document.getElementById('wedding-checklist-container');
-    const addShotButton = document.getElementById('add-wedding-shot-button');
-    const shotListTitle = document.getElementById('wedding-list-title');
-
-    function renderProjectShotList() {
-        if (!shotListContainer) return;
-        const project = getCurrentProject();
-
-        if (!project) {
-            shotListContainer.innerHTML = `<p class="text-[#adadad] text-center px-4 py-8">No active project selected.</p>`;
-            if (shotListTitle) shotListTitle.textContent = "No Project";
-            return;
-        }
-
-        if (shotListTitle) shotListTitle.textContent = `${project.title} - Shots`;
-        const shots = project.shotLists.main || [];
-        
-        if (shots.length === 0) {
-            shotListContainer.innerHTML = `<p class="text-[#adadad] text-center px-4 py-8">No shots added yet. Click "Add Shot" to begin.</p>`;
-        } else {
-            const groupedByCategory = shots.reduce((acc, shot) => {
-                const category = shot.category || 'Uncategorized';
-                if (!acc[category]) acc[category] = [];
-                acc[category].push(shot);
-                return acc;
-            }, {});
-
-            let html = '';
-            for (const category in groupedByCategory) {
-                html += `<h3 class="text-white text-lg font-bold leading-tight tracking-[-0.015em] pt-4 pb-2">${category}</h3>`;
-                groupedByCategory[category].forEach(shot => {
-                    html += generateShotHTML(shot);
-                });
-            }
-            shotListContainer.innerHTML = html;
-        }
-        updateProgressBar();
-    }
-    
-    function generateShotHTML(shot) {
-        const uniqueId = `shot-${shot.text.replace(/[^a-zA-Z0-9]/g, '-')}`;
-        return `
-            <div class="flex items-center justify-between py-3 border-b border-gray-700">
-                <label for="${uniqueId}" class="flex gap-x-3 items-center cursor-pointer flex-1">
-                    <input id="${uniqueId}" type="checkbox" data-text="${shot.text}" ${shot.checked ? 'checked' : ''} class="h-5 w-5 rounded border-[#4d4d4d] border-2 bg-transparent text-black checked:bg-black checked:border-black checked:bg-[image:--checkbox-tick-svg] focus:ring-0 focus:ring-offset-0 focus:border-[#4d4d4d] focus:outline-none" />
-                    <p class="text-white text-base font-normal leading-normal">${shot.text}</p>
-                </label>
-                <button class="delete-shot-button text-red-500 hover:text-red-400 ml-4" data-text="${shot.text}">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" fill="currentColor" viewBox="0 0 256 256"><path d="M216,48H176V40a24,24,0,0,0-24-24H104A24,24,0,0,0,80,40v8H40a8,8,0,0,0,0,16h8V208a16,16,0,0,0,16,16H192a16,16,0,0,0,16-16V64h8a8,8,0,0,0,0-16ZM96,40a8,8,0,0,1,8-8h48a8,8,0,0,1,8,8v8H96Zm96,168H64V64H192Z"></path></svg>
-                </button>
-            </div>
-        `;
-    }
-
-    function handleAddItemToList() {
-        const project = getCurrentProject();
-        if (!project) {
-            alert("Please select a project first!");
-            return;
-        }
-
-        const shotText = prompt("Enter the name for the new shot:");
-        if (!shotText || shotText.trim() === '') return;
-        
-        const category = prompt("Enter a category for this shot (e.g., Ceremony, Portraits):", "Custom");
-        if (!category || category.trim() === '') return;
-        
-        if (!project.shotLists.main) project.shotLists.main = [];
-        project.shotLists.main.push({ text: shotText.trim(), category: category.trim(), checked: false });
-        renderProjectShotList();
-        saveState();
-    }
-
-    function handleShotListInteraction(event) {
-        const project = getCurrentProject();
-        if(!project || !project.shotLists.main) return;
-
-        const textFromCheckbox = event.target.dataset.text;
-        if (event.target.type === 'checkbox') {
-            const shot = project.shotLists.main.find(s => s.text === textFromCheckbox);
-            if (shot) {
-                shot.checked = event.target.checked;
-                updateProgressBar();
-                saveState();
-            }
-        }
-
-        const deleteButton = event.target.closest('.delete-shot-button');
-        if (deleteButton) {
-            const shotTextToDelete = deleteButton.dataset.text;
-            if (confirm(`Are you sure you want to delete the shot: "${shotTextToDelete}"?`)) {
-                project.shotLists.main = project.shotLists.main.filter(s => s.text !== shotTextToDelete);
-                renderProjectShotList();
-                saveState();
-            }
-        }
-    }
-    
-    if(addShotButton) addShotButton.addEventListener('click', handleAddItemToList);
-    if(shotListContainer) shotListContainer.addEventListener('click', handleShotListInteraction);
-
-    // ===================================================================
-    //  PERSISTENCE (SAVE/LOAD STATE)
+    //  PERSISTENCE & INITIALIZATION
     // ===================================================================
     function saveState() {
         localStorage.setItem('photographerAppState', JSON.stringify(appState));
@@ -384,21 +314,15 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log("No saved state, initialized with default.");
         }
         
-        // Ensure a valid current project is always set.
         if (!appState.projects) appState.projects = [];
         const projectExists = appState.projects.some(p => p.id === appState.currentProjectId);
 
         if (!appState.currentProjectId || !projectExists) {
             appState.currentProjectId = appState.projects.length > 0 ? appState.projects[0].id : null;
-            console.log("Current project validated and set.");
         }
     }
 
-    // ===================================================================
-    //  INITIAL APP LOAD & RENDER ALL
-    // ===================================================================
     function renderAll() {
-        renderDashboard();
         renderProjectsList();
         renderProjectShotList();
     }
@@ -407,7 +331,7 @@ document.addEventListener('DOMContentLoaded', () => {
         loadState();
         applyTheme();
         renderAll();
-        showPage('page-dashboard');
+        showPage('page-projects'); // Start on the projects page
     }
 
     init();
