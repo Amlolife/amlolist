@@ -2,25 +2,22 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log("Document loaded. App is starting.");
 
     // ===================================================================
-    //  STATE & SETUP
+    //  APP INITIALIZATION & STATE MANAGEMENT
     // ===================================================================
     let appState = {};
-    const pages = document.querySelectorAll('.page');
-    const navLinks = document.querySelectorAll('.nav-link');
-
     const defaultState = {
         settings: { isDarkMode: true },
         projects: [{
-            id: `proj_${new Date().getTime()}`,
-            category: "Wedding",
-            title: "Sarah & Alex",
-            date: "2024-06-15",
-            imageUrl: "https://images.unsplash.com/photo-1597158292833-2ab349342240?q=80&w=2070&auto=format&fit=crop",
+            id: `proj_default_1`,
+            category: "Getting Started",
+            title: "My First Project",
+            date: new Date().toISOString().split('T')[0],
+            imageUrl: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=2070&auto=format&fit=crop",
             shotLists: {
                 main: [
-                    { text: 'Wake up Buddy', category: 'Personal', checked: true, time: '07:00' },
-                    { text: 'Morning Run', category: 'Workout', checked: false, time: '08:00' },
-                    { text: 'Shrink project kick off', category: 'Work', checked: false, time: '10:00' },
+                    { id: 'task1', text: 'Create a new project', category: 'Work', checked: true, time: '09:00' },
+                    { id: 'task2', text: 'Add a new task', category: 'Work', checked: false, time: '09:05' },
+                    { id: 'task3', text: 'Mark a task as complete', category: 'Work', checked: false, time: '09:10' },
                 ]
             }
         }],
@@ -29,107 +26,125 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const ICONS = {
         Check: `<svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>`,
-        Workout: `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>`,
-        Work: `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.616V8a2 2 0 00-2-2h-5.384A6.002 6.002 0 0012 2.5a6.002 6.002 0 00-1.616 3.5H5a2 2 0 00-2 2v5.616a4 4 0 00-1.384 2.804A4 4 0 005 21.236V22h14v-.764a4 4 0 003.384-4.816A4 4 0 0021 13.616z"></path></svg>`,
-        Food: `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 17h8m-8 0V5a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2z"></path></svg>`,
-        Personal: `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>`,
-        Design: `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>`,
-        Default: `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path></svg>`
+        Workout: `<svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>`,
+        Work: `<svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 13.616V8a2 2 0 00-2-2h-5.384A6.002 6.002 0 0012 2.5a6.002 6.002 0 00-1.616 3.5H5a2 2 0 00-2 2v5.616a4 4 0 00-1.384 2.804A4 4 0 005 21.236V22h14v-.764a4 4 0 003.384-4.816A4 4 0 0021 13.616z"></path></svg>`,
+        Food: `<svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 17h8m-8 0V5a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2z"></path></svg>`,
+        Personal: `<svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>`,
+        Design: `<svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>`,
+    };
+    const CATEGORIES = ['Work', 'Workout', 'Food', 'Design', 'Personal'];
+
+    // ===================================================================
+    //  UI RENDERING & NAVIGATION
+    // ===================================================================
+    const pageContainers = {
+        dashboard: document.getElementById('page-dashboard'),
+        projects: document.getElementById('page-projects'),
+        addProject: document.getElementById('page-add-project'),
+        shotList: document.getElementById('page-shot-list'),
+        addShot: document.getElementById('page-add-shot'),
+        settings: document.getElementById('page-settings'),
     };
 
-    const CATEGORIES = ['Food', 'Workout', 'Work', 'Design', 'Personal'];
-
-    // ===================================================================
-    //  NAVIGATION & UI FLOW
-    // ===================================================================
-    function showPage(targetId) {
-        let pageExists = false;
-        pages.forEach(page => {
-            const isTarget = page.id === targetId;
-            page.classList.toggle('hidden', !isTarget);
-            if (isTarget) pageExists = true;
-        });
-
-        if (pageExists) {
-            navLinks.forEach(link => {
-                link.classList.toggle('active', link.dataset.target === targetId);
-            });
-            window.scrollTo(0, 0);
-        }
-    }
-
-    navLinks.forEach(link => {
-        link.addEventListener('click', (event) => {
-            event.preventDefault();
-            const targetId = link.dataset.target;
-            if (targetId === 'page-shot-list' && !getCurrentProject()) {
-                alert("Please select a project from the Projects page first.");
-                showPage('page-projects');
-                return;
+    function showPage(pageId) {
+        Object.keys(pageContainers).forEach(key => {
+             if (pageContainers[key]) {
+                pageContainers[key].classList.toggle('hidden', key !== pageId);
             }
-            showPage(targetId);
         });
-    });
-    
-    document.getElementById('nav-add-button').addEventListener('click', () => {
-        if (!getCurrentProject()) {
-            alert("Please select a project before adding a task.");
-            showPage('page-projects');
-            return;
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.classList.toggle('active', link.dataset.target === pageId);
+        });
+        window.scrollTo(0, 0);
+    }
+
+    function animateList(container) {
+        if (!container) return;
+        const items = container.querySelectorAll('.animated-card');
+        items.forEach((item, index) => {
+            item.style.animationDelay = `${index * 60}ms`;
+        });
+    }
+
+    // ===================================================================
+    //  DASHBOARD
+    // ===================================================================
+    function renderDashboard() {
+        const container = pageContainers.dashboard;
+        if (!container) return;
+        
+        const project = getCurrentProject();
+        const today = new Date();
+        const greeting = getGreeting();
+
+        let headerHtml = `<div class="p-6">
+                <p class="text-gray-400">${greeting}</p>
+                <h1 class="text-3xl font-bold">Dashboard</h1>
+            </div>`;
+        
+        let contentHtml = '';
+        if (!project) {
+            contentHtml = `<div class="px-6">
+                <div class="bg-gray-800 p-4 rounded-lg text-center">
+                    <p class="text-white font-semibold">No Active Project</p>
+                    <p class="text-gray-400 text-sm mt-1 mb-3">Select a project to see your tasks.</p>
+                    <button data-target="page-projects" class="bg-purple-600 text-white font-bold py-2 px-4 rounded-lg text-sm">View Projects</button>
+                </div>
+            </div>`;
+        } else {
+            const shots = project.shotLists.main || [];
+            const total = shots.length;
+            const completed = shots.filter(s => s.checked).length;
+            const percentage = total > 0 ? (completed / total) * 100 : 0;
+            const incompleteTasks = shots.filter(s => !s.checked).sort((a,b) => (a.time || "23:59").localeCompare(b.time || "23:59")).slice(0, 3);
+            
+            contentHtml = `
+            <div class="px-6">
+                <div class="bg-gray-800 p-6 rounded-2xl flex items-center gap-6">
+                    <div class="relative w-24 h-24">
+                        <svg class="w-full h-full" viewBox="0 0 36 36">
+                            <path class="text-gray-700" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-width="3"></path>
+                            <path class="text-purple-500" stroke-dasharray="${percentage}, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"></path>
+                        </svg>
+                        <div class="absolute inset-0 flex flex-col items-center justify-center">
+                            <span class="text-2xl font-bold">${Math.round(percentage)}%</span>
+                            <span class="text-xs text-gray-400">Done</span>
+                        </div>
+                    </div>
+                    <div>
+                         <p class="text-gray-400 text-sm">Active Project</p>
+                         <h2 class="text-xl font-bold text-white mt-1">${project.title}</h2>
+                         <p class="text-sm text-gray-400 mt-1">${completed} of ${total} tasks complete.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="px-6 mt-8">
+                <h3 class="text-xl font-bold mb-4">Today's Priority</h3>
+                <div class="flex flex-col gap-3">
+                    ${incompleteTasks.length > 0 ? incompleteTasks.map((shot, index) => generateShotHTML(shot, index)).join('') : '<p class="text-gray-500">All tasks completed! 🎉</p>'}
+                </div>
+            </div>
+            `;
         }
-        renderAddTaskForm();
-        showPage('page-add-shot');
-    });
-    
-    document.body.addEventListener('click', e => {
-         if (e.target.closest('[data-target]')) {
-             const targetId = e.target.closest('[data-target]').dataset.target;
-             showPage(targetId);
-         }
-    });
-
-    // ===================================================================
-    //  PROJECT MANAGEMENT
-    // ===================================================================
-    const projectsListContainer = document.getElementById('projects-list-container');
-    const addProjectForm = document.getElementById('add-project-form');
-
-    function getCurrentProject() {
-        if (!appState.currentProjectId || !appState.projects) return null;
-        return appState.projects.find(p => p.id === appState.currentProjectId);
-    }
-    
-    if (addProjectForm) {
-        addProjectForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const title = document.getElementById('project-title').value;
-            const category = document.getElementById('project-category').value;
-            const date = document.getElementById('project-date').value;
-
-            const newProject = {
-                id: `proj_${new Date().getTime()}`,
-                category: category,
-                title: title,
-                date: date,
-                imageUrl: `https://placehold.co/600x400/333/fff?text=${title.replace(/\s/g, '+')}`,
-                shotLists: { main: [] }
-            };
-
-            appState.projects.push(newProject);
-            appState.currentProjectId = newProject.id;
-            saveState();
-            renderAll();
-            showPage('page-shot-list');
-        });
+        
+        container.innerHTML = headerHtml + contentHtml;
+        animateList(container);
     }
 
-    function renderProjectsList() {
-        if(!projectsListContainer) return;
-        projectsListContainer.innerHTML = '';
+    // ===================================================================
+    //  PROJECTS PAGE
+    // ===================================================================
+    function renderProjectsPage() {
+        const container = pageContainers.projects;
+        if (!container) return;
+
         const projects = appState.projects || [];
-
-        if(projects.length === 0){
-             projectsListContainer.innerHTML = `<p class="text-gray-400 text-center col-span-2 py-8">No projects yet.</p>`;
+        const listContainer = container.querySelector('#projects-list-container');
+        listContainer.innerHTML = '';
+        
+        if (projects.length === 0) {
+            listContainer.innerHTML = `<p class="text-gray-400 text-center col-span-2 py-8">No projects yet.</p>`;
         } else {
              const projectCardsHtml = projects.map((project, index) => {
                 const isActive = project.id === appState.currentProjectId;
@@ -143,113 +158,44 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                 `;
             }).join('');
-            projectsListContainer.innerHTML = projectCardsHtml + `<div class="col-span-2"><button data-target="page-add-project" class="w-full flex items-center justify-center rounded-lg h-12 px-5 bg-purple-600 hover:bg-purple-500 text-white text-base font-bold">Create New Project</button></div>`;
+            listContainer.innerHTML = projectCardsHtml;
         }
+        const createBtnContainer = container.querySelector('.p-6:last-child');
+        createBtnContainer.innerHTML = `<button data-target="page-add-project" class="w-full flex items-center justify-center rounded-lg h-12 px-5 bg-purple-600 hover:bg-purple-500 text-white text-base font-bold">Create New Project</button>`;
     }
 
-    function handleProjectCardClick(event) {
-        const card = event.target.closest('.project-card-clickable, .project-card');
-        if (!card) return;
+    // ===================================================================
+    //  SHOT LIST / TASK LIST PAGE
+    // ===================================================================
+    function renderShotListPage() {
+        const header = document.getElementById('shot-list-header');
+        const container = document.getElementById('shot-list-container');
+        if (!container || !header) return;
         
-        appState.currentProjectId = card.dataset.projectId;
-        saveState();
-        renderAll();
-        showPage('page-shot-list');
-    }
-    
-    if(projectsListContainer) projectsListContainer.addEventListener('click', handleProjectCardClick);
-    
-    // ===================================================================
-    //  DASHBOARD LOGIC
-    // ===================================================================
-    const dashboardContainer = document.getElementById('page-dashboard');
-
-    function renderDashboard() {
-        if (!dashboardContainer) return;
         const project = getCurrentProject();
-        const today = new Date();
-        
-        let headerHtml = `
-            <div class="p-6 flex justify-between items-center">
-                <div>
-                    <h1 class="text-3xl font-bold">Dashboard</h1>
-                    <p class="text-gray-400">${today.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</p>
-                </div>
-                <img src="https://images.unsplash.com/photo-1575936123452-b67c3203c357?q=80&w=2070&auto=format&fit=crop" class="w-12 h-12 rounded-full object-cover">
-            </div>
-        `;
-
-        let activeProjectHtml = '';
         if (!project) {
-            activeProjectHtml = `
-                <div class="px-6">
-                    <div class="bg-gray-800 p-4 rounded-lg text-center">
-                        <p class="text-white font-semibold">No Active Project</p>
-                        <p class="text-gray-400 text-sm mt-1 mb-3">Select a project to see your tasks.</p>
-                        <button data-target="page-projects" class="bg-purple-600 text-white font-bold py-2 px-4 rounded-lg text-sm">View Projects</button>
-                    </div>
-                </div>`;
-        } else {
-            const shots = project.shotLists.main || [];
-            const total = shots.length;
-            const completed = shots.filter(s => s.checked).length;
-            const percentage = total > 0 ? (completed / total) * 100 : 0;
-            
-            activeProjectHtml = `
-                <div class="px-6">
-                    <div class="bg-gray-800 p-4 rounded-xl">
-                        <p class="text-gray-400 text-sm">Active Project</p>
-                        <h2 class="text-2xl font-bold text-white mt-1">${project.title}</h2>
-                        <div class="w-full bg-gray-700 rounded-full h-2.5 mt-4">
-                            <div class="bg-purple-500 h-2.5 rounded-full" style="width: ${percentage}%"></div>
-                        </div>
-                        <div class="flex justify-between text-sm text-gray-400 mt-2">
-                            <span>Progress</span>
-                            <span>${completed}/${total} Tasks</span>
-                        </div>
-                        <button data-target="page-shot-list" class="w-full mt-4 bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg">View Task List</button>
-                    </div>
-                </div>`;
-        }
-        
-        dashboardContainer.innerHTML = headerHtml + activeProjectHtml;
-    }
-    
-    // ===================================================================
-    //  SHOT LIST PAGE LOGIC
-    // ===================================================================
-    const shotListContainer = document.getElementById('shot-list-container');
-    const shotListHeader = document.getElementById('shot-list-header');
-
-    function renderProjectShotList() {
-        if (!shotListContainer || !shotListHeader) return;
-        const project = getCurrentProject();
-
-        if (!project) {
-            shotListHeader.innerHTML = '';
-            shotListContainer.innerHTML = `<p class="text-gray-400 text-center px-4 py-8">No active project selected.</p>`;
+            header.innerHTML = '';
+            container.innerHTML = `<p class="text-gray-400 text-center px-4 py-8">No active project selected.</p>`;
             return;
         }
 
         const projectDate = new Date((project.date || "2024-01-01") + 'T00:00:00');
-        shotListHeader.innerHTML = `
-             <div class="p-6">
-                 <button class="nav-link mb-4" data-target="page-dashboard">
+        header.innerHTML = `<div class="p-6">
+                <button class="nav-link mb-4" data-target="page-dashboard">
                     <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
                 </button>
                 <h1 class="text-3xl font-bold">${project.title}</h1>
                 <p class="text-gray-400">${projectDate.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</p>
-            </div>
-        `;
-
-        const shots = project.shotLists.main || [];
+            </div>`;
         
+        const shots = project.shotLists.main || [];
         if (shots.length === 0) {
-            shotListContainer.innerHTML = `<p class="text-gray-400 text-center px-4 py-8">No tasks yet. Tap the '+' to add one.</p>`;
+            container.innerHTML = `<p class="text-gray-400 text-center px-4 py-8">No tasks yet. Tap the '+' button to add one.</p>`;
         } else {
             shots.sort((a,b) => (a.time || "23:59").localeCompare(b.time || "23:59"));
-            shotListContainer.innerHTML = shots.map((shot, index) => generateShotHTML(shot, index)).join('');
+            container.innerHTML = shots.map((shot, index) => generateShotHTML(shot, index)).join('');
         }
+        animateList(container);
     }
     
     function generateShotHTML(shot, index = 0) {
@@ -257,8 +203,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const icon = ICONS[shot.category] || ICONS.Default;
         const checkIcon = shot.checked ? ICONS.Check : '';
         return `
-            <div data-text="${shot.text}" style="animation-delay: ${index * 60}ms" class="task-card animated-card flex items-center gap-4 bg-gray-800 p-4 rounded-lg border-l-4 border-gray-700 ${isComplete}">
-                 <div class="task-checkbox w-6 h-6 rounded-md border-2 border-gray-500 flex items-center justify-center shrink-0 cursor-pointer">
+            <div data-id="${shot.id}" style="animation-delay: ${index * 60}ms" class="task-card animated-card flex items-center gap-4 bg-gray-800 p-4 rounded-lg border-l-4 border-gray-700 cursor-pointer ${isComplete}">
+                 <div class="task-checkbox-outer w-6 h-6 rounded-md border-2 border-gray-500 flex items-center justify-center shrink-0">
                     ${checkIcon}
                  </div>
                  <div class="flex-shrink-0 w-10 h-10 rounded-lg bg-gray-700 flex items-center justify-center">${icon}</div>
@@ -270,144 +216,170 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
     }
 
-    if(shotListContainer) {
-        shotListContainer.addEventListener('click', e => {
-            const card = e.target.closest('.task-card');
-            if (card) {
-                const project = getCurrentProject();
-                if(!project || !project.shotLists.main) return;
-                
-                const shotText = card.dataset.text;
-                const shot = project.shotLists.main.find(s => s.text === shotText);
-                if (shot) {
-                    shot.checked = !shot.checked;
-                    renderProjectShotList();
-                    saveState();
-                }
-            }
-        });
-    }
-
     // ===================================================================
-    //  ADD SHOT FORM LOGIC
+    //  FORMS LOGIC (ADD/EDIT)
     // ===================================================================
-    const addShotForm = document.getElementById('add-shot-form');
-    const categoryPillsContainer = document.getElementById('category-pills-container');
-
     function renderAddTaskForm() {
-        if (!categoryPillsContainer) return;
-        categoryPillsContainer.innerHTML = CATEGORIES.map(cat => `
-            <button type="button" data-category="${cat}" class="category-pill bg-gray-700 text-gray-300 rounded-full px-4 py-1.5 text-sm">${cat}</button>
-        `).join('');
-        
-        categoryPillsContainer.querySelector('.category-pill')?.classList.add('active');
-        addShotForm.reset();
+        const container = document.getElementById('category-pills-container');
+        if (!container) return;
+        container.innerHTML = CATEGORIES.map(cat => `<button type="button" data-category="${cat}" class="category-pill bg-gray-700 text-gray-300 rounded-full px-4 py-1.5 text-sm">${cat}</button>`).join('');
+        container.querySelector('.category-pill')?.classList.add('active');
+        document.getElementById('add-shot-form').reset();
     }
     
-    if (categoryPillsContainer) {
-        categoryPillsContainer.addEventListener('click', e => {
-            if (e.target.classList.contains('category-pill')) {
-                categoryPillsContainer.querySelectorAll('.category-pill').forEach(p => p.classList.remove('active'));
-                e.target.classList.add('active');
-            }
-        });
+    function populateEditModal(task) {
+        if(!task) return;
+        document.getElementById('edit-task-id').value = task.id;
+        document.getElementById('edit-task-title').value = task.text;
+        document.getElementById('edit-task-time').value = task.time;
+        const container = document.getElementById('edit-category-pills-container');
+        container.innerHTML = CATEGORIES.map(cat => `<button type="button" data-category="${cat}" class="category-pill bg-gray-700 text-gray-300 rounded-full px-4 py-1.5 text-sm">${cat}</button>`).join('');
+        document.querySelectorAll('#edit-category-pills-container .category-pill').forEach(p => p.classList.remove('active'));
+        const activePill = container.querySelector(`[data-category="${task.category}"]`);
+        if (activePill) activePill.classList.add('active');
+        else container.querySelector('.category-pill')?.classList.add('active');
     }
 
-    if (addShotForm) {
-        addShotForm.addEventListener('submit', e => {
-            e.preventDefault();
-            const project = getCurrentProject();
-            if(!project) {
-                alert("Please select a project before adding a task.");
-                return;
-            }
-            
-            const title = document.getElementById('task-title').value;
-            const time = document.getElementById('task-time').value;
-            const activePill = categoryPillsContainer.querySelector('.category-pill.active');
-            const category = activePill ? activePill.dataset.category : 'Default';
+    // ===================================================================
+    //  EVENT LISTENERS & HANDLERS
+    // ===================================================================
+    document.body.addEventListener('click', (e) => {
+        const targetLink = e.target.closest('[data-target]');
+        if (targetLink) {
+             showPage(targetLink.dataset.target);
+             return;
+        }
 
-            if (!project.shotLists.main) project.shotLists.main = [];
-            project.shotLists.main.push({ text: title, time: time, category: category, checked: false });
-
+        const projectCard = e.target.closest('.project-card');
+        if (projectCard) {
+            appState.currentProjectId = projectCard.dataset.projectId;
             saveState();
             renderAll();
             showPage('page-shot-list');
-        });
-    }
+            return;
+        }
 
-    // ===================================================================
-    //  SETTINGS PAGE LOGIC
-    // ===================================================================
-    const darkModeToggle = document.getElementById('dark-mode-toggle');
-    const resetDataButton = document.getElementById('reset-data-button');
-
-    function applyTheme() {
-        // Dark mode is default, light mode is the exception
-        // This app is dark-themed, so we won't implement a light mode for now.
-        if(darkModeToggle) darkModeToggle.checked = true;
-    }
-    
-    if(darkModeToggle) {
-        darkModeToggle.addEventListener('click', () => {
-             darkModeToggle.checked = true; // Keep it on dark mode
-             alert("Light mode coming soon!");
-        });
-    }
-
-    if(resetDataButton) {
-        resetDataButton.addEventListener('click', () => {
-            if (confirm("ARE YOU SURE? This will delete all projects and settings permanently.")) {
-                localStorage.removeItem('photographerAppState');
-                location.reload();
+        const taskCard = e.target.closest('.task-card');
+        if (taskCard) {
+            const taskId = taskCard.dataset.id;
+            const project = getCurrentProject();
+            const task = project?.shotLists?.main.find(t => t.id === taskId);
+            
+            if (e.target.closest('.task-checkbox-outer')) {
+                 if (task) {
+                    task.checked = !task.checked;
+                    saveState();
+                    renderAll();
+                }
+            } else {
+                populateEditModal(task);
+                document.getElementById('edit-task-modal').classList.remove('hidden');
             }
-        });
+        }
+    });
+    
+    document.getElementById('add-project-form')?.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const title = document.getElementById('project-title').value;
+        const category = document.getElementById('project-category').value;
+        const date = document.getElementById('project-date').value;
+
+        const newProject = {
+            id: `proj_${new Date().getTime()}`,
+            category, title, date,
+            imageUrl: `https://placehold.co/600x400/333/fff?text=${title.replace(/\s/g, '+')}`,
+            shotLists: { main: [] }
+        };
+        if(!appState.projects) appState.projects = [];
+        appState.projects.push(newProject);
+        appState.currentProjectId = newProject.id;
+        saveState();
+        renderAll();
+        showPage('page-shot-list');
+    });
+
+    document.getElementById('add-shot-form')?.addEventListener('submit', e => {
+        e.preventDefault();
+        const project = getCurrentProject();
+        if(!project) return;
+        
+        const title = document.getElementById('task-title').value;
+        const time = document.getElementById('task-time').value;
+        const category = document.querySelector('#category-pills-container .active')?.dataset.category || 'Default';
+
+        if (!project.shotLists.main) project.shotLists.main = [];
+        project.shotLists.main.push({ id: `task_${new Date().getTime()}`, text: title, time, category, checked: false });
+
+        saveState();
+        renderAll();
+        showPage('page-shot-list');
+    });
+
+    document.getElementById('edit-task-form')?.addEventListener('submit', e => {
+        e.preventDefault();
+        const taskId = document.getElementById('edit-task-id').value;
+        const project = getCurrentProject();
+        const task = project?.shotLists.main.find(t => t.id === taskId);
+        if (task) {
+            task.text = document.getElementById('edit-task-title').value;
+            task.time = document.getElementById('edit-task-time').value;
+            task.category = document.querySelector('#edit-category-pills-container .active')?.dataset.category || 'Default';
+            saveState();
+            renderAll();
+        }
+        document.getElementById('edit-task-modal').classList.add('hidden');
+    });
+    
+    document.getElementById('cancel-edit-btn')?.addEventListener('click', () => {
+         document.getElementById('edit-task-modal').classList.add('hidden');
+    });
+
+    document.getElementById('reset-data-button')?.addEventListener('click', () => {
+        if (confirm("ARE YOU SURE? This will delete all projects and settings permanently.")) {
+            localStorage.removeItem('photographerAppState');
+            location.reload();
+        }
+    });
+
+    // ===================================================================
+    //  HELPERS & INITIALIZATION
+    // ===================================================================
+    function getGreeting() {
+        const hour = new Date().getHours();
+        if (hour < 12) return "Good morning";
+        if (hour < 18) return "Good afternoon";
+        return "Good evening";
     }
     
-    // ===================================================================
-    //  PERSISTENCE & INITIALIZATION
-    // ===================================================================
     function saveState() {
         localStorage.setItem('photographerAppState', JSON.stringify(appState));
-        console.log("App state saved.");
     }
     
     function loadState() {
         const savedState = localStorage.getItem('photographerAppState');
         if (savedState) {
             appState = JSON.parse(savedState);
-            console.log("App state loaded.");
         } else {
             appState = JSON.parse(JSON.stringify(defaultState));
-            console.log("No saved state, initialized with default.");
         }
         
         if (!appState.projects) appState.projects = [];
         const projectExists = appState.projects.some(p => p.id === appState.currentProjectId);
-
         if (!appState.currentProjectId || !projectExists) {
             appState.currentProjectId = appState.projects.length > 0 ? appState.projects[0].id : null;
         }
     }
 
-    // ===================================================================
-    //  INITIAL APP LOAD & RENDER ALL
-    // ===================================================================
     function renderAll() {
         renderDashboard();
-        renderProjectsList();
-        renderProjectShotList();
+        renderProjectsPage();
+        renderShotListPage();
     }
 
     function init() {
         loadState();
-        applyTheme();
         renderAll();
-        if (getCurrentProject()) {
-            showPage('page-dashboard');
-        } else {
-            showPage('page-projects');
-        }
+        showPage(appState.currentProjectId ? 'page-dashboard' : 'page-projects');
     }
 
     init();
