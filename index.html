@@ -26,6 +26,10 @@
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <!-- Update these URLs -->
+<script src="https://www.gstatic.com/firebasejs/9.19.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.19.1/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.19.1/firebase-auth-compat.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" xintegrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     
     <!-- Custom Styles & Fonts -->
@@ -222,6 +226,56 @@
                     unsubscribeTemplates: null,
                 }
             },
+            methods: {
+  // Add these essential methods
+  loginAnonymously() {
+    const auth = getAuth();
+    signInAnonymously(auth).catch((error) => {
+      console.error("Anonymous sign-in failed", error);
+    });
+  },
+  
+  logout() {
+    const auth = getAuth();
+    signOut(auth).then(() => this.currentView = 'beranda');
+  },
+  
+  generateCalendar() {
+    const date = this.calendar.date;
+    const year = date.getFullYear();
+    const month = date.getMonth();
+    
+    this.calendar.year = year;
+    this.calendar.month = month;
+    this.calendar.monthName = date.toLocaleString('id-ID', { month: 'long' });
+    
+    // Calendar generation logic here
+  },
+  
+  changeMonth(delta) {
+    const date = new Date(this.calendar.date);
+    date.setMonth(date.getMonth() + delta);
+    this.calendar.date = date;
+    this.generateCalendar();
+  },
+  
+  formatDateForDisplay(dateString) {
+    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    return new Date(dateString).toLocaleDateString('id-ID', options);
+  },
+  
+  getTaskProgress(wedding) {
+    const total = wedding.shots?.length || 0;
+    const done = wedding.shots?.filter(s => s.completed).length || 0;
+    const percent = total ? Math.round((done / total) * 100) : 0;
+    return { done, total, percent };
+  },
+  
+  copyUserId() {
+    navigator.clipboard.writeText(this.auth.user.uid);
+    alert('User ID copied to clipboard!');
+  },
+  
             async created() {
                 const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
                 const app = initializeApp(firebaseConfig);
@@ -328,7 +382,11 @@
                 // Other methods from previous versions
             }
         };
-
+mounted() {
+  if (this.auth.ready && this.auth.user) {
+    this.generateCalendar();
+  }
+}
         createApp(App).mount('#app');
 
         if ('serviceWorker' in navigator) {
@@ -336,6 +394,21 @@
                 navigator.serviceWorker.register('./service-worker.js').then(reg => console.log('SW registered.')).catch(err => console.log('SW registration failed: ', err));
             });
         }
+        computed: {
+  filteredWeddings() {
+    // Add your filtering logic here
+    return this.weddings;
+  },
+  shotCompletionProgress() {
+    return this.getTaskProgress(this.activeWedding).percent;
+  }
+}
+        data() {
+  return {
+    // ...
+    loading: true
+  }
+}
     </script>
 </body>
 </html>
