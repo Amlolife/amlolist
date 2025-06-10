@@ -10,51 +10,38 @@
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" xintegrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     
-    <!-- Custom Styles -->
+    <!-- Custom Styles & Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #9333ea; /* Purple 600 */
-            --primary-light: #a855f7; /* Purple 500 */
-            --primary-dark: #7e22ce; /* Purple 700 */
-            --background: #111827; /* Gray 900 */
-            --surface: #1f2937; /* Gray 800 */
-            --text-main: #f9fafb; /* Gray 50 */
-            --text-muted: #9ca3af; /* Gray 400 */
-            --border-color: #374151; /* Gray 700 */
-            --gradient: linear-gradient(135deg, var(--primary-light) 0%, #3b82f6 100%);
+            --primary: #8b5cf6; /* Violet 500 */
+            --background: #f8fafc; /* Slate 50 */
+            --surface: #ffffff; 
+            --text-main: #1e293b; /* Slate 800 */
+            --text-muted: #64748b; /* Slate 500 */
+            --border-color: #e2e8f0; /* Slate 200 */
+            --light-violet-bg: #f5f3ff; /* Violet 50 */
         }
         
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        
         .glass {
-            background: rgba(31, 41, 55, 0.8); /* Gray 800 with opacity */
+            background: rgba(255, 255, 255, 0.8);
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
             border: 1px solid var(--border-color);
         }
-        
-        /* Custom scrollbar for dark theme */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: var(--background);
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #4b5563; /* Gray 600 */
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #6b7280; /* Gray 500 */
-        }
-        
-        /* Gradient text */
-        .gradient-text {
-            background-clip: text;
-            -webkit-background-clip: text;
-            color: transparent;
-            background-image: var(--gradient);
-        }
 
-        /* Animation for the copy confirmation */
         @keyframes fade-in-out {
             0%, 100% { opacity: 0; transform: translateY(10px); }
             10%, 90% { opacity: 1; transform: translateY(0); }
@@ -64,18 +51,18 @@
         }
     </style>
 </head>
-<body class="bg-[var(--background)] text-[var(--text-main)] min-h-screen font-sans">
+<body class="bg-[var(--background)] text-[var(--text-main)] min-h-screen">
     <div id="app">
         <input type="file" ref="photoUploader" @change="handlePhotoUpload" class="hidden" accept="image/*">
-        <header class="bg-[var(--surface)] shadow-md shadow-black/20 sticky top-0 z-20 border-b border-[var(--border-color)]">
+        <header class="bg-[var(--surface)] shadow-sm sticky top-0 z-20 border-b border-[var(--border-color)]">
             <div class="container mx-auto px-4 py-3 flex items-center justify-between">
                 <div class="flex items-center space-x-3">
-                    <i class="fas fa-list-check text-purple-400 text-2xl"></i>
-                    <h1 class="text-xl font-bold gradient-text">Amlo List</h1>
+                    <i class="fas fa-list-check text-violet-500 text-2xl"></i>
+                    <h1 class="text-xl font-bold text-slate-800">Amlo List</h1>
                 </div>
                 <div class="flex items-center space-x-3">
-                    <button @click="addWedding" class="p-2 rounded-full hover:bg-gray-700 transition" title="Add New List">
-                        <i class="fas fa-plus text-md text-purple-400"></i>
+                    <button @click="addWedding" class="p-2 rounded-full hover:bg-slate-100 transition" title="Add New List">
+                        <i class="fas fa-plus text-md text-violet-500"></i>
                     </button>
                 </div>
             </div>
@@ -85,34 +72,34 @@
         <main class="container mx-auto px-4 py-6">
             <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
                 <!-- Sidebar -->
-                <aside class="lg:col-span-1 bg-[var(--surface)] rounded-xl shadow-lg p-4 h-fit lg:sticky top-24 border border-[var(--border-color)]">
-                    <h2 class="text-lg font-semibold mb-4 flex items-center text-gray-200">
-                        <i class="fas fa-calendar-alt mr-2 text-purple-400"></i> Daftar Jadwal
+                <aside class="lg:col-span-1 bg-[var(--surface)] rounded-xl shadow-md p-4 h-fit lg:sticky top-24 border border-[var(--border-color)]">
+                    <h2 class="text-lg font-semibold mb-4 flex items-center text-slate-700">
+                        <i class="fas fa-calendar-alt mr-2 text-violet-500"></i> Daftar Jadwal
                     </h2>
                     <div class="space-y-2 max-h-[50vh] overflow-y-auto" v-if="weddings.length > 0">
                         <template v-for="wedding in weddings" :key="wedding.id">
                             <div @click="setActiveWedding(wedding)" 
                                  class="p-3 rounded-lg border cursor-pointer transition flex justify-between items-center"
-                                 :class="{'bg-purple-900/50 border-purple-500 shadow-md': activeWedding && activeWedding.id === wedding.id, 'border-gray-700 hover:bg-gray-700/50': !activeWedding || activeWedding.id !== wedding.id}">
+                                 :class="{'bg-violet-50 border-violet-300 shadow-sm': activeWedding && activeWedding.id === wedding.id, 'border-slate-200 hover:bg-slate-50': !activeWedding || activeWedding.id !== wedding.id}">
                                 <div>
-                                    <h3 class="font-medium text-gray-200">{{ wedding.title }}</h3>
-                                    <p class="text-sm text-gray-400">{{ formatDateForDisplay(wedding.date) }}</p>
+                                    <h3 class="font-medium text-slate-800">{{ wedding.title }}</h3>
+                                    <p class="text-sm text-slate-500">{{ formatDateForDisplay(wedding.date) }}</p>
                                 </div>
-                                <i class="fas fa-chevron-right text-xs text-gray-500"></i>
+                                <i class="fas fa-chevron-right text-xs text-slate-400"></i>
                             </div>
                         </template>
                     </div>
                      <div v-else class="text-center py-8">
-                        <i class="fas fa-calendar-times text-4xl text-gray-600 mb-3"></i>
-                        <p class="text-gray-400">Belum ada jadwal.</p>
-                        <button @click="addWedding" class="mt-4 text-sm text-purple-400 hover:underline font-semibold">
+                        <i class="fas fa-calendar-times text-4xl text-slate-300 mb-3"></i>
+                        <p class="text-slate-500">Belum ada jadwal.</p>
+                        <button @click="addWedding" class="mt-4 text-sm text-violet-600 hover:underline font-semibold">
                             + Tambah Jadwal Pertama
                         </button>
                     </div>
 
-                    <div v-if="activeWedding && activeWedding.tags && activeWedding.tags.length > 0" class="mt-6 pt-6 border-t border-gray-700">
-                        <h2 class="text-lg font-semibold mb-4 flex items-center text-gray-200">
-                            <i class="fas fa-tags mr-2 text-purple-400"></i> Tags
+                    <div v-if="activeWedding && activeWedding.tags && activeWedding.tags.length > 0" class="mt-6 pt-6 border-t border-slate-200">
+                        <h2 class="text-lg font-semibold mb-4 flex items-center text-slate-700">
+                            <i class="fas fa-tags mr-2 text-violet-500"></i> Tags
                         </h2>
                         <div class="flex flex-wrap gap-2">
                             <span v-for="tag in activeWedding.tags" :key="tag.text" :class="tag.color" class="px-2 py-1 rounded-full text-xs font-medium">{{ tag.text }}</span>
@@ -125,98 +112,98 @@
                     <!-- Display this when a wedding is active -->
                     <template v-if="activeWedding">
                         <!-- Wedding Details Card -->
-                        <div class="bg-[var(--surface)] rounded-xl shadow-lg overflow-hidden border border-[var(--border-color)]">
+                        <div class="bg-[var(--surface)] rounded-xl shadow-md overflow-hidden border border-[var(--border-color)]">
                             <div class="p-6">
                                 <div class="flex justify-between items-start">
                                     <div>
-                                        <h2 class="text-2xl font-bold text-gray-100">{{ activeWedding.title }}</h2>
-                                        <p class="text-gray-400 flex items-center mt-1">
-                                            <i class="fas fa-calendar-day mr-2 text-purple-400"></i> {{ formatDateForDisplay(activeWedding.date) }}
+                                        <h2 class="text-2xl font-bold text-slate-800">{{ activeWedding.title }}</h2>
+                                        <p class="text-slate-500 flex items-center mt-1">
+                                            <i class="fas fa-calendar-day mr-2 text-violet-500"></i> {{ formatDateForDisplay(activeWedding.date) }}
                                         </p>
                                     </div>
                                     <div class="flex space-x-1">
-                                        <button @click="openEditModal(activeWedding)" class="p-2 rounded-full hover:bg-blue-900/30 transition" title="Edit Details">
-                                            <i class="fas fa-edit text-blue-400"></i>
+                                        <button @click="openEditModal(activeWedding)" class="p-2 rounded-full hover:bg-blue-100/70 transition" title="Edit Details">
+                                            <i class="fas fa-edit text-blue-500"></i>
                                         </button>
-                                        <button @click="shareWedding(activeWedding)" class="p-2 rounded-full hover:bg-green-900/30 transition" title="Share">
-                                            <i class="fas fa-share-alt text-green-400"></i>
+                                        <button @click="shareWedding(activeWedding)" class="p-2 rounded-full hover:bg-green-100/70 transition" title="Share">
+                                            <i class="fas fa-share-alt text-green-500"></i>
                                         </button>
-                                        <button @click="deleteWedding(activeWedding.id)" class="p-2 rounded-full hover:bg-red-900/30 transition" title="Delete Wedding">
-                                            <i class="fas fa-trash-alt text-red-400"></i>
+                                        <button @click="deleteWedding(activeWedding.id)" class="p-2 rounded-full hover:bg-red-100/70 transition" title="Delete Wedding">
+                                            <i class="fas fa-trash-alt text-red-500"></i>
                                         </button>
                                     </div>
                                 </div>
                                 
                                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
-                                    <div class="bg-gray-900/70 p-4 rounded-lg border border-purple-500/20">
-                                        <h3 class="font-semibold flex items-center text-gray-300">
-                                            <i class="fas fa-map-marker-alt mr-2 text-purple-400"></i> Lokasi
+                                    <div class="bg-violet-50 p-4 rounded-lg border border-violet-200">
+                                        <h3 class="font-semibold flex items-center text-slate-700">
+                                            <i class="fas fa-map-marker-alt mr-2 text-violet-500"></i> Lokasi
                                         </h3>
-                                        <p class="mt-1 text-gray-300">{{ activeWedding.location }}</p>
-                                        <p class="text-sm text-gray-400">{{ activeWedding.address }}</p>
+                                        <p class="mt-1 text-slate-700">{{ activeWedding.location }}</p>
+                                        <p class="text-sm text-slate-500">{{ activeWedding.address }}</p>
                                     </div>
-                                    <div class="bg-gray-900/70 p-4 rounded-lg border border-blue-500/20">
-                                        <h3 class="font-semibold flex items-center text-gray-300">
-                                            <i class="fas fa-user-friends mr-2 text-blue-400"></i> Kontak Pasangan
+                                    <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                                        <h3 class="font-semibold flex items-center text-slate-700">
+                                            <i class="fas fa-user-friends mr-2 text-blue-500"></i> Kontak Pasangan
                                         </h3>
-                                        <p class="mt-1 text-gray-300">{{ activeWedding.contacts.bride }} & {{ activeWedding.contacts.groom }}</p>
-                                        <p class="text-sm text-gray-400">{{ activeWedding.contacts.email }} | {{ activeWedding.contacts.phone }}</p>
+                                        <p class="mt-1 text-slate-700">{{ activeWedding.contacts.bride }} & {{ activeWedding.contacts.groom }}</p>
+                                        <p class="text-sm text-slate-500">{{ activeWedding.contacts.email }} | {{ activeWedding.contacts.phone }}</p>
                                     </div>
-                                    <div class="bg-gray-900/70 p-4 rounded-lg border border-green-500/20">
-                                        <h3 class="font-semibold flex items-center text-gray-300">
-                                            <i class="fas fa-info-circle mr-2 text-green-400"></i> Details
+                                    <div class="bg-green-50 p-4 rounded-lg border border-green-200">
+                                        <h3 class="font-semibold flex items-center text-slate-700">
+                                            <i class="fas fa-info-circle mr-2 text-green-500"></i> Details
                                         </h3>
-                                        <p class="mt-1 text-gray-300">{{ activeWedding.details.guests }} guests | {{ activeWedding.details.type }}</p>
-                                        <p class="text-sm text-gray-400">Package: {{ activeWedding.details.package }}</p>
+                                        <p class="mt-1 text-slate-700">{{ activeWedding.details.guests }} guests | {{ activeWedding.details.type }}</p>
+                                        <p class="text-sm text-slate-500">Package: {{ activeWedding.details.package }}</p>
                                     </div>
                                 </div>
                                 
                                 <div class="mt-6" v-if="activeWedding.notes !== null">
-                                    <h3 class="font-semibold mb-2 text-gray-300">Catatan Penting</h3>
-                                    <div class="bg-yellow-900/30 border border-yellow-400/20 rounded-lg p-1">
-                                       <textarea v-model="activeWedding.notes" @blur="saveActiveWedding" class="w-full h-24 p-3 bg-transparent text-yellow-300 focus:outline-none resize-none" placeholder="Tambahkan catatan..."></textarea>
+                                    <h3 class="font-semibold mb-2 text-slate-700">Catatan Penting</h3>
+                                    <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-1">
+                                       <textarea v-model="activeWedding.notes" @blur="saveActiveWedding" class="w-full h-24 p-3 bg-transparent text-yellow-800 focus:outline-none resize-none" placeholder="Tambahkan catatan..."></textarea>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         
                         <!-- Must-Have Shots -->
-                        <div class="bg-[var(--surface)] rounded-xl shadow-lg border border-[var(--border-color)]">
+                        <div class="bg-[var(--surface)] rounded-xl shadow-md border border-[var(--border-color)]">
                             <div class="p-6">
                                 <div class="flex items-center justify-between">
-                                    <h2 class="text-xl font-semibold flex items-center text-gray-200">
-                                        <i class="fas fa-clipboard-list mr-2 text-purple-400"></i> Foto Wajib Ada
+                                    <h2 class="text-xl font-semibold flex items-center text-slate-800">
+                                        <i class="fas fa-clipboard-list mr-2 text-violet-500"></i> Foto Wajib Ada
                                     </h2>
-                                    <button @click="openShotModal" class="bg-purple-600 hover:bg-purple-700 text-white px-3 py-1.5 rounded-lg text-sm transition flex items-center font-semibold">
+                                    <button @click="openShotModal" class="bg-violet-600 hover:bg-violet-700 text-white px-3 py-1.5 rounded-lg text-sm transition flex items-center font-semibold">
                                         <i class="fas fa-plus mr-1.5"></i> Tambah
                                     </button>
                                 </div>
-                                <div class="mt-2" v-if="activeWedding.shots.length > 0">
-                                    <div class="w-full bg-gray-600 rounded-full h-2">
-                                        <div class="bg-green-500 h-2 rounded-full" :style="{ width: shotCompletionProgress + '%' }"></div>
+                                <div class="mt-3" v-if="activeWedding.shots.length > 0">
+                                    <div class="w-full bg-slate-200 rounded-full h-2.5">
+                                        <div class="bg-violet-500 h-2.5 rounded-full" :style="{ width: shotCompletionProgress + '%' }"></div>
                                     </div>
-                                    <p class="text-xs text-gray-400 text-right mt-1">{{ shotCompletionProgress }}% Selesai</p>
+                                    <p class="text-xs text-slate-500 text-right mt-1">{{ shotCompletionProgress }}% Selesai</p>
                                 </div>
                                 
                                 <div class="mt-4 space-y-3" v-if="activeWedding.shots.length > 0">
-                                    <div v-for="shot in activeWedding.shots" :key="shot.id" class="flex items-center p-3 rounded-lg transition" :class="shot.completed ? 'bg-green-900/50' : 'bg-gray-900/70'">
+                                    <div v-for="shot in activeWedding.shots" :key="shot.id" class="flex items-center p-3 rounded-lg transition" :class="shot.completed ? 'bg-green-50' : 'bg-slate-50'">
                                         <label class="custom-checkbox flex items-center cursor-pointer">
                                             <input type="checkbox" v-model="shot.completed" @change="saveActiveWedding" class="hidden">
-                                            <span class="w-5 h-5 border border-gray-500 rounded-md flex items-center justify-center mr-4 transition-all"
-                                                  :class="{'bg-purple-600 border-purple-600': shot.completed}">
-                                                <i class="fas fa-check text-white text-xs" :class="{'hidden': !shot.completed}"></i>
+                                            <span class="w-6 h-6 border-2 border-slate-300 rounded-md flex items-center justify-center mr-4 transition-all flex-shrink-0"
+                                                  :class="{'bg-violet-500 border-violet-500': shot.completed}">
+                                                <i class="fas fa-check text-white text-sm" :class="{'hidden': !shot.completed}"></i>
                                             </span>
                                         </label>
                                         <div class="flex-grow">
-                                            <p class="font-medium text-gray-200" :class="{'line-through text-gray-500': shot.completed}">{{ shot.title }}</p>
-                                            <p class="text-sm text-gray-400">{{ shot.description }}</p>
+                                            <p class="font-medium text-slate-700" :class="{'line-through text-slate-400': shot.completed}">{{ shot.title }}</p>
+                                            <p class="text-sm text-slate-500">{{ shot.description }}</p>
                                         </div>
-                                        <button @click="deleteShot(shot.id)" class="ml-auto p-2 text-gray-500 hover:text-red-400 hover:bg-red-900/30 rounded-full">
+                                        <button @click="deleteShot(shot.id)" class="ml-auto p-2 text-slate-400 hover:text-red-500 hover:bg-red-100/70 rounded-full">
                                             <i class="fas fa-times"></i>
                                         </button>
                                     </div>
                                 </div>
-                                <div v-else class="text-center py-8 text-gray-500">
+                                <div v-else class="text-center py-8 text-slate-400">
                                     <i class="fas fa-camera-slash text-3xl mb-2"></i>
                                     <p>Belum ada foto wajib.</p>
                                 </div>
@@ -224,17 +211,17 @@
                         </div>
 
                          <!-- Photo Preview -->
-                        <div class="bg-[var(--surface)] rounded-xl shadow-lg border border-[var(--border-color)]">
+                        <div class="bg-[var(--surface)] rounded-xl shadow-md border border-[var(--border-color)]">
                             <div class="p-6">
-                                <h2 class="text-xl font-semibold mb-4 flex items-center text-gray-200">
-                                    <i class="fas fa-images mr-2 text-purple-400"></i> Quick Preview
+                                <h2 class="text-xl font-semibold mb-4 flex items-center text-slate-800">
+                                    <i class="fas fa-images mr-2 text-violet-500"></i> Quick Preview
                                 </h2>
                                 <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-                                    <div v-for="(photo, index) in activeWedding.photos" :key="index" class="group aspect-square bg-gray-800 rounded-lg overflow-hidden relative">
+                                    <div v-for="(photo, index) in activeWedding.photos" :key="index" class="group aspect-square bg-slate-100 rounded-lg overflow-hidden relative">
                                         <img :src="photo.url" class="w-full h-full object-cover" alt="Wedding preview">
                                         <button @click="deletePhoto(index)" class="absolute top-1 right-1 bg-black bg-opacity-40 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">&times;</button>
                                     </div>
-                                    <button @click="addPhoto" class="aspect-square bg-gray-800 rounded-lg flex items-center justify-center text-gray-500 border-2 border-dashed border-gray-600 hover:border-purple-500 hover:text-purple-400 transition-colors">
+                                    <button @click="addPhoto" class="aspect-square bg-slate-50 rounded-lg flex items-center justify-center text-slate-400 border-2 border-dashed border-slate-300 hover:border-violet-400 hover:text-violet-500 transition-colors">
                                         <i class="fas fa-plus text-3xl"></i>
                                     </button>
                                 </div>
@@ -242,34 +229,34 @@
                         </div>
                         
                         <!-- Timeline -->
-                        <div class="bg-[var(--surface)] rounded-xl shadow-lg border border-[var(--border-color)]">
+                        <div class="bg-[var(--surface)] rounded-xl shadow-md border border-[var(--border-color)]">
                              <div class="p-6">
                                 <div class="flex items-center justify-between mb-4">
-                                    <h2 class="text-xl font-semibold flex items-center text-gray-200">
-                                        <i class="fas fa-clock mr-2 text-purple-400"></i> Linimasa Fotografi
+                                    <h2 class="text-xl font-semibold flex items-center text-slate-800">
+                                        <i class="fas fa-clock mr-2 text-violet-500"></i> Linimasa Fotografi
                                     </h2>
-                                     <button @click="openTimelineModal" class="bg-purple-600 hover:bg-purple-700 text-white px-3 py-1.5 rounded-lg text-sm transition flex items-center font-semibold">
+                                     <button @click="openTimelineModal" class="bg-violet-600 hover:bg-violet-700 text-white px-3 py-1.5 rounded-lg text-sm transition flex items-center font-semibold">
                                         <i class="fas fa-plus mr-1.5"></i> Tambah
                                     </button>
                                 </div>
                                 
-                                <div class="relative border-l-2 border-purple-900 ml-2" v-if="activeWedding.timeline.length > 0">
+                                <div class="relative border-l-2 border-violet-200 ml-2" v-if="activeWedding.timeline.length > 0">
                                      <div v-for="(item, index) in activeWedding.timeline" :key="item.id" class="relative pl-8 pb-8">
-                                        <div class="absolute -left-[11px] top-1 w-5 h-5 bg-gray-800 border-4 border-purple-500 rounded-full z-10"></div>
-                                        <div v-if="index < activeWedding.timeline.length - 1" class="absolute -left-[1.5px] top-5 h-full w-0.5 bg-purple-900"></div>
+                                        <div class="absolute -left-[11px] top-1 w-5 h-5 bg-white border-4 border-violet-500 rounded-full z-10"></div>
+                                        <div v-if="index < activeWedding.timeline.length - 1" class="absolute -left-[1.5px] top-5 h-full w-0.5 bg-violet-200"></div>
                                         <div class="flex justify-between items-start">
                                             <div>
-                                                <h3 class="font-medium text-gray-200">{{ item.title }}</h3>
-                                                <span class="text-sm text-purple-300 bg-purple-900/70 px-2 py-0.5 rounded-full font-semibold">{{ item.time }}</span>
-                                                <p class="text-sm text-gray-400 mt-1">{{ item.notes }}</p>
+                                                <h3 class="font-medium text-slate-700">{{ item.title }}</h3>
+                                                <span class="text-sm text-violet-600 bg-violet-100 px-2 py-0.5 rounded-full font-semibold">{{ item.time }}</span>
+                                                <p class="text-sm text-slate-500 mt-1">{{ item.notes }}</p>
                                             </div>
-                                            <button @click="deleteTimelineItem(item.id)" class="p-2 text-gray-500 hover:text-red-400">
+                                            <button @click="deleteTimelineItem(item.id)" class="p-2 text-slate-400 hover:text-red-500">
                                                 <i class="fas fa-trash-alt text-xs"></i>
                                             </button>
                                         </div>
                                     </div>
                                 </div>
-                                <div v-else class="text-center py-8 text-gray-500">
+                                <div v-else class="text-center py-8 text-slate-400">
                                     <i class="fas fa-list-ol text-3xl mb-2"></i>
                                     <p>Belum ada linimasa.</p>
                                 </div>
@@ -279,11 +266,11 @@
 
                     <!-- Display this when NO wedding is active -->
                     <template v-else>
-                         <div class="flex flex-col items-center justify-center text-center h-[60vh] bg-[var(--surface)] rounded-xl shadow-lg border border-[var(--border-color)] p-4">
-                            <i class="fas fa-camera-retro text-6xl text-purple-800 mb-4"></i>
-                            <h2 class="text-2xl font-bold text-gray-300">Selamat Datang di Amlo List</h2>
-                            <p class="text-gray-400 mt-2">Pilih sebuah jadwal dari sidebar untuk melihat detailnya, <br>atau tambahkan jadwal pernikahan baru untuk memulai.</p>
-                            <button @click="addWedding" class="mt-6 bg-purple-600 text-white font-bold py-2 px-5 rounded-lg hover:bg-purple-700 transition-all shadow-lg hover:shadow-xl">
+                         <div class="flex flex-col items-center justify-center text-center h-[60vh] bg-[var(--surface)] rounded-xl shadow-md border border-[var(--border-color)] p-4">
+                            <i class="fas fa-list-check text-6xl text-slate-300 mb-4"></i>
+                            <h2 class="text-2xl font-bold text-slate-700">Selamat Datang di Amlo List</h2>
+                            <p class="text-slate-500 mt-2">Pilih sebuah jadwal dari sidebar untuk melihat detailnya, <br>atau tambahkan jadwal baru untuk memulai.</p>
+                            <button @click="addWedding" class="mt-6 bg-violet-600 text-white font-bold py-2 px-5 rounded-lg hover:bg-violet-700 transition-all shadow-lg hover:shadow-xl">
                                 Tambah Jadwal
                             </button>
                         </div>
@@ -293,27 +280,27 @@
         </main>
         
         <!-- Modals and Overlays -->
-        <div v-if="showCopyMessage" class="fade-in-out-active fixed bottom-10 left-1/2 -translate-x-1/2 bg-gray-200 text-gray-800 px-4 py-2 rounded-lg shadow-lg z-50">
-           <i class="fas fa-check-circle mr-2 text-green-500"></i> Detail disalin ke clipboard!
+        <div v-if="showCopyMessage" class="fade-in-out-active fixed bottom-10 left-1/2 -translate-x-1/2 bg-slate-800 text-white px-4 py-2 rounded-lg shadow-lg z-50">
+           <i class="fas fa-check-circle mr-2"></i> Detail disalin ke clipboard!
         </div>
 
         <!-- Add Shot Modal -->
         <div v-if="showShotModal" class="fixed inset-0 flex items-center justify-center z-40">
-            <div @click="closeShotModal" class="absolute inset-0 bg-black bg-opacity-60 backdrop-blur-sm"></div>
+            <div @click="closeShotModal" class="absolute inset-0 bg-black bg-opacity-30 backdrop-blur-sm"></div>
             <div class="glass rounded-2xl p-6 w-full max-w-md relative z-10 shadow-xl m-4">
-                <h3 class="text-lg font-semibold text-gray-200 mb-4">Tambah Foto Wajib</h3>
+                <h3 class="text-lg font-semibold text-slate-800 mb-4">Tambah Foto Wajib</h3>
                 <form @submit.prevent="addShot" class="space-y-4">
                      <div>
-                        <label class="block text-sm font-medium text-gray-300 mb-1">Judul Foto</label>
-                        <input v-model="newShot.title" type="text" class="w-full bg-gray-800 text-gray-200 px-3 py-2 border border-gray-600 rounded-lg focus:ring-purple-500 focus:border-purple-500" placeholder="Contoh: First look" required>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Judul Foto</label>
+                        <input v-model="newShot.title" type="text" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500" placeholder="Contoh: First look" required>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-300 mb-1">Catatan</label>
-                        <textarea v-model="newShot.description" class="w-full bg-gray-800 text-gray-200 px-3 py-2 border border-gray-600 rounded-lg focus:ring-purple-500 focus:border-purple-500" rows="3" placeholder="Instruksi khusus..."></textarea>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Catatan</label>
+                        <textarea v-model="newShot.description" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500" rows="3" placeholder="Instruksi khusus..."></textarea>
                     </div>
                     <div class="flex justify-end space-x-3 pt-2">
-                        <button type="button" @click="closeShotModal" class="px-4 py-2 border border-gray-600 rounded-lg text-gray-300 hover:bg-gray-700">Batal</button>
-                        <button type="submit" class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-semibold">Tambah Foto</button>
+                        <button type="button" @click="closeShotModal" class="px-4 py-2 border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-100">Batal</button>
+                        <button type="submit" class="px-4 py-2 bg-violet-600 text-white rounded-lg hover:bg-violet-700 font-semibold">Tambah Foto</button>
                     </div>
                 </form>
             </div>
@@ -321,43 +308,43 @@
         
         <!-- Edit Wedding Modal -->
         <div v-if="showEditModal && weddingToEdit" class="fixed inset-0 flex items-center justify-center z-40">
-             <div @click="closeEditModal" class="absolute inset-0 bg-black bg-opacity-60 backdrop-blur-sm"></div>
+             <div @click="closeEditModal" class="absolute inset-0 bg-black bg-opacity-30 backdrop-blur-sm"></div>
              <div class="glass rounded-2xl p-6 w-full max-w-2xl relative z-10 shadow-xl m-4 max-h-[90vh] overflow-y-auto">
-                <h3 class="text-lg font-semibold text-gray-200 mb-4">Edit Detail Pernikahan</h3>
-                <form @submit.prevent="updateWedding" class="space-y-4 text-gray-300">
+                <h3 class="text-lg font-semibold text-slate-800 mb-4">Edit Detail Pernikahan</h3>
+                <form @submit.prevent="updateWedding" class="space-y-4 text-slate-700">
                     <div>
                         <label class="block text-sm font-medium">Judul</label>
-                        <input type="text" v-model="weddingToEdit.title" class="mt-1 w-full bg-gray-800 text-gray-200 px-3 py-2 border border-gray-600 rounded-lg" required>
+                        <input type="text" v-model="weddingToEdit.title" class="mt-1 w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500" required>
                     </div>
                     <div>
                         <label class="block text-sm font-medium">Tanggal</label>
-                        <input type="date" v-model="weddingToEdit.date" class="mt-1 w-full bg-gray-800 text-gray-200 px-3 py-2 border border-gray-600 rounded-lg" style="color-scheme: dark;">
+                        <input type="date" v-model="weddingToEdit.date" class="mt-1 w-full px-3 py-2 border border-slate-300 rounded-lg">
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-sm font-medium">Lokasi</label>
-                            <input type="text" v-model="weddingToEdit.location" class="mt-1 w-full bg-gray-800 text-gray-200 px-3 py-2 border border-gray-600 rounded-lg">
+                            <input type="text" v-model="weddingToEdit.location" class="mt-1 w-full px-3 py-2 border border-slate-300 rounded-lg">
                         </div>
                         <div>
                             <label class="block text-sm font-medium">Alamat</label>
-                            <input type="text" v-model="weddingToEdit.address" class="mt-1 w-full bg-gray-800 text-gray-200 px-3 py-2 border border-gray-600 rounded-lg">
+                            <input type="text" v-model="weddingToEdit.address" class="mt-1 w-full px-3 py-2 border border-slate-300 rounded-lg">
                         </div>
                     </div>
-                    <h4 class="font-semibold pt-2 text-gray-200">Kontak</h4>
+                    <h4 class="font-semibold pt-2 text-slate-800">Kontak</h4>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <input type="text" v-model="weddingToEdit.contacts.bride" placeholder="Pengantin Wanita" class="w-full bg-gray-800 text-gray-200 px-3 py-2 border border-gray-600 rounded-lg">
-                        <input type="text" v-model="weddingToEdit.contacts.groom" placeholder="Pengantin Pria" class="w-full bg-gray-800 text-gray-200 px-3 py-2 border border-gray-600 rounded-lg">
-                        <input type="email" v-model="weddingToEdit.contacts.email" placeholder="Email" class="w-full bg-gray-800 text-gray-200 px-3 py-2 border border-gray-600 rounded-lg">
-                        <input type="tel" v-model="weddingToEdit.contacts.phone" placeholder="Telepon" class="w-full bg-gray-800 text-gray-200 px-3 py-2 border border-gray-600 rounded-lg">
+                        <input type="text" v-model="weddingToEdit.contacts.bride" placeholder="Pengantin Wanita" class="w-full px-3 py-2 border border-slate-300 rounded-lg">
+                        <input type="text" v-model="weddingToEdit.contacts.groom" placeholder="Pengantin Pria" class="w-full px-3 py-2 border border-slate-300 rounded-lg">
+                        <input type="email" v-model="weddingToEdit.contacts.email" placeholder="Email" class="w-full px-3 py-2 border border-slate-300 rounded-lg">
+                        <input type="tel" v-model="weddingToEdit.contacts.phone" placeholder="Telepon" class="w-full px-3 py-2 border border-slate-300 rounded-lg">
                     </div>
-                     <h4 class="font-semibold pt-2 text-gray-200">Detail Acara</h4>
+                     <h4 class="font-semibold pt-2 text-slate-800">Detail Acara</h4>
                      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                         <input type="number" v-model.number="weddingToEdit.details.guests" placeholder="Jumlah Tamu" class="w-full bg-gray-800 text-gray-200 px-3 py-2 border border-gray-600 rounded-lg">
-                         <input type="text" v-model="weddingToEdit.details.type" placeholder="Tipe Acara" class="w-full bg-gray-800 text-gray-200 px-3 py-2 border border-gray-600 rounded-lg">
-                         <input type="text" v-model="weddingToEdit.details.package" placeholder="Paket" class="w-full bg-gray-800 text-gray-200 px-3 py-2 border border-gray-600 rounded-lg">
+                         <input type="number" v-model.number="weddingToEdit.details.guests" placeholder="Jumlah Tamu" class="w-full px-3 py-2 border border-slate-300 rounded-lg">
+                         <input type="text" v-model="weddingToEdit.details.type" placeholder="Tipe Acara" class="w-full px-3 py-2 border border-slate-300 rounded-lg">
+                         <input type="text" v-model="weddingToEdit.details.package" placeholder="Paket" class="w-full px-3 py-2 border border-slate-300 rounded-lg">
                      </div>
 
-                    <h4 class="font-semibold pt-2 text-gray-200">Tags</h4>
+                    <h4 class="font-semibold pt-2 text-slate-800">Tags</h4>
                     <div>
                         <div class="flex flex-wrap gap-2 mb-2">
                              <span v-for="(tag, index) in weddingToEdit.tags" :key="index" :class="tag.color" class="flex items-center px-2 py-1 rounded-full text-xs font-medium">
@@ -366,14 +353,14 @@
                             </span>
                         </div>
                         <div class="flex">
-                            <input type="text" @keydown.enter.prevent="addTag" v-model="newTag" placeholder="Tambah tag baru..." class="w-full bg-gray-800 text-gray-200 px-3 py-2 border border-gray-600 rounded-l-lg">
-                            <button type="button" @click="addTag" class="px-4 py-2 bg-gray-600 text-white rounded-r-lg hover:bg-gray-700">Add</button>
+                            <input type="text" @keydown.enter.prevent="addTag" v-model="newTag" placeholder="Tambah tag baru..." class="w-full px-3 py-2 border border-slate-300 rounded-l-lg">
+                            <button type="button" @click="addTag" class="px-4 py-2 bg-slate-600 text-white rounded-r-lg hover:bg-slate-700">Add</button>
                         </div>
                     </div>
 
                     <div class="flex justify-end space-x-3 pt-4">
-                        <button type="button" @click="closeEditModal" class="px-4 py-2 border border-gray-600 rounded-lg text-gray-300 hover:bg-gray-700">Batal</button>
-                        <button type="submit" class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-semibold">Simpan Perubahan</button>
+                        <button type="button" @click="closeEditModal" class="px-4 py-2 border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-100">Batal</button>
+                        <button type="submit" class="px-4 py-2 bg-violet-600 text-white rounded-lg hover:bg-violet-700 font-semibold">Simpan Perubahan</button>
                     </div>
                 </form>
              </div>
@@ -381,16 +368,16 @@
 
         <!-- Add/Edit Timeline Modal -->
         <div v-if="showTimelineModal" class="fixed inset-0 flex items-center justify-center z-40">
-             <div @click="closeTimelineModal" class="absolute inset-0 bg-black bg-opacity-60 backdrop-blur-sm"></div>
+             <div @click="closeTimelineModal" class="absolute inset-0 bg-black bg-opacity-30 backdrop-blur-sm"></div>
              <div class="glass rounded-2xl p-6 w-full max-w-md relative z-10 shadow-xl m-4">
-                <h3 class="text-lg font-semibold text-gray-200 mb-4">Tambah Linimasa</h3>
+                <h3 class="text-lg font-semibold text-slate-800 mb-4">Tambah Linimasa</h3>
                 <form @submit.prevent="addTimelineItem" class="space-y-4">
-                    <input v-model="newTimelineItem.title" type="text" placeholder="Judul Acara (e.g., Upacara)" class="w-full bg-gray-800 text-gray-200 px-3 py-2 border border-gray-600 rounded-lg" required>
-                    <input v-model="newTimelineItem.time" type="time" placeholder="Waktu (e.g., 10:30)" class="w-full bg-gray-800 text-gray-200 px-3 py-2 border border-gray-600 rounded-lg" style="color-scheme: dark;" required>
-                    <textarea v-model="newTimelineItem.notes" placeholder="Catatan singkat..." class="w-full bg-gray-800 text-gray-200 px-3 py-2 border border-gray-600 rounded-lg" rows="3"></textarea>
+                    <input v-model="newTimelineItem.title" type="text" placeholder="Judul Acara (e.g., Upacara)" class="w-full px-3 py-2 border border-slate-300 rounded-lg" required>
+                    <input v-model="newTimelineItem.time" type="time" placeholder="Waktu (e.g., 10:30)" class="w-full px-3 py-2 border border-slate-300 rounded-lg" required>
+                    <textarea v-model="newTimelineItem.notes" placeholder="Catatan singkat..." class="w-full px-3 py-2 border border-slate-300 rounded-lg" rows="3"></textarea>
                     <div class="flex justify-end space-x-3 pt-2">
-                        <button type="button" @click="closeTimelineModal" class="px-4 py-2 border border-gray-600 rounded-lg text-gray-300 hover:bg-gray-700">Batal</button>
-                        <button type="submit" class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-semibold">Tambah</button>
+                        <button type="button" @click="closeTimelineModal" class="px-4 py-2 border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-100">Batal</button>
+                        <button type="submit" class="px-4 py-2 bg-violet-600 text-white rounded-lg hover:bg-violet-700 font-semibold">Tambah</button>
                     </div>
                 </form>
              </div>
@@ -415,13 +402,13 @@
                     newShot: { title: '', description: '' },
                     newTimelineItem: { title: '', time: '', notes: '' },
                     tagColors: [
-                        'bg-blue-900/70 text-blue-300 border border-blue-500/30',
-                        'bg-green-900/70 text-green-300 border border-green-500/30',
-                        'bg-yellow-900/70 text-yellow-300 border border-yellow-500/30',
-                        'bg-red-900/70 text-red-300 border border-red-500/30',
-                        'bg-indigo-900/70 text-indigo-300 border border-indigo-500/30',
-                        'bg-pink-900/70 text-pink-300 border border-pink-500/30',
-                        'bg-gray-700/70 text-gray-300 border border-gray-500/30',
+                        'bg-violet-100 text-violet-700',
+                        'bg-blue-100 text-blue-700',
+                        'bg-green-100 text-green-700',
+                        'bg-yellow-100 text-yellow-700',
+                        'bg-red-100 text-red-700',
+                        'bg-pink-100 text-pink-700',
+                        'bg-slate-200 text-slate-700',
                     ]
                 }
             },
@@ -466,12 +453,12 @@
                 addWedding() {
                     const newWedding = {
                         id: Date.now(),
-                        title: "Pernikahan Baru",
+                        title: "Jadwal Baru",
                         date: new Date().toISOString().split('T')[0],
                         location: "Belum ditentukan", address: "",
                         contacts: { bride: "", groom: "", email: "", phone: "" },
                         details: { guests: 0, type: "TBD", package: "TBD" },
-                        notes: "Catatan khusus untuk pernikahan ini...",
+                        notes: "Catatan khusus...",
                         shots: [], timeline: [], photos: [], tags: []
                     };
                     this.weddings.unshift(newWedding);
@@ -479,7 +466,7 @@
                     this.saveWeddings();
                 },
                 deleteWedding(weddingId) {
-                    if (confirm("Apakah Anda yakin ingin menghapus jadwal pernikahan ini? Aksi ini tidak dapat dibatalkan.")) {
+                    if (confirm("Apakah Anda yakin ingin menghapus jadwal ini? Aksi ini tidak dapat dibatalkan.")) {
                         this.weddings = this.weddings.filter(w => w.id !== weddingId);
                         if (this.activeWedding && this.activeWedding.id === weddingId) {
                             this.activeWedding = this.weddings.length > 0 ? this.weddings[0] : null;
@@ -534,7 +521,7 @@
                     if (!this.newTag.trim() || !this.weddingToEdit) return;
                     const newTagObject = {
                         text: this.newTag,
-                        color: this.tagColors[Math.floor(Math.random() * this.tagColors.length)]
+                        color: this.tagColors[this.weddingToEdit.tags.length % this.tagColors.length]
                     };
                     this.weddingToEdit.tags.push(newTagObject);
                     this.newTag = '';
@@ -566,11 +553,11 @@
                 },
                 shareWedding(wedding) {
                     const details = `
-Wedding: ${wedding.title}
+List: ${wedding.title}
 Date: ${this.formatDateForDisplay(wedding.date)}
 Location: ${wedding.location}
 ---
-Must-Have Shots:
+Tasks:
 ${wedding.shots.map(s => `- ${s.title} (${s.completed ? 'Selesai' : 'Belum'})`).join('\n')}
 ---
 Timeline:
@@ -602,8 +589,8 @@ ${wedding.timeline.map(t => `- ${t.time}: ${t.title}`).join('\n')}
                         ],
                         photos: [],
                         tags: [
-                            { text: 'Premium', color: 'bg-blue-900/70 text-blue-300 border border-blue-500/30' },
-                            { text: 'Outdoor', color: 'bg-green-900/70 text-green-300 border border-green-500/30' },
+                            { text: 'Premium', color: 'bg-violet-100 text-violet-700' },
+                            { text: 'Outdoor', color: 'bg-green-100 text-green-700' },
                         ]
                     }];
                 }
