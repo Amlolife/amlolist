@@ -127,12 +127,12 @@ document.addEventListener('DOMContentLoaded', () => {
              return;
         }
 
-        appState.projects.forEach(project => {
+        const projectCardsHtml = appState.projects.map((project, index) => {
             const isActive = project.id === appState.currentProjectId;
             const activeClasses = isActive ? 'border-purple-600' : 'border-gray-700';
             
-            projectsListContainer.innerHTML += `
-                <div data-project-id="${project.id}" class="project-card-clickable bg-[#222] p-4 rounded-lg flex justify-between items-center cursor-pointer border-2 ${activeClasses}">
+            return `
+                <div data-project-id="${project.id}" style="animation-delay: ${index * 60}ms" class="project-card-clickable bg-[#222] p-4 rounded-lg flex justify-between items-center cursor-pointer border-2 ${activeClasses}">
                     <div>
                         <p class="text-white font-bold text-lg pointer-events-none">${project.title}</p>
                         <p class="text-gray-400 text-sm pointer-events-none">${project.category} - ${project.date}</p>
@@ -142,7 +142,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     </button>
                 </div>
             `;
-        });
+        }).join('');
+        projectsListContainer.innerHTML = projectCardsHtml;
     }
 
     if(addProjectButton) addProjectButton.addEventListener('click', createNewProject);
@@ -201,7 +202,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (tasks.length === 0) {
                  tasksHtml = `<div class="px-6"><p class="text-gray-400 py-4">No tasks for ${project.title} today.</p></div>`;
             } else {
-                tasksHtml = `<div class="px-6 flex flex-col gap-4">${tasks.map(generateShotHTML).join('')}</div>`;
+                 tasks.sort((a,b) => (a.time || "23:59").localeCompare(b.time || "23:59"));
+                 tasksHtml = `<div class="px-6 flex flex-col gap-4">${tasks.map((shot, index) => generateShotHTML(shot, index)).join('')}</div>`;
             }
         }
 
@@ -212,10 +214,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     <button data-target="page-projects" class="nav-link text-purple-400 text-sm">View All</button>
                 </div>
                 <div id="dashboard-projects-list" class="flex flex-col gap-3">
-                    ${(appState.projects || []).map(p => {
+                    ${(appState.projects || []).map((p, index) => {
                         const isActive = p.id === appState.currentProjectId;
                         return `
-                        <div data-project-id="${p.id}" class="project-card-clickable flex items-center justify-between bg-[#222] p-3 rounded-lg cursor-pointer">
+                        <div data-project-id="${p.id}" style="animation-delay: ${index * 60}ms" class="project-card-clickable flex items-center justify-between bg-[#222] p-3 rounded-lg cursor-pointer">
                             <p class="font-semibold pointer-events-none">${p.title}</p>
                             <span class="text-xs ${isActive ? 'text-purple-400' : 'text-gray-500'} pointer-events-none">${isActive ? 'Active' : ''}</span>
                         </div>
@@ -259,16 +261,16 @@ document.addEventListener('DOMContentLoaded', () => {
             shotListContainer.innerHTML = `<p class="text-gray-400 text-center px-4 py-8">No tasks yet. Tap the '+' to add one.</p>`;
         } else {
             shots.sort((a,b) => (a.time || "23:59").localeCompare(b.time || "23:59"));
-            shotListContainer.innerHTML = shots.map(generateShotHTML).join('');
+            shotListContainer.innerHTML = shots.map((shot, index) => generateShotHTML(shot, index)).join('');
         }
     }
     
-    function generateShotHTML(shot) {
+    function generateShotHTML(shot, index = 0) {
         const isComplete = shot.checked ? 'is-complete' : '';
         const icon = ICONS[shot.category] || ICONS.Default;
         const checkIcon = shot.checked ? ICONS.Check : '';
         return `
-            <div data-text="${shot.text}" class="task-card flex items-center gap-4 bg-[#222] p-4 rounded-lg border-l-4 border-gray-700 ${isComplete}">
+            <div data-text="${shot.text}" style="animation-delay: ${index * 60}ms" class="task-card flex items-center gap-4 bg-[#222] p-4 rounded-lg border-l-4 border-gray-700 ${isComplete}">
                  <div class="task-checkbox w-6 h-6 rounded-md border-2 border-gray-500 flex items-center justify-center shrink-0 cursor-pointer">
                     ${checkIcon}
                  </div>
