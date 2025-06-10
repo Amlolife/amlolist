@@ -354,6 +354,20 @@
                          <input type="text" v-model="weddingToEdit.details.package" placeholder="Paket" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
                      </div>
 
+                    <h4 class="font-semibold pt-2">Tags</h4>
+                    <div>
+                        <div class="flex flex-wrap gap-2 mb-2">
+                             <span v-for="(tag, index) in weddingToEdit.tags" :key="index" :class="tag.color" class="flex items-center px-2 py-1 rounded-full text-xs font-medium">
+                                {{ tag.text }}
+                                <button type="button" @click="removeTag(index)" class="ml-2 text-xs opacity-50 hover:opacity-100">&times;</button>
+                            </span>
+                        </div>
+                        <div class="flex">
+                            <input type="text" @keydown.enter.prevent="addTag" v-model="newTag" placeholder="Tambah tag baru..." class="w-full px-3 py-2 border border-gray-300 rounded-l-lg">
+                            <button type="button" @click="addTag" class="px-4 py-2 bg-gray-600 text-white rounded-r-lg hover:bg-gray-700">Add</button>
+                        </div>
+                    </div>
+
                     <div class="flex justify-end space-x-3 pt-4">
                         <button type="button" @click="closeEditModal" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">Batal</button>
                         <button type="submit" class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-semibold">Simpan Perubahan</button>
@@ -394,8 +408,18 @@
                     showTimelineModal: false,
                     showCopyMessage: false,
                     weddingToEdit: null,
+                    newTag: '',
                     newShot: { title: '', description: '' },
-                    newTimelineItem: { title: '', time: '', notes: '' }
+                    newTimelineItem: { title: '', time: '', notes: '' },
+                    tagColors: [
+                        'bg-blue-100 text-blue-800',
+                        'bg-green-100 text-green-800',
+                        'bg-yellow-100 text-yellow-800',
+                        'bg-red-100 text-red-800',
+                        'bg-indigo-100 text-indigo-800',
+                        'bg-pink-100 text-pink-800',
+                        'bg-gray-100 text-gray-800',
+                    ]
                 }
             },
             created() {
@@ -476,7 +500,6 @@
                     if (!this.weddingToEdit) return;
                     const index = this.weddings.findIndex(w => w.id === this.weddingToEdit.id);
                     if (index !== -1) {
-                        // This robustly updates the original object, ensuring reactivity.
                         Object.assign(this.weddings[index], this.weddingToEdit);
                         this.activeWedding = this.weddings[index];
                         this.saveWeddings();
@@ -504,6 +527,19 @@
                      if (!this.activeWedding) return;
                     this.activeWedding.timeline = this.activeWedding.timeline.filter(i => i.id !== itemId);
                     this.saveActiveWedding();
+                },
+                addTag() {
+                    if (!this.newTag.trim() || !this.weddingToEdit) return;
+                    const newTagObject = {
+                        text: this.newTag,
+                        color: this.tagColors[Math.floor(Math.random() * this.tagColors.length)]
+                    };
+                    this.weddingToEdit.tags.push(newTagObject);
+                    this.newTag = '';
+                },
+                removeTag(index) {
+                    if (!this.weddingToEdit) return;
+                    this.weddingToEdit.tags.splice(index, 1);
                 },
                 addPhoto() {
                     if (!this.activeWedding) return;
