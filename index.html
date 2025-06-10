@@ -25,13 +25,17 @@
 <body class="text-white">
 
     <main class="pb-24">
-        <!-- Dashboard is now integrated into the Projects page view -->
-        <section id="page-dashboard" class="page hidden"></section>
+        <!-- =================================================================== -->
+        <!-- DASHBOARD PAGE (NEW HOME PAGE) -->
+        <!-- =================================================================== -->
+        <section id="page-dashboard" class="page">
+            <!-- Content is dynamically rendered by app.js -->
+        </section>
         
         <!-- =================================================================== -->
         <!-- PROJECTS LIST PAGE -->
         <!-- =================================================================== -->
-        <section id="page-projects" class="page">
+        <section id="page-projects" class="page hidden">
              <div class="p-6">
                 <h1 class="text-3xl font-bold">Projects</h1>
                 <p class="text-gray-400">Select a project to view its schedule</p>
@@ -47,10 +51,13 @@
         </section>
 
         <!-- =================================================================== -->
-        <!-- TODAY'S SCHEDULE / SHOT LIST PAGE -->
+        <!-- SHOT LIST PAGE -->
         <!-- =================================================================== -->
         <section id="page-shot-list" class="page hidden">
             <div class="p-6">
+                 <button class="nav-link mb-4" data-target="page-projects">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                </button>
                 <h1 class="text-3xl font-bold" id="schedule-day">Today's schedule</h1>
                 <p class="text-gray-400" id="schedule-date">Monday 19</p>
             </div>
@@ -123,7 +130,7 @@
     <!-- =================================================================== -->
     <nav class="fixed bottom-0 left-0 right-0 bg-[#1D1D1D] border-t border-gray-800">
         <div class="flex justify-around items-center h-20">
-            <a data-target="page-shot-list" class="nav-link flex-1 flex flex-col items-center justify-center text-gray-400 cursor-pointer">
+            <a data-target="page-dashboard" class="nav-link flex-1 flex flex-col items-center justify-center text-gray-400 cursor-pointer">
                 <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
             </a>
             <a id="nav-add-button" class="flex items-center justify-center w-16 h-16 bg-purple-700 rounded-full -mt-8 shadow-lg shadow-purple-900/50 cursor-pointer">
