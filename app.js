@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
             date: "2024-06-15",
             imageUrl: "https://images.unsplash.com/photo-1597158292833-2ab349342240?q=80&w=2070&auto=format&fit=crop",
             shotLists: {
-                wedding: [
+                main: [
                     { text: 'Bride getting hair done', category: 'Getting Ready', checked: false },
                     { text: 'Bride getting makeup done', category: 'Getting Ready', checked: true },
                     { text: 'Exchange of vows', category: 'Ceremony', checked: false },
@@ -33,12 +33,9 @@ document.addEventListener('DOMContentLoaded', () => {
     function showPage(targetId) {
         let pageExists = false;
         pages.forEach(page => {
-            if (page.id === targetId) {
-                page.classList.remove('hidden');
-                pageExists = true;
-            } else {
-                page.classList.add('hidden');
-            }
+            const isTarget = page.id === targetId;
+            page.classList.toggle('hidden', !isTarget);
+            if (isTarget) pageExists = true;
         });
 
         if (pageExists) {
@@ -54,6 +51,10 @@ document.addEventListener('DOMContentLoaded', () => {
         link.addEventListener('click', (event) => {
             event.preventDefault();
             const targetPageId = link.dataset.target;
+            // If we're opening the shot list, ensure it renders first
+            if (targetPageId === 'page-shot-list') {
+                renderProjectShotList();
+            }
             showPage(targetPageId);
         });
     });
@@ -65,7 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const addProjectButton = document.getElementById('add-project-button');
 
     function getCurrentProject() {
-        if (!appState.currentProjectId) return null;
+        if (!appState.currentProjectId || !appState.projects) return null;
         return appState.projects.find(p => p.id === appState.currentProjectId);
     }
 
@@ -80,8 +81,8 @@ document.addEventListener('DOMContentLoaded', () => {
             category: category,
             title: title,
             date: new Date().toISOString().split('T')[0],
-            imageUrl: "https://images.unsplash.com/photo-1511285560921-506948335697?q=80&w=1887&auto=format&fit=crop",
-            shotLists: { wedding: [] }
+            imageUrl: `https://placehold.co/600x400/333/fff?text=${title.replace(/\s/g, '+')}`,
+            shotLists: { main: [] }
         };
 
         appState.projects.push(newProject);
@@ -94,7 +95,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderProjectsList() {
         if(!projectsListContainer) return;
         projectsListContainer.innerHTML = '';
-        if(appState.projects.length === 0){
+        if(!appState.projects || appState.projects.length === 0){
              projectsListContainer.innerHTML = `<p class="text-[#adadad] text-center px-4 py-8">No projects yet. Click below to create one.</p>`;
              return;
         }
@@ -103,13 +104,13 @@ document.addEventListener('DOMContentLoaded', () => {
             const isActive = project.id === appState.currentProjectId;
             const activeClasses = isActive ? 'border-2 border-white' : 'border-2 border-transparent';
             const buttonText = isActive ? 'Active' : 'Select';
-            const buttonClasses = isActive ? 'bg-green-600' : 'bg-blue-600 hover:bg-blue-500';
+            const buttonClasses = isActive ? 'bg-green-600 cursor-default' : 'bg-blue-600 hover:bg-blue-500';
 
             projectsListContainer.innerHTML += `
-                <div class="bg-[#363636] p-4 rounded-lg flex justify-between items-center ${activeClasses}">
+                <div data-project-id="${project.id}" class="project-card-clickable bg-[#363636] p-4 rounded-lg flex justify-between items-center cursor-pointer ${activeClasses}">
                     <div>
-                        <p class="text-white font-bold text-lg">${project.title}</p>
-                        <p class="text-[#adadad] text-sm">${project.category} - ${project.date}</p>
+                        <p class="text-white font-bold text-lg pointer-events-none">${project.title}</p>
+                        <p class="text-[#adadad] text-sm pointer-events-none">${project.category} - ${project.date}</p>
                     </div>
                     <div class="flex gap-2">
                         <button data-project-id="${project.id}" class="select-project-btn text-white text-xs font-bold py-1 px-3 rounded-full ${buttonClasses}">${buttonText}</button>
@@ -126,15 +127,19 @@ document.addEventListener('DOMContentLoaded', () => {
         projectsListContainer.addEventListener('click', e => {
             const selectBtn = e.target.closest('.select-project-btn');
             const deleteBtn = e.target.closest('.delete-project-btn');
+            const card = e.target.closest('.project-card-clickable');
 
-            if(selectBtn) {
+            if (selectBtn) {
+                e.stopPropagation(); // prevent card click from firing
                 appState.currentProjectId = selectBtn.dataset.projectId;
                 saveState();
                 renderAll();
                 showPage('page-dashboard');
+                return;
             }
 
-            if(deleteBtn) {
+            if (deleteBtn) {
+                e.stopPropagation(); // prevent card click from firing
                 if(confirm('Are you sure you want to delete this project and all its data?')){
                     const projectId = deleteBtn.dataset.projectId;
                     appState.projects = appState.projects.filter(p => p.id !== projectId);
@@ -144,10 +149,17 @@ document.addEventListener('DOMContentLoaded', () => {
                     saveState();
                     renderAll();
                 }
+                return;
+            }
+
+            if (card) {
+                appState.currentProjectId = card.dataset.projectId;
+                saveState();
+                renderAll();
+                showPage('page-wedding-day'); // Navigate directly to shot list
             }
         });
     }
-
 
     // ===================================================================
     //  DASHBOARD LOGIC
@@ -156,19 +168,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function updateProgressBar() {
         const project = getCurrentProject();
-        
         const progressBar = document.getElementById('progress-bar');
         const progressText = document.getElementById('progress-text');
         const progressCounts = document.getElementById('progress-counts');
 
-        if (!project || !progressBar) { // Check if elements exist
+        if (!project || !progressBar) {
              if(progressBar) progressBar.style.width = '0%';
              if(progressText) progressText.querySelector('p').textContent = '0% Complete';
              if(progressCounts) progressCounts.textContent = 'No project selected';
              return;
         };
 
-        const shots = project.shotLists.wedding || [];
+        const shots = project.shotLists.main || [];
         const totalShots = shots.length;
         const completedShots = shots.filter(shot => shot.checked).length;
         const percentage = totalShots > 0 ? Math.round((completedShots / totalShots) * 100) : 0;
@@ -210,7 +221,7 @@ document.addEventListener('DOMContentLoaded', () => {
                  <div data-target="page-wedding-day" class="flex items-center gap-4 px-4 min-h-14 justify-between cursor-pointer hover:bg-[#363636]">
                     <div class="flex items-center gap-4">
                         <div class="text-white flex items-center justify-center rounded-lg bg-[#363636] shrink-0 size-10"><svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256"><path d="M80,64a8,8,0,0,1,8-8H216a8,8,0,0,1,0,16H88A8,8,0,0,1,80,64Zm136,56H88a8,8,0,0,0,0,16H216a8,8,0,0,0,0-16Zm0,64H88a8,8,0,0,0,0,16H216a8,8,0,0,0,0-16ZM44,52A12,12,0,1,0,56,64,12,12,0,0,0,44,52Zm0,64a12,12,0,1,0,12,12A12,12,0,0,0,44,116Zm0,64a12,12,0,1,0,12,12A12,12,0,0,0,44,180Z"></path></svg></div>
-                        <p class="text-white text-base font-normal leading-normal flex-1 truncate">Shot List</p>
+                        <p class="text-white text-base font-normal leading-normal flex-1 truncate">Project Shot List</p>
                     </div>
                     <div class="shrink-0"><div class="text-white flex size-7 items-center justify-center"><svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256"><path d="M221.66,133.66l-72,72a8,8,0,0,1-11.32-11.32L196.69,136H40a8,8,0,0,1,0-16H196.69L138.34,61.66a8,8,0,0,1,11.32-11.32l72,72A8,8,0,0,1,221.66,133.66Z"></path></svg></div></div>
                 </div>
@@ -219,7 +230,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Event Delegation for dynamically created buttons
     document.body.addEventListener('click', (event) => {
         if(event.target.id === 'dashboard-go-to-projects') {
             showPage('page-projects');
@@ -255,27 +265,27 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     // ===================================================================
-    //  GENERAL SHOT LIST LOGIC
+    //  PROJECT SHOT LIST LOGIC
     // ===================================================================
-    const weddingListContainer = document.getElementById('wedding-checklist-container');
-    const addWeddingShotButton = document.getElementById('add-wedding-shot-button');
-    const weddingListTitle = document.getElementById('wedding-list-title');
+    const shotListContainer = document.getElementById('wedding-checklist-container');
+    const addShotButton = document.getElementById('add-wedding-shot-button');
+    const shotListTitle = document.getElementById('wedding-list-title');
 
-    function renderWeddingShots() {
-        if (!weddingListContainer) return;
+    function renderProjectShotList() {
+        if (!shotListContainer) return;
         const project = getCurrentProject();
 
         if (!project) {
-            weddingListContainer.innerHTML = `<p class="text-[#adadad] text-center px-4 py-8">No active project selected.</p>`;
-            if (weddingListTitle) weddingListTitle.textContent = "No Project";
+            shotListContainer.innerHTML = `<p class="text-[#adadad] text-center px-4 py-8">No active project selected.</p>`;
+            if (shotListTitle) shotListTitle.textContent = "No Project";
             return;
         }
 
-        if (weddingListTitle) weddingListTitle.textContent = `${project.title} - Shots`;
-        const shots = project.shotLists.wedding || [];
+        if (shotListTitle) shotListTitle.textContent = `${project.title} - Shots`;
+        const shots = project.shotLists.main || [];
         
         if (shots.length === 0) {
-            weddingListContainer.innerHTML = `<p class="text-[#adadad] text-center px-4 py-8">No shots added yet. Click "Add Shot" to begin.</p>`;
+            shotListContainer.innerHTML = `<p class="text-[#adadad] text-center px-4 py-8">No shots added yet. Click "Add Shot" to begin.</p>`;
         } else {
             const groupedByCategory = shots.reduce((acc, shot) => {
                 const category = shot.category || 'Uncategorized';
@@ -291,7 +301,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     html += generateShotHTML(shot);
                 });
             }
-            weddingListContainer.innerHTML = html;
+            shotListContainer.innerHTML = html;
         }
         updateProgressBar();
     }
@@ -311,7 +321,7 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
     }
 
-    function handleAddItem() {
+    function handleAddItemToList() {
         const project = getCurrentProject();
         if (!project) {
             alert("Please select a project first!");
@@ -324,18 +334,19 @@ document.addEventListener('DOMContentLoaded', () => {
         const category = prompt("Enter a category for this shot (e.g., Ceremony, Portraits):", "Custom");
         if (!category || category.trim() === '') return;
         
-        project.shotLists.wedding.push({ text: shotText.trim(), category: category.trim(), checked: false });
-        renderWeddingShots();
+        if (!project.shotLists.main) project.shotLists.main = [];
+        project.shotLists.main.push({ text: shotText.trim(), category: category.trim(), checked: false });
+        renderProjectShotList();
         saveState();
     }
 
-    function handleItemInteraction(event) {
+    function handleShotListInteraction(event) {
         const project = getCurrentProject();
-        if(!project) return;
+        if(!project || !project.shotLists.main) return;
 
         const textFromCheckbox = event.target.dataset.text;
         if (event.target.type === 'checkbox') {
-            const shot = project.shotLists.wedding.find(s => s.text === textFromCheckbox);
+            const shot = project.shotLists.main.find(s => s.text === textFromCheckbox);
             if (shot) {
                 shot.checked = event.target.checked;
                 updateProgressBar();
@@ -347,15 +358,15 @@ document.addEventListener('DOMContentLoaded', () => {
         if (deleteButton) {
             const shotTextToDelete = deleteButton.dataset.text;
             if (confirm(`Are you sure you want to delete the shot: "${shotTextToDelete}"?`)) {
-                project.shotLists.wedding = project.shotLists.wedding.filter(s => s.text !== shotTextToDelete);
-                renderWeddingShots();
+                project.shotLists.main = project.shotLists.main.filter(s => s.text !== shotTextToDelete);
+                renderProjectShotList();
                 saveState();
             }
         }
     }
     
-    if(addWeddingShotButton) addWeddingShotButton.addEventListener('click', handleAddItem);
-    if(weddingListContainer) weddingListContainer.addEventListener('click', handleItemInteraction);
+    if(addShotButton) addShotButton.addEventListener('click', handleAddItemToList);
+    if(shotListContainer) shotListContainer.addEventListener('click', handleShotListInteraction);
 
     // ===================================================================
     //  PERSISTENCE (SAVE/LOAD STATE)
@@ -370,29 +381,18 @@ document.addEventListener('DOMContentLoaded', () => {
         if (savedState) {
             appState = JSON.parse(savedState);
             console.log("App state loaded.");
-
-            // **BUG FIX AREA START**
-            // Ensure the current project ID is valid after loading.
-            if (!appState.projects) appState.projects = [];
-            const projectExists = appState.projects.some(p => p.id === appState.currentProjectId);
-
-            if (!appState.currentProjectId || !projectExists) {
-                if (appState.projects.length > 0) {
-                    appState.currentProjectId = appState.projects[0].id;
-                    console.log("Current project was invalid, reset to the first available project.");
-                } else {
-                    appState.currentProjectId = null;
-                    console.log("No projects exist, current project is null.");
-                }
-            }
-            // **BUG FIX AREA END**
-
         } else {
-            // Use a deep copy to prevent mutation of the defaultState constant
             appState = JSON.parse(JSON.stringify(defaultState));
-            // Set the current project ID on first load
-            appState.currentProjectId = appState.projects.length > 0 ? appState.projects[0].id : null;
             console.log("No saved state, initialized with default.");
+        }
+        
+        // Ensure a valid current project is always set.
+        if (!appState.projects) appState.projects = [];
+        const projectExists = appState.projects.some(p => p.id === appState.currentProjectId);
+
+        if (!appState.currentProjectId || !projectExists) {
+            appState.currentProjectId = appState.projects.length > 0 ? appState.projects[0].id : null;
+            console.log("Current project validated and set.");
         }
     }
 
@@ -402,7 +402,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderAll() {
         renderDashboard();
         renderProjectsList();
-        renderWeddingShots();
+        renderProjectShotList();
     }
 
     function init() {
