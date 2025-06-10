@@ -371,8 +371,8 @@ document.addEventListener('DOMContentLoaded', () => {
             appState = JSON.parse(savedState);
             console.log("App state loaded.");
         } else {
-            appState = defaultState;
-            appState.currentProjectId = appState.projects.length > 0 ? appState.projects[0].id : null;
+            // Use a deep copy to prevent mutation of the defaultState constant
+            appState = JSON.parse(JSON.stringify(defaultState));
             console.log("No saved state, initialized with default.");
         }
     }
@@ -380,15 +380,30 @@ document.addEventListener('DOMContentLoaded', () => {
     // ===================================================================
     //  INITIAL APP LOAD & RENDER ALL
     // ===================================================================
+    function validateCurrentProject() {
+        if (!appState.projects) appState.projects = [];
+        const projectExists = appState.projects.some(p => p.id === appState.currentProjectId);
+
+        if (!appState.currentProjectId || !projectExists) {
+            if (appState.projects.length > 0) {
+                appState.currentProjectId = appState.projects[0].id;
+                console.log("Current project was invalid or null, reset to the first available project.");
+            } else {
+                appState.currentProjectId = null;
+                console.log("No projects exist, current project is null.");
+            }
+        }
+    }
+    
     function renderAll() {
         renderDashboard();
         renderProjectsList();
         renderWeddingShots();
-        // future lists like renderFamilyShots() would go here
     }
 
     function init() {
         loadState();
+        validateCurrentProject();
         applyTheme();
         renderAll();
         showPage('page-dashboard');
