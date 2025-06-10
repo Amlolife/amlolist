@@ -63,6 +63,7 @@
 </head>
 <body class="bg-[var(--background)] min-h-screen font-sans">
     <div id="app">
+        <input type="file" ref="photoUploader" @change="handlePhotoUpload" class="hidden" accept="image/*">
         <header class="bg-[var(--surface)] shadow-sm sticky top-0 z-20">
             <div class="container mx-auto px-4 py-3 flex items-center justify-between">
                 <div class="flex items-center space-x-2">
@@ -92,7 +93,7 @@
                                  :class="{'bg-purple-100 border-purple-300 shadow-sm': activeWedding && activeWedding.id === wedding.id, 'border-gray-100': !activeWedding || activeWedding.id !== wedding.id}">
                                 <div>
                                     <h3 class="font-medium text-gray-800">{{ wedding.title }}</h3>
-                                    <p class="text-sm text-gray-500">{{ wedding.date }}</p>
+                                    <p class="text-sm text-gray-500">{{ formatDateForDisplay(wedding.date) }}</p>
                                 </div>
                                 <i class="fas fa-chevron-right text-xs text-gray-400"></i>
                             </div>
@@ -127,7 +128,7 @@
                                     <div>
                                         <h2 class="text-2xl font-bold text-gray-800">{{ activeWedding.title }}</h2>
                                         <p class="text-gray-500 flex items-center mt-1">
-                                            <i class="fas fa-calendar-day mr-2 text-purple-600"></i> {{ activeWedding.date }}
+                                            <i class="fas fa-calendar-day mr-2 text-purple-600"></i> {{ formatDateForDisplay(activeWedding.date) }}
                                         </p>
                                     </div>
                                     <div class="flex space-x-1">
@@ -226,8 +227,8 @@
                                     <i class="fas fa-images mr-2 text-purple-600"></i> Quick Preview
                                 </h2>
                                 <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-                                    <div v-for="(photo, index) in activeWedding.photos" :key="photo.url" class="group aspect-square bg-gray-100 rounded-lg overflow-hidden relative">
-                                        <img :src="photo.url" @error="imageError" class="w-full h-full object-cover" alt="Wedding preview">
+                                    <div v-for="(photo, index) in activeWedding.photos" :key="index" class="group aspect-square bg-gray-100 rounded-lg overflow-hidden relative">
+                                        <img :src="photo.url" class="w-full h-full object-cover" alt="Wedding preview">
                                         <button @click="deletePhoto(index)" class="absolute top-1 right-1 bg-black bg-opacity-40 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">&times;</button>
                                     </div>
                                     <button @click="addPhoto" class="aspect-square bg-gray-50 rounded-lg flex items-center justify-center text-gray-400 border-2 border-dashed border-gray-300 hover:border-purple-400 hover:text-purple-500 transition-colors">
@@ -297,8 +298,20 @@
         <div v-if="showShotModal" class="fixed inset-0 flex items-center justify-center z-40">
             <div @click="closeShotModal" class="absolute inset-0 bg-black bg-opacity-30 backdrop-blur-sm"></div>
             <div class="glass rounded-2xl p-6 w-full max-w-md relative z-10 shadow-xl m-4">
-                <form @submit.prevent="addShot">
-                    <!-- ... Modal Content ... -->
+                <h3 class="text-lg font-semibold text-gray-800 mb-4">Tambah Foto Wajib</h3>
+                <form @submit.prevent="addShot" class="space-y-4">
+                     <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Judul Foto</label>
+                        <input v-model="newShot.title" type="text" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-purple-500 focus:border-purple-500" placeholder="Contoh: First look" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Catatan</label>
+                        <textarea v-model="newShot.description" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-purple-500 focus:border-purple-500" rows="3" placeholder="Instruksi khusus..."></textarea>
+                    </div>
+                    <div class="flex justify-end space-x-3 pt-2">
+                        <button type="button" @click="closeShotModal" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">Batal</button>
+                        <button type="submit" class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-semibold">Tambah Foto</button>
+                    </div>
                 </form>
             </div>
         </div>
@@ -315,7 +328,7 @@
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700">Tanggal</label>
-                        <input type="text" v-model="weddingToEdit.date" class="mt-1 w-full px-3 py-2 border border-gray-300 rounded-lg">
+                        <input type="date" v-model="weddingToEdit.date" class="mt-1 w-full px-3 py-2 border border-gray-300 rounded-lg">
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
@@ -356,7 +369,7 @@
                 <h3 class="text-lg font-semibold text-gray-800 mb-4">Tambah Linimasa</h3>
                 <form @submit.prevent="addTimelineItem" class="space-y-4">
                     <input v-model="newTimelineItem.title" type="text" placeholder="Judul Acara (e.g., Upacara)" class="w-full px-3 py-2 border border-gray-300 rounded-lg" required>
-                    <input v-model="newTimelineItem.time" type="text" placeholder="Waktu (e.g., 10:30 - 11:30)" class="w-full px-3 py-2 border border-gray-300 rounded-lg" required>
+                    <input v-model="newTimelineItem.time" type="time" placeholder="Waktu (e.g., 10:30)" class="w-full px-3 py-2 border border-gray-300 rounded-lg" required>
                     <textarea v-model="newTimelineItem.notes" placeholder="Catatan singkat..." class="w-full px-3 py-2 border border-gray-300 rounded-lg" rows="3"></textarea>
                     <div class="flex justify-end space-x-3 pt-2">
                         <button type="button" @click="closeTimelineModal" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">Batal</button>
@@ -399,6 +412,17 @@
                 }
             },
             methods: {
+                formatDateForDisplay(dateString) {
+                    if (!dateString) return '';
+                    // Handles 'YYYY-MM-DD'
+                    const date = new Date(dateString + 'T00:00:00');
+                    if (isNaN(date.getTime())) return dateString; // Fallback for invalid formats
+                    return date.toLocaleDateString('id-ID', {
+                        day: 'numeric',
+                        month: 'long',
+                        year: 'numeric'
+                    });
+                },
                 setActiveWedding(wedding) {
                     this.activeWedding = wedding;
                 },
@@ -417,7 +441,7 @@
                     const newWedding = {
                         id: Date.now(),
                         title: "Pernikahan Baru",
-                        date: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }),
+                        date: new Date().toISOString().split('T')[0],
                         location: "Belum ditentukan", address: "",
                         contacts: { bride: "", groom: "", email: "", phone: "" },
                         details: { guests: 0, type: "TBD", package: "TBD" },
@@ -441,7 +465,7 @@
                 openShotModal() { if (this.activeWedding) this.showShotModal = true; },
                 closeShotModal() { this.showShotModal = false; this.newShot = { title: '', description: '' }; },
                 openEditModal(wedding) {
-                    this.weddingToEdit = JSON.parse(JSON.stringify(wedding)); // Deep copy
+                    this.weddingToEdit = JSON.parse(JSON.stringify(wedding)); 
                     this.showEditModal = true;
                 },
                 closeEditModal() { this.showEditModal = false; this.weddingToEdit = null; },
@@ -482,11 +506,18 @@
                 },
                 addPhoto() {
                     if (!this.activeWedding) return;
-                    const url = prompt("Masukkan URL gambar:", "https://");
-                    if (url && url.startsWith('http')) {
-                        this.activeWedding.photos.push({ url });
+                    this.$refs.photoUploader.click();
+                },
+                handlePhotoUpload(event) {
+                    const file = event.target.files[0];
+                    if (!file || !this.activeWedding) return;
+
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        this.activeWedding.photos.push({ url: e.target.result });
                         this.saveActiveWedding();
-                    }
+                    };
+                    reader.readAsDataURL(file);
                 },
                 deletePhoto(index) {
                      if (!this.activeWedding) return;
@@ -496,7 +527,7 @@
                 shareWedding(wedding) {
                     const details = `
 Wedding: ${wedding.title}
-Date: ${wedding.date}
+Date: ${this.formatDateForDisplay(wedding.date)}
 Location: ${wedding.location}
 ---
 Must-Have Shots:
@@ -510,14 +541,11 @@ ${wedding.timeline.map(t => `- ${t.time}: ${t.title}`).join('\n')}
                         setTimeout(() => { this.showCopyMessage = false; }, 2500);
                     });
                 },
-                imageError(event) {
-                    event.target.src = 'https://placehold.co/400x400/f1f5f9/9ca3af?text=Gagal+Muat';
-                },
                 getSampleData() {
                      return [{
                         id: 1,
                         title: "Pernikahan Sarah & Michael",
-                        date: "15 Juni 2025",
+                        date: "2025-06-15",
                         location: "Grand Palms Resort",
                         address: "Jl. Pantai Indah No.123, Jakarta Utara",
                         contacts: { bride: "Sarah Johnson", groom: "Michael Smith", email: "sarah.j@email.com", phone: "(555) 123-4567" },
@@ -529,8 +557,8 @@ ${wedding.timeline.map(t => `- ${t.time}: ${t.title}`).join('\n')}
                             { id: 3, title: "Foto formal keluarga (sesuai daftar)", description: "Minta daftar grup dari pasangan", completed: false },
                         ],
                         timeline: [
-                            { id: 1, title: "Persiapan Pengantin", time: "08:00 - 09:30", notes: "Kamar hotel - ambil detail & momen candid" },
-                            { id: 2, title: "First Look", time: "09:45 - 10:15", notes: "Area taman - momen privat pasangan" },
+                            { id: 1, title: "Persiapan Pengantin", time: "08:00", notes: "Kamar hotel - ambil detail & momen candid" },
+                            { id: 2, title: "First Look", time: "09:45", notes: "Area taman - momen privat pasangan" },
                         ],
                         photos: [
                             { url: 'https://images.unsplash.com/photo-1597983706301-3f60b7389173?q=80&w=400&auto=format&fit=crop' },
