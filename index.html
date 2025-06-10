@@ -63,13 +63,104 @@
 <body class="antialiased">
 
     <main class="pb-24">
-        <!-- All page content is now fully managed by JavaScript -->
+        <!-- Dashboard Page -->
         <section id="page-dashboard" class="page"></section>
-        <section id="page-projects" class="page hidden"></section>
-        <section id="page-add-project" class="page hidden"></section>
+        
+        <!-- Projects Page -->
+        <section id="page-projects" class="page hidden">
+            <div class="p-6">
+                <h1 class="text-3xl font-bold">Projects</h1>
+                <p class="text-gray-400">Select a project to view its schedule</p>
+            </div>
+            <div id="projects-list-container" class="px-6 grid grid-cols-2 gap-4"></div>
+            <div class="p-6">
+                <button data-target="page-add-project" class="w-full flex items-center justify-center rounded-lg h-12 px-5 bg-purple-600 hover:bg-purple-500 text-white text-base font-bold">Create New Project</button>
+            </div>
+        </section>
+
+        <!-- Create New Project Page -->
+        <section id="page-add-project" class="page hidden">
+            <div class="p-6">
+                <div class="flex items-center">
+                    <button data-target="page-projects" class="p-2 -ml-2">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                    </button>
+                    <h1 class="text-3xl font-bold text-center flex-1">Create Project</h1>
+                </div>
+            </div>
+            <form id="add-project-form" class="px-6 flex flex-col gap-6">
+                <div>
+                    <label for="project-title" class="text-gray-400 mb-2 block">Project Title</label>
+                    <input type="text" id="project-title" required placeholder="e.g., Sarah & Alex Wedding" class="w-full bg-gray-800 border border-gray-700 rounded-lg p-3 focus:ring-purple-500 focus:border-purple-500">
+                </div>
+                 <div>
+                    <label for="project-category" class="text-gray-400 mb-2 block">Category</label>
+                    <input type="text" id="project-category" required placeholder="e.g., Wedding, Corporate" class="w-full bg-gray-800 border border-gray-700 rounded-lg p-3 focus:ring-purple-500 focus:border-purple-500">
+                </div>
+                <div>
+                    <label for="project-date" class="text-gray-400 mb-2 block">Date</label>
+                    <input type="date" id="project-date" required class="w-full bg-gray-800 border border-gray-700 rounded-lg p-3 focus:ring-purple-500 focus:border-purple-500">
+                </div>
+                 <button type="submit" class="w-full mt-4 flex items-center justify-center rounded-lg h-12 px-5 bg-purple-600 hover:bg-purple-500 text-white text-base font-bold">
+                    Create Project
+                </button>
+            </form>
+        </section>
+
+        <!-- Shot List Page -->
         <section id="page-shot-list" class="page hidden"></section>
-        <section id="page-add-shot" class="page hidden"></section>
-        <section id="page-settings" class="page hidden"></section>
+        
+        <!-- Create New Task Page -->
+        <section id="page-add-shot" class="page hidden">
+             <div class="p-6">
+                 <div class="flex items-center">
+                    <button data-target="page-shot-list" class="p-2 -ml-2">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                    </button>
+                    <h1 class="text-3xl font-bold text-center flex-1 pr-8">Create New Task</h1>
+                 </div>
+            </div>
+            <form id="add-shot-form" class="px-6 flex flex-col gap-6">
+                <div>
+                    <label for="task-title" class="text-gray-400 mb-2 block">Task Title</label>
+                    <input type="text" id="task-title" required placeholder="e.g. Morning Run" class="w-full bg-gray-800 border border-gray-700 rounded-lg p-3 focus:ring-purple-500 focus:border-purple-500">
+                </div>
+                 <div>
+                    <label for="task-time" class="text-gray-400 mb-2 block">Time</label>
+                    <input type="time" id="task-time" required class="w-full bg-gray-800 border border-gray-700 rounded-lg p-3 focus:ring-purple-500 focus:border-purple-500">
+                </div>
+                <div>
+                    <h3 class="text-gray-400 mb-2">Category</h3>
+                    <div id="category-pills-container" class="flex flex-wrap gap-2"></div>
+                </div>
+                 <button type="submit" class="w-full mt-4 flex items-center justify-center rounded-lg h-12 px-5 bg-purple-600 hover:bg-purple-500 text-white text-base font-bold">
+                    Create Task
+                </button>
+            </form>
+        </section>
+
+        <!-- Settings Page -->
+        <section id="page-settings" class="page hidden">
+            <div class="p-6">
+                <h1 class="text-3xl font-bold text-center">Settings</h1>
+            </div>
+             <div class="px-6 flex flex-col gap-4">
+                 <div class="flex items-center justify-between bg-gray-800 p-4 rounded-lg">
+                    <p class="text-lg">Dark Mode</p>
+                    <label class="relative flex h-[31px] w-[51px] cursor-pointer items-center rounded-full border-none bg-gray-600 p-0.5 has-[:checked]:bg-purple-600">
+                        <div class="h-full w-[27px] rounded-full bg-white transition-transform"></div>
+                        <input id="dark-mode-toggle" type="checkbox" class="invisible absolute" />
+                    </label>
+                </div>
+                 <div class="flex items-center justify-between bg-gray-800 p-4 rounded-lg">
+                    <p class="text-lg">Reset All Data</p>
+                    <button id="reset-data-button" class="flex items-center justify-center rounded-lg h-10 px-4 bg-red-700 hover:bg-red-600 text-white font-medium">
+                        Reset
+                    </button>
+                </div>
+             </div>
+        </section>
+
     </main>
     
     <!-- EDIT TASK MODAL -->
