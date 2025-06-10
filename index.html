@@ -68,7 +68,7 @@
                     <div :key="currentView">
                         <!-- Beranda View -->
                         <main v-if="currentView === 'beranda'">
-                             <div class="text-center mb-6">
+                            <div class="text-center mb-6">
                                 <div class="flex items-center justify-center space-x-2">
                                     <i class="fas fa-list-check text-violet-500 text-3xl"></i>
                                     <h1 class="text-3xl font-bold text-slate-800">Amlo List</h1>
@@ -119,7 +119,7 @@
 
                         <!-- Jadwal View -->
                         <main v-if="currentView === 'jadwal'" class="grid grid-cols-1 lg:grid-cols-4 gap-6">
-                            <aside class="lg:col-span-1 bg-[var(--surface)] rounded-xl shadow-md p-4 h-fit lg:sticky top-24 border border-[var(--border-color)]">
+                            <aside class="lg:col-span-1 bg-white rounded-xl shadow-md p-4 h-fit lg:sticky top-24 border border-slate-200">
                                 <div class="flex justify-between items-center mb-4">
                                     <h2 class="text-lg font-semibold flex items-center text-slate-700"><i class="fas fa-calendar-alt mr-2 text-violet-500"></i> Daftar Jadwal</h2>
                                     <button @click="openNewScheduleModal" class="p-2 w-8 h-8 rounded-full hover:bg-slate-100 transition" title="Tambah Jadwal Baru"><i class="fas fa-plus text-md text-violet-500"></i></button>
@@ -133,17 +133,7 @@
                             </aside>
                             <div class="lg:col-span-3 space-y-6">
                                 <template v-if="activeWedding">
-                                    <!-- Details -->
-                                    <div class="bg-white p-6 rounded-xl shadow-md border border-slate-200">
-                                        <div class="flex justify-between items-start">
-                                            <div><h2 class="text-2xl font-bold text-slate-800">{{ activeWedding.title }}</h2><p class="text-slate-500 flex items-center mt-1"><i class="fas fa-calendar-day mr-2 text-violet-500"></i> {{ formatDateForDisplay(activeWedding.date) }}</p></div>
-                                            <div class="flex space-x-1"><button @click="openEditModal(activeWedding)" class="p-2 rounded-full hover:bg-blue-100/70 transition" title="Edit"><i class="fas fa-edit text-blue-500"></i></button><button @click="saveAsTemplate" class="p-2 rounded-full hover:bg-blue-100/70 transition" title="Simpan sebagai Template"><i class="fas fa-save text-blue-500"></i></button><button @click="openShareModal" class="p-2 rounded-full hover:bg-green-100/70 transition" title="Bagikan & Kolaborasi"><i class="fas fa-share-alt text-green-500"></i></button><button @click="deleteWedding(activeWedding.id)" class="p-2 rounded-full hover:bg-red-100/70 transition" title="Hapus Jadwal"><i class="fas fa-trash-alt text-red-500"></i></button></div>
-                                        </div>
-                                    </div>
-                                    
-                                    <!-- Tasks -->
-                                    <div class="bg-white p-6 rounded-xl shadow-md border border-slate-200"><div class="flex items-center justify-between"><h2 class="text-xl font-semibold flex items-center text-slate-800"><i class="fas fa-clipboard-list mr-2 text-violet-500"></i> Tugas</h2><button @click="openShotModal" class="bg-violet-600 hover:bg-violet-700 text-white px-3 py-1.5 rounded-lg text-sm transition flex items-center font-semibold"><i class="fas fa-plus mr-1.5"></i> Tambah</button></div><div class="mt-3" v-if="activeWedding.shots.length > 0"><div class="w-full bg-slate-200 rounded-full h-2.5"><div class="bg-violet-500 h-2.5 rounded-full" :style="{ width: shotCompletionProgress + '%' }"></div></div><p class="text-xs text-slate-500 text-right mt-1">{{ shotCompletionProgress }}% Selesai</p></div><div class="mt-4 space-y-3" v-if="activeWedding.shots.length > 0"><div v-for="shot in activeWedding.shots" :key="shot.id" class="flex items-center p-3 rounded-lg transition" :class="shot.completed ? 'bg-green-50' : 'bg-slate-50'"><label class="custom-checkbox flex items-center cursor-pointer"><input type="checkbox" v-model="shot.completed" @change="updateShots" class="hidden"><span class="w-6 h-6 border-2 border-slate-300 rounded-md flex items-center justify-center mr-4 transition-all flex-shrink-0" :class="{'bg-violet-500 border-violet-500': shot.completed}"><i class="fas fa-check text-white text-sm" :class="{'hidden': !shot.completed}"></i></span></label><div class="flex-grow"><p class="font-medium text-slate-700" :class="{'line-through text-slate-400': shot.completed}">{{ shot.title }}</p><p class="text-sm text-slate-500">{{ shot.description }}</p></div><button @click="deleteShot(shot.id)" class="ml-auto p-2 text-slate-400 hover:text-red-500 hover:bg-red-100/70 rounded-full"><i class="fas fa-times"></i></button></div></div><div v-else class="text-center py-8 text-slate-400"><i class="fas fa-tasks text-3xl mb-2"></i><p>Belum ada tugas.</p></div></div>
-
+                                    <div class="bg-white p-6 rounded-xl shadow-md border border-slate-200"><div class="flex justify-between items-start"><div><h2 class="text-2xl font-bold text-slate-800">{{ activeWedding.title }}</h2><p class="text-slate-500 flex items-center mt-1"><i class="fas fa-calendar-day mr-2 text-violet-500"></i> {{ formatDateForDisplay(activeWedding.date) }}</p></div><div class="flex space-x-1"><button @click="openEditModal(activeWedding)" class="p-2 rounded-full hover:bg-blue-100/70 transition" title="Edit"><i class="fas fa-edit text-blue-500"></i></button><button @click="saveAsTemplate" class="p-2 rounded-full hover:bg-blue-100/70 transition" title="Simpan sebagai Template"><i class="fas fa-save text-blue-500"></i></button><button @click="openShareModal" class="p-2 rounded-full hover:bg-green-100/70 transition" title="Bagikan & Kolaborasi"><i class="fas fa-share-alt text-green-500"></i></button><button @click="deleteWedding(activeWedding.id)" class="p-2 rounded-full hover:bg-red-100/70 transition" title="Hapus Jadwal"><i class="fas fa-trash-alt text-red-500"></i></button></div></div></div>
                                 </template>
                                  <template v-else>
                                      <div class="flex flex-col items-center justify-center text-center h-[60vh] bg-white rounded-xl shadow-md border border-slate-200 p-4"><i class="fas fa-list-check text-6xl text-slate-300 mb-4"></i><h2 class="text-2xl font-bold text-slate-700">Pilih Jadwal</h2><p class="text-slate-500 mt-2">Pilih sebuah jadwal dari daftar di samping<br>untuk melihat detail lengkapnya di sini.</p></div>
@@ -155,19 +145,7 @@
                         <main v-if="currentView === 'invoice'"></main>
                         
                         <!-- Profil View -->
-                        <main v-if="currentView === 'profil'">
-                             <div class="bg-white p-6 rounded-xl shadow-md border border-slate-200">
-                                <div class="flex items-center flex-col text-center">
-                                    <div class="w-24 h-24 rounded-full bg-slate-100 flex items-center justify-center mb-4"><i class="fas fa-user text-5xl text-slate-400"></i></div>
-                                    <h1 class="text-2xl font-bold text-slate-800">Profil & Statistik</h1><p class="text-slate-500 mt-1">Ringkasan aktivitas Anda.</p>
-                                </div>
-                                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-8 text-center">
-                                    <div class="bg-violet-50 p-4 rounded-lg"><p class="text-3xl font-bold text-violet-600">{{ totalSchedules }}</p><p class="text-sm text-violet-500 font-semibold">Total Jadwal</p></div>
-                                     <div class="bg-green-50 p-4 rounded-lg"><p class="text-3xl font-bold text-green-600">{{ totalTasks }}</p><p class="text-sm text-green-500 font-semibold">Total Tugas</p></div>
-                                     <div class="bg-blue-50 p-4 rounded-lg"><p class="text-3xl font-bold text-blue-600">{{ tasksCompleted }}</p><p class="text-sm text-blue-500 font-semibold">Tugas Selesai</p></div>
-                                </div>
-                            </div>
-                        </main>
+                        <main v-if="currentView === 'profil'"></main>
                     </div>
                 </transition>
             </div>
@@ -219,18 +197,22 @@
                     searchQuery: '',
                     calendar: { date: new Date(), year: 0, month: 0, monthName: '', days: [] },
                     selectedDate: null,
+                    invoice: { number: 'INV-001', date: new Date().toISOString().split('T')[0], dueDate: '', client: { name: '', address: '' }, items: [{ description: '', quantity: 1, rate: 0 }], taxRate: 10, invoicerName: 'Amlo List', invoicerSlogan: 'Jasa Perencanaan Acara' },
+                    showShotModal: false,
+                    showEditModal: false,
+                    showTimelineModal: false,
+                    showCopyMessage: false,
+                    photoToPreview: null,
+                    weddingToEdit: null,
+                    newTag: '',
+                    newShot: { title: '', description: '' },
+                    newTimelineItem: { title: '', time: '', notes: '' },
                     unsubscribeSchedules: null,
                     unsubscribeTemplates: null,
-                    showShareModal: false,
-                    showNewScheduleModal: false,
-                    collaboratorId: '',
-                    newSchedule: { title: '', templateId: '' }
-                    // ... other data properties
                 }
             },
             async created() {
                 const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
-
                 const app = initializeApp(firebaseConfig);
                 const auth = getAuth(app);
                 this.db = getFirestore(app);
@@ -249,10 +231,90 @@
                     }
                 });
             },
+            computed: {
+                shotCompletionProgress() { if (!this.activeWedding || !this.activeWedding.shots) return 0; const total = this.activeWedding.shots.length; if (total === 0) return 0; const done = this.activeWedding.shots.filter(s => s.completed).length; return Math.round((done / total) * 100); },
+                filteredWeddings() { 
+                    let weddings = this.weddings;
+                    if (this.selectedDate) { weddings = weddings.filter(w => w.date === this.selectedDate); }
+                    if (this.searchQuery.trim()) { const query = this.searchQuery.toLowerCase(); return weddings.filter(w => (w.title && w.title.toLowerCase().includes(query)) || (w.location && w.location.toLowerCase().includes(query)) || (w.contacts.bride && w.contacts.bride.toLowerCase().includes(query)) || (w.contacts.groom && w.contacts.groom.toLowerCase().includes(query)) || (w.contacts.phone && w.contacts.phone.toLowerCase().includes(query))); }
+                    return weddings;
+                },
+                scheduleDates() { const dates = new Set(); this.weddings.forEach(w => dates.add(w.date)); return dates; },
+                allTasks() { return this.weddings.flatMap(w => (w.shots || []).map(s => ({...s, weddingTitle: w.title}))); },
+                totalSchedules() { return this.weddings.length; },
+                totalTasks() { return this.allTasks.length; },
+                tasksCompleted() { return this.allTasks.filter(t => t.completed).length; },
+                invoiceSubtotal() { return this.invoice.items.reduce((total, item) => total + (item.quantity * item.rate), 0); },
+                invoiceTotal() { const taxAmount = this.invoiceSubtotal * (this.invoice.taxRate / 100); return this.invoiceSubtotal + taxAmount; }
+            },
             methods: {
-                // ... all methods from the previous complete version
                 setView(view) { this.currentView = view; },
-                // ... all other methods are assumed to be here
+                formatDateForDisplay(date) { if (!date) return ''; if (date.seconds) { return new Date(date.seconds * 1000).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }); } return new Date(date + 'T00:00:00').toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }); },
+                setActiveWedding(wedding) { this.activeWedding = wedding; if (window.innerWidth < 1024) this.currentView = 'jadwal'; },
+                async saveActiveWedding() { if (!this.activeWedding) return; const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id'; const docRef = doc(this.db, `artifacts/${appId}/public/data/schedules`, this.activeWedding.id); await updateDoc(docRef, this.activeWedding); },
+                async addWedding() {
+                    const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+                    const newWedding = { ownerId: this.auth.user.uid, collaborators: [this.auth.user.uid], createdAt: serverTimestamp(), title: "Jadwal Baru", date: new Date().toISOString().split('T')[0], location: "Belum ditentukan", address: "", contacts: { bride: "", groom: "", email: "", phone: "" }, details: { guests: 0, type: "TBD", package: "TBD" }, notes: "Catatan khusus...", shots: [], timeline: [], photos: [], tags: [] };
+                    const docRef = await addDoc(collection(this.db, `artifacts/${appId}/public/data/schedules`), newWeddingData);
+                    this.activeWedding = {id: docRef.id, ...newWeddingData};
+                    this.generateCalendar();
+                 },
+                async deleteWedding(weddingId) {
+                    const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+                    if (this.activeWedding.ownerId !== this.auth.user.uid) { alert("Hanya pemilik yang dapat menghapus jadwal ini."); return; }
+                    if (confirm("Apakah Anda yakin ingin menghapus jadwal ini?")) { await deleteDoc(doc(this.db, `artifacts/${appId}/public/data/schedules`, weddingId)); this.generateCalendar(); }
+                },
+                openNewScheduleModal() { this.showNewScheduleModal = true; },
+                closeNewScheduleModal() { this.showNewScheduleModal = false; this.newSchedule = { title: '', templateId: '' }; },
+                async createSchedule() {
+                    const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+                    if (!this.newSchedule.title.trim()) return;
+                    let newWeddingData = { ownerId: this.auth.user.uid, collaborators: [this.auth.user.uid], createdAt: serverTimestamp(), title: this.newSchedule.title, date: new Date().toISOString().split('T')[0], location: "Belum ditentukan", address: "", contacts: { bride: "", groom: "", email: "", phone: "" }, details: { guests: 0, type: "TBD", package: "TBD" }, notes: "Catatan khusus...", shots: [], timeline: [], photos: [], tags: [] };
+                    if (this.newSchedule.templateId) {
+                        const templateDoc = await getDoc(doc(this.db, `artifacts/${appId}/users/${this.auth.user.uid}/templates`, this.newSchedule.templateId));
+                        if(templateDoc.exists()){ const template = templateDoc.data(); newWeddingData.shots = template.shots || []; newWeddingData.timeline = template.timeline || []; }
+                    }
+                    await addDoc(collection(this.db, `artifacts/${appId}/public/data/schedules`), newWeddingData);
+                    this.closeNewScheduleModal();
+                },
+                async saveAsTemplate() {
+                    const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+                    if (!this.activeWedding) return;
+                    const templateName = prompt("Masukkan nama untuk template ini:", this.activeWedding.title);
+                    if (!templateName) return;
+                    const templateData = { ownerId: this.auth.user.uid, name: templateName, shots: this.activeWedding.shots.map(({id, completed, ...rest}) => rest), timeline: this.activeWedding.timeline.map(({id, ...rest}) => rest) };
+                    await addDoc(collection(this.db, `artifacts/${appId}/users/${this.auth.user.uid}/templates`), templateData);
+                    alert('Berhasil disimpan sebagai template!');
+                },
+                openShareModal() { this.showShareModal = true; },
+                closeShareModal() { this.showShareModal = false; this.collaboratorId = ''; },
+                async addCollaborator() {
+                    const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+                    if (!this.collaboratorId.trim() || !this.activeWedding) return;
+                    const scheduleRef = doc(this.db, `artifacts/${appId}/public/data/schedules`, this.activeWedding.id);
+                    await updateDoc(scheduleRef, { collaborators: arrayUnion(this.collaboratorId) });
+                    this.collaboratorId = '';
+                },
+                async removeCollaborator(collaboratorId) {
+                     const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+                     if (!this.activeWedding) return;
+                     const scheduleRef = doc(this.db, `artifacts/${appId}/public/data/schedules`, this.activeWedding.id);
+                     await updateDoc(scheduleRef, { collaborators: arrayRemove(collaboratorId) });
+                },
+                async updateShots() {
+                    if (!this.activeWedding) return;
+                    const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+                    const scheduleRef = doc(this.db, `artifacts/${appId}/public/data/schedules`, this.activeWedding.id);
+                    await updateDoc(scheduleRef, { shots: this.activeWedding.shots });
+                },
+                async deleteShot(shotId) {
+                    if (!this.activeWedding) return;
+                    const shots = this.activeWedding.shots.filter(s => s.id !== shotId);
+                    const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+                    const scheduleRef = doc(this.db, `artifacts/${appId}/public/data/schedules`, this.activeWedding.id);
+                    await updateDoc(scheduleRef, { shots });
+                },
+                // Other methods from previous versions
             }
         };
 
