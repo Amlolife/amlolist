@@ -3,45 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stitch Design - Photographer's Hub</title>
+    <title>Amlo - Task Manager</title>
     <link rel="icon" type="image/x-icon" href="data:image/x-icon;base64,">
     <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?display=swap&family=Noto+Sans%3Awght%40400%3B500%3B700%3B900&family=Plus+Jakarta+Sans%3Awght%40400%3B500%3B700%3B800">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?display=swap&family=Plus+Jakarta+Sans:wght@400;500;700;800">
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <style>
-        body { background-color: #111; font-family: "Plus Jakarta Sans", "Noto Sans", sans-serif; }
+        body { background-color: #111827; font-family: "Plus Jakarta Sans", sans-serif; }
         .page { display: block; animation: fadeIn 0.4s ease-in-out; }
         .page.hidden { display: none; }
-        .nav-link.active svg { color: #8A2BE2; }
+        .nav-link.active svg { color: #A78BFA; }
 
-        .task-card.is-complete { background-color: #8A2BE220; border-left-color: #00ff00; }
-        .task-card.is-complete .task-checkbox { background-color: #00D100; border-color: #00D100; }
-        .task-card.is-complete .task-title { text-decoration: line-through; color: #888; }
+        .task-card.is-complete { background-color: #4B556320; border-left-color: #34D399; }
+        .task-card.is-complete .task-checkbox { background-color: #34D399; border-color: #34D399; }
+        .task-card.is-complete .task-title { text-decoration: line-through; color: #9CA3AF; }
         .task-checkbox { background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z'/%3e%3c/svg%3e"); }
 
-        .category-pill.active { background-color: #8A2BE2; color: white; }
+        .category-pill.active { background-color: #8B5CF6; color: white; }
+        .project-card.active-project { box-shadow: 0 0 0 2px #A78BFA; }
         
-        /* --- ANIMATIONS --- */
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        @keyframes slideUpIn {
-            from { opacity: 0; transform: translateY(15px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .task-card, .project-card-clickable {
-            opacity: 0; /* Hidden by default to be animated in by JS */
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUpIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .animated-card {
+            opacity: 0;
             animation: slideUpIn 0.5s ease-out forwards;
         }
 
-        button, a.nav-link, .project-card-clickable {
-            transition: transform 0.1s ease;
+        button, a.nav-link, .project-card {
+            transition: transform 0.1s ease, box-shadow 0.2s ease;
         }
 
-        button:active, a.nav-link:active, .project-card-clickable:active {
+        button:active, a.nav-link:active, .project-card:active {
             transform: scale(0.96);
         }
     </style>
@@ -64,30 +57,50 @@
                 <h1 class="text-3xl font-bold">Projects</h1>
                 <p class="text-gray-400">Select a project to view its schedule</p>
             </div>
-            <div id="projects-list-container" class="px-6 flex flex-col gap-4">
-                <!-- Projects will be rendered here -->
+            <div id="projects-list-container" class="px-6 grid grid-cols-2 gap-4">
+                <!-- Project cards will be rendered here -->
             </div>
+        </section>
+
+        <!-- =================================================================== -->
+        <!-- CREATE NEW PROJECT PAGE -->
+        <!-- =================================================================== -->
+        <section id="page-add-project" class="page hidden">
              <div class="p-6">
-                <button id="add-project-button" class="w-full flex items-center justify-center rounded-lg h-12 px-5 bg-purple-700 hover:bg-purple-600 text-white text-base font-bold">
-                    <span>Create New Project</span>
-                </button>
+                 <div class="flex items-center">
+                    <button class="nav-link" data-target="page-projects">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                    </button>
+                    <h1 class="text-3xl font-bold text-center flex-1">Create Project</h1>
+                 </div>
             </div>
+            <form id="add-project-form" class="px-6 flex flex-col gap-6">
+                <div>
+                    <label for="project-title" class="text-gray-400 mb-2 block">Project Title</label>
+                    <input type="text" id="project-title" required placeholder="e.g., Sarah & Alex Wedding" class="w-full bg-gray-800 border border-gray-700 rounded-lg p-3 focus:ring-purple-500 focus:border-purple-500">
+                </div>
+                 <div>
+                    <label for="project-category" class="text-gray-400 mb-2 block">Category</label>
+                    <input type="text" id="project-category" required placeholder="e.g., Wedding, Corporate" class="w-full bg-gray-800 border border-gray-700 rounded-lg p-3 focus:ring-purple-500 focus:border-purple-500">
+                </div>
+                <div>
+                    <label for="project-date" class="text-gray-400 mb-2 block">Date</label>
+                    <input type="date" id="project-date" required class="w-full bg-gray-800 border border-gray-700 rounded-lg p-3 focus:ring-purple-500 focus:border-purple-500">
+                </div>
+                 <button type="submit" class="w-full mt-4 flex items-center justify-center rounded-lg h-12 px-5 bg-purple-600 hover:bg-purple-500 text-white text-base font-bold">
+                    Create Project
+                </button>
+            </form>
         </section>
 
         <!-- =================================================================== -->
         <!-- SHOT LIST PAGE -->
         <!-- =================================================================== -->
         <section id="page-shot-list" class="page hidden">
-            <div class="p-6">
-                 <button class="nav-link mb-4" data-target="page-projects">
-                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
-                </button>
-                <h1 class="text-3xl font-bold" id="schedule-day">Today's schedule</h1>
-                <p class="text-gray-400" id="schedule-date">Monday 19</p>
-            </div>
-            <div id="shot-list-container" class="px-6 flex flex-col gap-4">
-                <!-- Shot list cards will be rendered here -->
-            </div>
+            <!-- Header is rendered by JS -->
+            <div id="shot-list-header"></div>
+            <!-- Tasks are rendered by JS -->
+            <div id="shot-list-container" class="px-6 flex flex-col gap-4"></div>
         </section>
         
         <!-- =================================================================== -->
@@ -99,25 +112,23 @@
                     <button class="nav-link" data-target="page-shot-list">
                         <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
                     </button>
-                    <h1 class="text-3xl font-bold text-center flex-1">Create New Task</h1>
+                    <h1 class="text-3xl font-bold text-center flex-1 pr-8">Create New Task</h1>
                  </div>
             </div>
             <form id="add-shot-form" class="px-6 flex flex-col gap-6">
                 <div>
                     <label for="task-title" class="text-gray-400 mb-2 block">Task Title</label>
-                    <input type="text" id="task-title" required placeholder="e.g. Morning Run" class="w-full bg-[#222] border border-gray-700 rounded-lg p-3 focus:ring-purple-500 focus:border-purple-500">
+                    <input type="text" id="task-title" required placeholder="e.g. Morning Run" class="w-full bg-gray-800 border border-gray-700 rounded-lg p-3 focus:ring-purple-500 focus:border-purple-500">
                 </div>
                  <div>
                     <label for="task-time" class="text-gray-400 mb-2 block">Time</label>
-                    <input type="time" id="task-time" required class="w-full bg-[#222] border border-gray-700 rounded-lg p-3 focus:ring-purple-500 focus:border-purple-500">
+                    <input type="time" id="task-time" required class="w-full bg-gray-800 border border-gray-700 rounded-lg p-3 focus:ring-purple-500 focus:border-purple-500">
                 </div>
                 <div>
                     <h3 class="text-gray-400 mb-2">Category</h3>
-                    <div id="category-pills-container" class="flex flex-wrap gap-2">
-                        <!-- Category pills will be rendered here -->
-                    </div>
+                    <div id="category-pills-container" class="flex flex-wrap gap-2"></div>
                 </div>
-                 <button type="submit" class="w-full mt-4 flex items-center justify-center rounded-lg h-12 px-5 bg-purple-700 hover:bg-purple-600 text-white text-base font-bold">
+                 <button type="submit" class="w-full mt-4 flex items-center justify-center rounded-lg h-12 px-5 bg-purple-600 hover:bg-purple-500 text-white text-base font-bold">
                     Create Task
                 </button>
             </form>
@@ -131,16 +142,16 @@
                 <h1 class="text-3xl font-bold text-center">Settings</h1>
             </div>
              <div class="px-6 flex flex-col gap-4">
-                 <div class="flex items-center justify-between bg-[#222] p-4 rounded-lg">
+                 <div class="flex items-center justify-between bg-gray-800 p-4 rounded-lg">
                     <p class="text-lg">Dark Mode</p>
                     <label class="relative flex h-[31px] w-[51px] cursor-pointer items-center rounded-full border-none bg-gray-600 p-0.5 has-[:checked]:bg-purple-600">
                         <div class="h-full w-[27px] rounded-full bg-white transition-transform"></div>
                         <input id="dark-mode-toggle" type="checkbox" class="invisible absolute" />
                     </label>
                 </div>
-                 <div class="flex items-center justify-between bg-[#222] p-4 rounded-lg">
+                 <div class="flex items-center justify-between bg-gray-800 p-4 rounded-lg">
                     <p class="text-lg">Reset All Data</p>
-                    <button id="reset-data-button" class="flex items-center justify-center rounded-lg h-10 px-4 bg-red-800 hover:bg-red-700 text-white font-medium">
+                    <button id="reset-data-button" class="flex items-center justify-center rounded-lg h-10 px-4 bg-red-700 hover:bg-red-600 text-white font-medium">
                         Reset
                     </button>
                 </div>
@@ -152,16 +163,19 @@
     <!-- =================================================================== -->
     <!-- GLOBAL BOTTOM NAVIGATION BAR -->
     <!-- =================================================================== -->
-    <nav class="fixed bottom-0 left-0 right-0 bg-[#1D1D1D] border-t border-gray-800">
+    <nav class="fixed bottom-0 left-0 right-0 bg-gray-900 border-t border-gray-700">
         <div class="flex justify-around items-center h-20">
             <a data-target="page-dashboard" class="nav-link flex-1 flex flex-col items-center justify-center text-gray-400 cursor-pointer">
                 <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
             </a>
-            <a id="nav-add-button" class="flex items-center justify-center w-16 h-16 bg-purple-700 rounded-full -mt-8 shadow-lg shadow-purple-900/50 cursor-pointer">
+            <a id="nav-add-button" class="flex items-center justify-center w-16 h-16 bg-purple-600 rounded-full -mt-8 shadow-lg shadow-purple-900/50 cursor-pointer">
                  <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
             </a>
             <a data-target="page-projects" class="nav-link flex-1 flex flex-col items-center justify-center text-gray-400 cursor-pointer">
                  <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+            </a>
+             <a data-target="page-settings" class="nav-link flex-1 flex flex-col items-center justify-center text-gray-400 cursor-pointer">
+                 <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
             </a>
         </div>
     </nav>
