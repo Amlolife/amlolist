@@ -28,6 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const ICONS = {
+        Check: `<svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>`,
         Workout: `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>`,
         Work: `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.616V8a2 2 0 00-2-2h-5.384A6.002 6.002 0 0012 2.5a6.002 6.002 0 00-1.616 3.5H5a2 2 0 00-2 2v5.616a4 4 0 00-1.384 2.804A4 4 0 005 21.236V22h14v-.764a4 4 0 003.384-4.816A4 4 0 0021 13.616z"></path></svg>`,
         Food: `<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 17h8m-8 0V5a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2z"></path></svg>`,
@@ -60,11 +61,22 @@ document.addEventListener('DOMContentLoaded', () => {
     navLinks.forEach(link => {
         link.addEventListener('click', (event) => {
             event.preventDefault();
-            showPage(link.dataset.target);
+            const targetId = link.dataset.target;
+            if (targetId === 'page-shot-list' && !getCurrentProject()) {
+                alert("Please select a project first from the Projects page.");
+                showPage('page-projects');
+                return;
+            }
+            showPage(targetId);
         });
     });
     
     document.getElementById('nav-add-button').addEventListener('click', () => {
+        if (!getCurrentProject()) {
+            alert("Please select a project before adding a task.");
+            showPage('page-projects');
+            return;
+        }
         renderAddTaskForm();
         showPage('page-add-shot');
     });
@@ -90,7 +102,14 @@ document.addEventListener('DOMContentLoaded', () => {
             title: title,
             date: new Date().toISOString().split('T')[0],
             imageUrl: `https://placehold.co/600x400/333/fff?text=${title.replace(/\s/g, '+')}`,
-            shotLists: { main: [] }
+            shotLists: { 
+                main: [{
+                    text: `Welcome to '${title}'!`,
+                    category: 'Personal',
+                    checked: false,
+                    time: '09:00'
+                }] 
+            }
         };
 
         appState.projects.push(newProject);
@@ -182,7 +201,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (shots.length === 0) {
             shotListContainer.innerHTML = `<p class="text-gray-400 text-center px-4 py-8">No tasks yet. Tap the '+' to add one.</p>`;
         } else {
-            shots.sort((a,b) => a.time.localeCompare(b.time)); // Sort by time
+            shots.sort((a,b) => (a.time || "23:59").localeCompare(b.time || "23:59"));
             shotListContainer.innerHTML = shots.map(generateShotHTML).join('');
         }
     }
@@ -190,16 +209,17 @@ document.addEventListener('DOMContentLoaded', () => {
     function generateShotHTML(shot) {
         const isComplete = shot.checked ? 'is-complete' : '';
         const icon = ICONS[shot.category] || ICONS.Default;
+        const checkIcon = shot.checked ? ICONS.Check : '';
         return `
             <div data-text="${shot.text}" class="task-card flex items-center gap-4 bg-[#222] p-4 rounded-lg border-l-4 border-gray-700 ${isComplete}">
                  <div class="task-checkbox w-6 h-6 rounded-md border-2 border-gray-500 flex items-center justify-center shrink-0 cursor-pointer">
-                    ${shot.checked ? ICONS.Check : ''}
+                    ${checkIcon}
                  </div>
                  <div class="flex-shrink-0 w-10 h-10 rounded-lg bg-gray-700 flex items-center justify-center">${icon}</div>
                  <div class="flex-grow">
                      <p class="task-title text-white font-semibold">${shot.text}</p>
                  </div>
-                 <p class="text-sm text-gray-400">${shot.time}</p>
+                 <p class="text-sm text-gray-400">${shot.time || ""}</p>
             </div>
         `;
     }
@@ -251,7 +271,10 @@ document.addEventListener('DOMContentLoaded', () => {
         addShotForm.addEventListener('submit', e => {
             e.preventDefault();
             const project = getCurrentProject();
-            if(!project) return;
+            if(!project) {
+                alert("Please select a project before adding a task.");
+                return;
+            }
             
             const title = document.getElementById('task-title').value;
             const time = document.getElementById('task-time').value;
@@ -274,7 +297,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const resetDataButton = document.getElementById('reset-data-button');
 
     function applyTheme() {
-        // Dark mode is default, light mode is the exception
         document.body.classList.toggle('light-mode', !appState.settings.isDarkMode);
         if(darkModeToggle) darkModeToggle.checked = appState.settings.isDarkMode;
     }
