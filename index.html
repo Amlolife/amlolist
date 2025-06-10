@@ -8,6 +8,7 @@
     <!-- Third-party Libraries -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://unpkg.com/idb-keyval@6/dist/umd.js"></script> <!-- Added for robust storage -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" xintegrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     
     <!-- Custom Styles & Fonts -->
@@ -391,6 +392,7 @@
         const App = {
             data() {
                 return {
+                    isLoading: true,
                     activeWedding: null,
                     weddings: [],
                     showShotModal: false,
@@ -412,11 +414,13 @@
                     ]
                 }
             },
-            created() {
-                this.weddings = JSON.parse(localStorage.getItem('weddings')) || this.getSampleData();
+            async created() {
+                const storedWeddings = await idbKeyval.get('weddings');
+                this.weddings = storedWeddings || this.getSampleData();
                 if (this.weddings.length > 0) {
                    this.activeWedding = this.weddings[0];
                 }
+                this.isLoading = false;
             },
             computed: {
                 shotCompletionProgress() {
@@ -440,13 +444,15 @@
                     this.activeWedding = wedding;
                 },
                 saveWeddings() {
-                    localStorage.setItem('weddings', JSON.stringify(this.weddings));
+                    // Use a non-reactive copy for saving
+                    idbKeyval.set('weddings', JSON.parse(JSON.stringify(this.weddings)))
+                      .catch(err => console.error("Could not save weddings to IndexedDB:", err));
                 },
                 saveActiveWedding() {
                     if (!this.activeWedding) return;
                     const index = this.weddings.findIndex(w => w.id === this.activeWedding.id);
                     if (index !== -1) {
-                        this.weddings.splice(index, 1, this.activeWedding);
+                        this.weddings[index] = this.activeWedding;
                         this.saveWeddings();
                     }
                 },
@@ -489,7 +495,7 @@
                     if (!this.weddingToEdit) return;
                     const index = this.weddings.findIndex(w => w.id === this.weddingToEdit.id);
                     if (index !== -1) {
-                        Object.assign(this.weddings[index], this.weddingToEdit);
+                        this.weddings[index] = this.weddingToEdit;
                         this.activeWedding = this.weddings[index];
                         this.saveWeddings();
                         this.closeEditModal();
