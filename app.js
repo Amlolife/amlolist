@@ -52,7 +52,7 @@ document.addEventListener('DOMContentLoaded', () => {
             event.preventDefault();
             const targetPageId = link.dataset.target;
             // If we're opening the shot list, ensure it renders first
-            if (targetPageId === 'page-shot-list') {
+            if (targetPageId === 'page-wedding-day') {
                 renderProjectShotList();
             }
             showPage(targetPageId);
@@ -125,23 +125,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if(projectsListContainer) {
         projectsListContainer.addEventListener('click', e => {
-            const selectBtn = e.target.closest('.select-project-btn');
-            const deleteBtn = e.target.closest('.delete-project-btn');
             const card = e.target.closest('.project-card-clickable');
+            if (!card) return; // Exit if the click was not inside a card
 
-            if (selectBtn) {
-                e.stopPropagation(); // prevent card click from firing
-                appState.currentProjectId = selectBtn.dataset.projectId;
+            const projectId = card.dataset.projectId;
+
+            // Check if a specific button was clicked inside the card
+            if (e.target.closest('.select-project-btn')) {
+                appState.currentProjectId = projectId;
                 saveState();
                 renderAll();
                 showPage('page-dashboard');
                 return;
             }
 
-            if (deleteBtn) {
-                e.stopPropagation(); // prevent card click from firing
+            if (e.target.closest('.delete-project-btn')) {
                 if(confirm('Are you sure you want to delete this project and all its data?')){
-                    const projectId = deleteBtn.dataset.projectId;
                     appState.projects = appState.projects.filter(p => p.id !== projectId);
                     if(appState.currentProjectId === projectId){
                         appState.currentProjectId = appState.projects.length > 0 ? appState.projects[0].id : null;
@@ -152,12 +151,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            if (card) {
-                appState.currentProjectId = card.dataset.projectId;
-                saveState();
-                renderAll();
-                showPage('page-wedding-day'); // Navigate directly to shot list
-            }
+            // If no button was clicked, the card itself was clicked
+            appState.currentProjectId = projectId;
+            saveState();
+            renderAll();
+            showPage('page-wedding-day'); // Navigate directly to shot list
         });
     }
 
