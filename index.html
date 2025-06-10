@@ -191,9 +191,17 @@
             
             <!-- Invoice Maker View -->
             <main v-if="currentView === 'invoice'">
-                 <div id="invoice-form" class="bg-white p-6 sm:p-8 rounded-xl shadow-md border border-slate-200">
-                    <h1 class="text-3xl font-bold text-slate-800 mb-6">Pembuat Invoice</h1>
+                 <div class="bg-white p-6 sm:p-8 rounded-xl shadow-md border border-slate-200">
+                    <h1 class="text-3xl font-bold text-slate-800 mb-2">Amlo Invoice Maker</h1>
+                    <p class="text-slate-500 mb-6">Buat, simpan template, dan ekspor invoice profesional dengan mudah.</p>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <h3 class="font-semibold text-slate-600 mb-2">Detail Anda (Invoicer)</h3>
+                            <div class="space-y-4">
+                                <input type="text" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-violet-500" v-model="invoice.invoicerName" placeholder="Nama Anda / Perusahaan">
+                                <input type="text" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-violet-500" v-model="invoice.invoicerSlogan" placeholder="Slogan / Deskripsi">
+                            </div>
+                        </div>
                         <div>
                             <h3 class="font-semibold text-slate-600 mb-2">Detail Invoice</h3>
                             <div class="space-y-4">
@@ -202,9 +210,9 @@
                                 <input type="date" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-violet-500" v-model="invoice.dueDate">
                             </div>
                         </div>
-                        <div>
-                            <h3 class="font-semibold text-slate-600 mb-2">Info Klien</h3>
-                             <div class="space-y-4">
+                        <div class="md:col-span-2">
+                             <h3 class="font-semibold text-slate-600 mb-2">Info Klien</h3>
+                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <input type="text" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-violet-500" v-model="invoice.client.name" placeholder="Nama Klien">
                                 <textarea class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-violet-500 resize-none" v-model="invoice.client.address" placeholder="Alamat Klien"></textarea>
                             </div>
@@ -230,7 +238,11 @@
                         </div>
                     </div>
                  </div>
-                 <div class="mt-6 flex justify-end space-x-3">
+                 <div class="mt-6 flex justify-between items-center">
+                    <div>
+                        <button @click="saveInvoiceTemplate" class="bg-slate-200 text-slate-700 font-bold py-2 px-5 rounded-lg hover:bg-slate-300 transition">Simpan Template</button>
+                        <button @click="loadInvoiceTemplate" class="ml-2 bg-slate-200 text-slate-700 font-bold py-2 px-5 rounded-lg hover:bg-slate-300 transition">Gunakan Template</button>
+                    </div>
                     <button @click="generatePDF" class="bg-violet-600 text-white font-bold py-2 px-5 rounded-lg hover:bg-violet-700 transition">Ekspor ke PDF</button>
                  </div>
             </main>
@@ -270,7 +282,7 @@
         <div id="invoice-pdf-template" class="p-8" style="position: absolute; left: -9999px; width: 210mm; font-family: 'Inter', sans-serif; color: #1e293b;">
              <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 2rem;">
                 <div><h1 style="font-size: 2.25rem; font-weight: bold;">INVOICE</h1><p style="color: #64748b;">{{ invoice.number }}</p></div>
-                <div style="text-align: right;"><h2 style="font-size: 1.5rem; font-weight: bold; color: #8b5cf6;">Amlo List</h2><p style="color: #64748b;">Jasa Perencanaan Acara</p></div>
+                <div style="text-align: right;"><h2 style="font-size: 1.5rem; font-weight: bold; color: #8b5cf6;">{{ invoice.invoicerName }}</h2><p style="color: #64748b;">{{ invoice.invoicerSlogan }}</p></div>
             </div>
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem;">
                 <div><h3 style="font-weight: 600; color: #64748b; margin-bottom: 0.5rem;">DITAGIHKAN KEPADA</h3><p style="font-weight: bold; font-size: 1.125rem;">{{ invoice.client.name }}</p><p style="color: #64748b;">{{ invoice.client.address }}</p></div>
@@ -283,7 +295,7 @@
             <div style="display: flex; justify-content: flex-end;">
                 <div style="width: 256px;"><div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;"><span style="color: #64748b;">Subtotal</span><span style="font-weight: 500;">{{ formatCurrency(invoiceSubtotal) }}</span></div><div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;"><span style="color: #64748b;">Pajak ({{ invoice.taxRate }}%)</span><span style="font-weight: 500;">{{ formatCurrency(invoiceSubtotal * (invoice.taxRate / 100)) }}</span></div><div style="display: flex; justify-content: space-between; font-weight: bold; font-size: 1.25rem; border-top: 2px solid #e2e8f0; padding-top: 0.5rem; margin-top: 0.5rem;"><span style="color: #1e293b;">Total</span><span style="color: #8b5cf6;">{{ formatCurrency(invoiceTotal) }}</span></div></div>
             </div>
-            <div style="margin-top: 3rem; text-align: center; color: #94a3b8; font-size: 0.875rem;"><p>Terima kasih atas bisnis Anda!</p></div>
+            <div style="margin-top: 3rem; text-align: center; color: #94a3b8; font-size: 0.875rem;"><p>Terima Kasih!</p></div>
         </div>
     </div>
 
@@ -301,7 +313,7 @@
                     searchQuery: '',
                     calendar: { date: new Date(), year: 0, month: 0, monthName: '', days: [] },
                     selectedDate: null,
-                    invoice: { number: 'INV-001', date: new Date().toISOString().split('T')[0], dueDate: '', client: { name: '', address: '' }, items: [{ description: '', quantity: 1, rate: 0 }], taxRate: 10 },
+                    invoice: { number: 'INV-001', date: new Date().toISOString().split('T')[0], dueDate: '', client: { name: '', address: '' }, items: [{ description: '', quantity: 1, rate: 0 }], taxRate: 10, invoicerName: 'Amlo List', invoicerSlogan: 'Jasa Perencanaan Acara' },
                     showShotModal: false,
                     showEditModal: false,
                     showTimelineModal: false,
@@ -316,6 +328,7 @@
             },
             async created() {
                 this.weddings = await idbKeyval.get('weddings') || this.getSampleData();
+                this.invoice = await idbKeyval.get('invoiceTemplate') || this.invoice;
                 if (this.weddings.length > 0) { this.activeWedding = this.weddings[0]; }
                 this.generateCalendar();
                 this.isLoading = false;
@@ -387,6 +400,20 @@
                         pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
                         pdf.save(`invoice-${this.invoice.number || '001'}.pdf`);
                     });
+                },
+                saveInvoiceTemplate() {
+                    idbKeyval.set('invoiceTemplate', JSON.parse(JSON.stringify(this.invoice)))
+                        .then(() => alert('Template invoice berhasil disimpan!'))
+                        .catch(err => alert('Gagal menyimpan template: ' + err));
+                },
+                async loadInvoiceTemplate() {
+                    const template = await idbKeyval.get('invoiceTemplate');
+                    if (template) {
+                        this.invoice = template;
+                        alert('Template invoice berhasil dimuat!');
+                    } else {
+                        alert('Tidak ada template yang tersimpan.');
+                    }
                 },
                 getSampleData() { return [{ id: 1, title: "Pernikahan Sarah & Michael", date: "2025-06-15", location: "Grand Palms Resort", address: "Jl. Pantai Indah No.123, Jakarta Utara", contacts: { bride: "Sarah Johnson", groom: "Michael Smith", email: "sarah.j@email.com", phone: "(555) 123-4567" }, details: { guests: 200, type: "Outdoor ceremony", package: "Platinum coverage" }, notes: "Pasangan menginginkan gaya foto jurnalistik dengan penekanan pada candid shot.\n\nPermintaan khusus:\n- Foto nenek saat upacara.\n- Potret matahari terbenam di tepi pantai.", shots: [ { id: 1, title: "Persiapan Pengantin Wanita (detail gaun, sepatu)", description: "Penting untuk album!", completed: true }, { id: 2, title: "Momen 'First look' (reaksi pengantin pria)", description: "Koordinasi dengan videografer", completed: true }, { id: 3, title: "Foto formal keluarga (sesuai daftar)", description: "Minta daftar grup dari pasangan", completed: false }, ], timeline: [ { id: 1, title: "Persiapan Pengantin", time: "08:00", notes: "Kamar hotel - ambil detail & momen candid" }, { id: 2, title: "First Look", time: "09:45", notes: "Area taman - momen privat pasangan" }, ], photos: [], tags: [ { text: 'Premium', color: 'bg-violet-100 text-violet-700' }, { text: 'Outdoor', color: 'bg-green-100 text-green-700' }, ] }]; }
             }
