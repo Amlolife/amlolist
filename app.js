@@ -63,7 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
             event.preventDefault();
             const targetId = link.dataset.target;
             if (targetId === 'page-shot-list' && !getCurrentProject()) {
-                alert("Please select a project first from the Projects page.");
+                alert("Please select a project from the Projects page first.");
                 showPage('page-projects');
                 return;
             }
@@ -172,6 +172,54 @@ document.addEventListener('DOMContentLoaded', () => {
             renderAll();
             showPage('page-shot-list');
         });
+    }
+
+    // ===================================================================
+    //  DASHBOARD LOGIC
+    // ===================================================================
+    const dashboardContainer = document.getElementById('page-dashboard');
+
+    function renderDashboard() {
+        if (!dashboardContainer) return;
+        const project = getCurrentProject();
+        const today = new Date();
+        
+        let headerHtml = `
+            <div class="p-6">
+                <h1 class="text-3xl font-bold">Today's schedule</h1>
+                <p class="text-gray-400">${today.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</p>
+            </div>
+        `;
+
+        let tasksHtml = '';
+        if (!project) {
+            tasksHtml = `<div class="px-6"><p class="text-gray-400 text-center py-8">No active project. Select one from the Projects page.</p></div>`;
+        } else {
+            const tasks = (project.shotLists.main || []).slice(0, 4); // Show first 4 tasks
+            if (tasks.length === 0) {
+                 tasksHtml = `<div class="px-6"><p class="text-gray-400 py-4">No tasks for ${project.title} today.</p></div>`;
+            } else {
+                tasksHtml = `<div class="px-6 flex flex-col gap-4">${tasks.map(generateShotHTML).join('')}</div>`;
+            }
+        }
+
+        let projectsHtml = `
+            <div class="px-6 mt-6">
+                <h2 class="text-2xl font-bold mb-4">Ongoing Projects</h2>
+                <div class="flex flex-col gap-3">
+                    ${(appState.projects || []).map(p => {
+                        const isActive = p.id === appState.currentProjectId;
+                        return `
+                        <div data-project-id="${p.id}" class="project-card-clickable flex items-center justify-between bg-[#222] p-3 rounded-lg cursor-pointer">
+                            <p class="font-semibold pointer-events-none">${p.title}</p>
+                            <span class="text-xs ${isActive ? 'text-purple-400' : 'text-gray-500'} pointer-events-none">${isActive ? 'Active' : ''}</span>
+                        </div>
+                        `
+                    }).join('')}
+                </div>
+            </div>`;
+
+        dashboardContainer.innerHTML = headerHtml + tasksHtml + projectsHtml;
     }
 
     // ===================================================================
@@ -345,6 +393,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function renderAll() {
+        renderDashboard();
         renderProjectsList();
         renderProjectShotList();
     }
@@ -353,7 +402,7 @@ document.addEventListener('DOMContentLoaded', () => {
         loadState();
         applyTheme();
         renderAll();
-        showPage('page-projects'); // Start on the projects page
+        showPage('page-dashboard'); // Start on the new dashboard page
     }
 
     init();
