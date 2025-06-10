@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const CATEGORIES = ['Food', 'Workout', 'Work', 'Design', 'Personal'];
 
     // ===================================================================
-    //  NAVIGATION
+    //  NAVIGATION & UI FLOW
     // ===================================================================
     function showPage(targetId) {
         let pageExists = false;
@@ -80,102 +80,84 @@ document.addEventListener('DOMContentLoaded', () => {
         renderAddTaskForm();
         showPage('page-add-shot');
     });
+    
+    document.body.addEventListener('click', e => {
+         if (e.target.closest('[data-target]')) {
+             const targetId = e.target.closest('[data-target]').dataset.target;
+             showPage(targetId);
+         }
+    });
 
     // ===================================================================
     //  PROJECT MANAGEMENT
     // ===================================================================
     const projectsListContainer = document.getElementById('projects-list-container');
-    const addProjectButton = document.getElementById('add-project-button');
+    const addProjectForm = document.getElementById('add-project-form');
 
     function getCurrentProject() {
         if (!appState.currentProjectId || !appState.projects) return null;
         return appState.projects.find(p => p.id === appState.currentProjectId);
     }
+    
+    if (addProjectForm) {
+        addProjectForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const title = document.getElementById('project-title').value;
+            const category = document.getElementById('project-category').value;
+            const date = document.getElementById('project-date').value;
 
-    function createNewProject() {
-        const title = prompt("Enter project title:", "New Photoshoot");
-        if (!title) return;
-        
-        const newProject = {
-            id: `proj_${new Date().getTime()}`,
-            category: "General",
-            title: title,
-            date: new Date().toISOString().split('T')[0],
-            imageUrl: `https://placehold.co/600x400/333/fff?text=${title.replace(/\s/g, '+')}`,
-            shotLists: { 
-                main: [{
-                    text: `Welcome to '${title}'!`,
-                    category: 'Personal',
-                    checked: false,
-                    time: '09:00'
-                }] 
-            }
-        };
+            const newProject = {
+                id: `proj_${new Date().getTime()}`,
+                category: category,
+                title: title,
+                date: date,
+                imageUrl: `https://placehold.co/600x400/333/fff?text=${title.replace(/\s/g, '+')}`,
+                shotLists: { main: [] }
+            };
 
-        appState.projects.push(newProject);
-        appState.currentProjectId = newProject.id;
-        saveState();
-        renderAll();
-        showPage('page-shot-list');
+            appState.projects.push(newProject);
+            appState.currentProjectId = newProject.id;
+            saveState();
+            renderAll();
+            showPage('page-shot-list');
+        });
     }
 
     function renderProjectsList() {
         if(!projectsListContainer) return;
         projectsListContainer.innerHTML = '';
-        if(!appState.projects || appState.projects.length === 0){
-             projectsListContainer.innerHTML = `<p class="text-gray-400 text-center px-4 py-8">No projects yet. Click below to create one.</p>`;
-             return;
-        }
+        const projects = appState.projects || [];
 
-        const projectCardsHtml = appState.projects.map((project, index) => {
-            const isActive = project.id === appState.currentProjectId;
-            const activeClasses = isActive ? 'border-purple-600' : 'border-gray-700';
-            
-            return `
-                <div data-project-id="${project.id}" style="animation-delay: ${index * 60}ms" class="project-card-clickable bg-[#222] p-4 rounded-lg flex justify-between items-center cursor-pointer border-2 ${activeClasses}">
-                    <div>
-                        <p class="text-white font-bold text-lg pointer-events-none">${project.title}</p>
-                        <p class="text-gray-400 text-sm pointer-events-none">${project.category} - ${project.date}</p>
+        if(projects.length === 0){
+             projectsListContainer.innerHTML = `<p class="text-gray-400 text-center col-span-2 py-8">No projects yet.</p>`;
+        } else {
+             const projectCardsHtml = projects.map((project, index) => {
+                const isActive = project.id === appState.currentProjectId;
+                return `
+                    <div data-project-id="${project.id}" style="animation-delay: ${index * 60}ms" class="project-card animated-card bg-gray-800 rounded-xl overflow-hidden cursor-pointer ${isActive ? 'active-project' : ''}">
+                        <img src="${project.imageUrl}" class="h-24 w-full object-cover pointer-events-none" alt="${project.title}">
+                        <div class="p-3 pointer-events-none">
+                            <p class="font-bold text-white truncate">${project.title}</p>
+                            <p class="text-sm text-gray-400">${project.category}</p>
+                        </div>
                     </div>
-                    <button data-project-id="${project.id}" class="delete-project-btn text-red-500 hover:text-red-400">
-                         <svg class="w-6 h-6 pointer-events-none" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>
-                    </button>
-                </div>
-            `;
-        }).join('');
-        projectsListContainer.innerHTML = projectCardsHtml;
+                `;
+            }).join('');
+            projectsListContainer.innerHTML = projectCardsHtml + `<div class="col-span-2"><button data-target="page-add-project" class="w-full flex items-center justify-center rounded-lg h-12 px-5 bg-purple-600 hover:bg-purple-500 text-white text-base font-bold">Create New Project</button></div>`;
+        }
     }
 
-    if(addProjectButton) addProjectButton.addEventListener('click', createNewProject);
-
     function handleProjectCardClick(event) {
-        const card = event.target.closest('.project-card-clickable');
+        const card = event.target.closest('.project-card-clickable, .project-card');
         if (!card) return;
-
-        const projectId = card.dataset.projectId;
-
-        if (event.target.closest('.delete-project-btn')) {
-            event.stopPropagation();
-            if(confirm('Are you sure you want to delete this project and all its data?')){
-                appState.projects = appState.projects.filter(p => p.id !== projectId);
-                if(appState.currentProjectId === projectId){
-                    appState.currentProjectId = appState.projects.length > 0 ? appState.projects[0].id : null;
-                }
-                saveState();
-                renderAll();
-            }
-            return;
-        }
-
-        appState.currentProjectId = projectId;
+        
+        appState.currentProjectId = card.dataset.projectId;
         saveState();
         renderAll();
         showPage('page-shot-list');
     }
     
-    if(projectsListContainer) {
-        projectsListContainer.addEventListener('click', handleProjectCardClick);
-    }
+    if(projectsListContainer) projectsListContainer.addEventListener('click', handleProjectCardClick);
     
     // ===================================================================
     //  DASHBOARD LOGIC
@@ -188,72 +170,77 @@ document.addEventListener('DOMContentLoaded', () => {
         const today = new Date();
         
         let headerHtml = `
-            <div class="p-6">
-                <h1 class="text-3xl font-bold">Today's schedule</h1>
-                <p class="text-gray-400">${today.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</p>
+            <div class="p-6 flex justify-between items-center">
+                <div>
+                    <h1 class="text-3xl font-bold">Dashboard</h1>
+                    <p class="text-gray-400">${today.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</p>
+                </div>
+                <img src="https://images.unsplash.com/photo-1575936123452-b67c3203c357?q=80&w=2070&auto=format&fit=crop" class="w-12 h-12 rounded-full object-cover">
             </div>
         `;
 
-        let tasksHtml = '';
+        let activeProjectHtml = '';
         if (!project) {
-            tasksHtml = `<div class="px-6"><p class="text-gray-400 text-center py-8">No active project. Select one from the Projects page.</p></div>`;
+            activeProjectHtml = `
+                <div class="px-6">
+                    <div class="bg-gray-800 p-4 rounded-lg text-center">
+                        <p class="text-white font-semibold">No Active Project</p>
+                        <p class="text-gray-400 text-sm mt-1 mb-3">Select a project to see your tasks.</p>
+                        <button data-target="page-projects" class="bg-purple-600 text-white font-bold py-2 px-4 rounded-lg text-sm">View Projects</button>
+                    </div>
+                </div>`;
         } else {
-            const tasks = (project.shotLists.main || []).slice(0, 4);
-            if (tasks.length === 0) {
-                 tasksHtml = `<div class="px-6"><p class="text-gray-400 py-4">No tasks for ${project.title} today.</p></div>`;
-            } else {
-                 tasks.sort((a,b) => (a.time || "23:59").localeCompare(b.time || "23:59"));
-                 tasksHtml = `<div class="px-6 flex flex-col gap-4">${tasks.map((shot, index) => generateShotHTML(shot, index)).join('')}</div>`;
-            }
-        }
-
-        let projectsHtml = `
-            <div class="px-6 mt-6">
-                <div class="flex justify-between items-center mb-4">
-                    <h2 class="text-2xl font-bold">Ongoing Projects</h2>
-                    <button data-target="page-projects" class="nav-link text-purple-400 text-sm">View All</button>
-                </div>
-                <div id="dashboard-projects-list" class="flex flex-col gap-3">
-                    ${(appState.projects || []).map((p, index) => {
-                        const isActive = p.id === appState.currentProjectId;
-                        return `
-                        <div data-project-id="${p.id}" style="animation-delay: ${index * 60}ms" class="project-card-clickable flex items-center justify-between bg-[#222] p-3 rounded-lg cursor-pointer">
-                            <p class="font-semibold pointer-events-none">${p.title}</p>
-                            <span class="text-xs ${isActive ? 'text-purple-400' : 'text-gray-500'} pointer-events-none">${isActive ? 'Active' : ''}</span>
+            const shots = project.shotLists.main || [];
+            const total = shots.length;
+            const completed = shots.filter(s => s.checked).length;
+            const percentage = total > 0 ? (completed / total) * 100 : 0;
+            
+            activeProjectHtml = `
+                <div class="px-6">
+                    <div class="bg-gray-800 p-4 rounded-xl">
+                        <p class="text-gray-400 text-sm">Active Project</p>
+                        <h2 class="text-2xl font-bold text-white mt-1">${project.title}</h2>
+                        <div class="w-full bg-gray-700 rounded-full h-2.5 mt-4">
+                            <div class="bg-purple-500 h-2.5 rounded-full" style="width: ${percentage}%"></div>
                         </div>
-                        `
-                    }).join('')}
-                </div>
-            </div>`;
-
-        dashboardContainer.innerHTML = headerHtml + tasksHtml + projectsHtml;
+                        <div class="flex justify-between text-sm text-gray-400 mt-2">
+                            <span>Progress</span>
+                            <span>${completed}/${total} Tasks</span>
+                        </div>
+                        <button data-target="page-shot-list" class="w-full mt-4 bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg">View Task List</button>
+                    </div>
+                </div>`;
+        }
+        
+        dashboardContainer.innerHTML = headerHtml + activeProjectHtml;
     }
     
-    if(dashboardContainer) {
-        dashboardContainer.addEventListener('click', handleProjectCardClick);
-    }
-
     // ===================================================================
     //  SHOT LIST PAGE LOGIC
     // ===================================================================
     const shotListContainer = document.getElementById('shot-list-container');
-    const scheduleDay = document.getElementById('schedule-day');
-    const scheduleDate = document.getElementById('schedule-date');
+    const shotListHeader = document.getElementById('shot-list-header');
 
     function renderProjectShotList() {
-        if (!shotListContainer) return;
+        if (!shotListContainer || !shotListHeader) return;
         const project = getCurrentProject();
 
         if (!project) {
+            shotListHeader.innerHTML = '';
             shotListContainer.innerHTML = `<p class="text-gray-400 text-center px-4 py-8">No active project selected.</p>`;
-            if (scheduleDay) scheduleDay.textContent = "No Project";
-            if (scheduleDate) scheduleDate.textContent = "Please select a project";
             return;
         }
 
         const projectDate = new Date((project.date || "2024-01-01") + 'T00:00:00');
-        if (scheduleDay) scheduleDay.textContent = project.title;
-        if (scheduleDate) scheduleDate.textContent = projectDate.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+        shotListHeader.innerHTML = `
+             <div class="p-6">
+                 <button class="nav-link mb-4" data-target="page-dashboard">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                </button>
+                <h1 class="text-3xl font-bold">${project.title}</h1>
+                <p class="text-gray-400">${projectDate.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</p>
+            </div>
+        `;
 
         const shots = project.shotLists.main || [];
         
@@ -270,7 +257,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const icon = ICONS[shot.category] || ICONS.Default;
         const checkIcon = shot.checked ? ICONS.Check : '';
         return `
-            <div data-text="${shot.text}" style="animation-delay: ${index * 60}ms" class="task-card flex items-center gap-4 bg-[#222] p-4 rounded-lg border-l-4 border-gray-700 ${isComplete}">
+            <div data-text="${shot.text}" style="animation-delay: ${index * 60}ms" class="task-card animated-card flex items-center gap-4 bg-gray-800 p-4 rounded-lg border-l-4 border-gray-700 ${isComplete}">
                  <div class="task-checkbox w-6 h-6 rounded-md border-2 border-gray-500 flex items-center justify-center shrink-0 cursor-pointer">
                     ${checkIcon}
                  </div>
@@ -356,15 +343,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const resetDataButton = document.getElementById('reset-data-button');
 
     function applyTheme() {
-        document.body.classList.toggle('light-mode', !appState.settings.isDarkMode);
-        if(darkModeToggle) darkModeToggle.checked = appState.settings.isDarkMode;
+        // Dark mode is default, light mode is the exception
+        // This app is dark-themed, so we won't implement a light mode for now.
+        if(darkModeToggle) darkModeToggle.checked = true;
     }
     
     if(darkModeToggle) {
-        darkModeToggle.addEventListener('change', () => {
-            appState.settings.isDarkMode = darkModeToggle.checked;
-            applyTheme();
-            saveState();
+        darkModeToggle.addEventListener('click', () => {
+             darkModeToggle.checked = true; // Keep it on dark mode
+             alert("Light mode coming soon!");
         });
     }
 
@@ -416,7 +403,11 @@ document.addEventListener('DOMContentLoaded', () => {
         loadState();
         applyTheme();
         renderAll();
-        showPage('page-dashboard');
+        if (getCurrentProject()) {
+            showPage('page-dashboard');
+        } else {
+            showPage('page-projects');
+        }
     }
 
     init();
