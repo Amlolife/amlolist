@@ -24,7 +24,7 @@
         .page.hidden { display: none; }
         
         .nav-link.active svg { color: var(--primary-color); }
-        .nav-link:active, button:active, .project-card:active { transform: scale(0.96); }
+        .nav-link:active, button:active, .project-card-clickable:active { transform: scale(0.96); }
 
         .task-card.is-complete { opacity: 0.6; }
         .task-card.is-complete .task-title { text-decoration: line-through; }
@@ -42,19 +42,28 @@
             animation: slideUpIn 0.4s ease-out forwards;
         }
         
-        button, a.nav-link, .project-card {
+        button, a.nav-link, .project-card-clickable {
             transition: transform 0.1s ease, box-shadow 0.2s ease;
         }
 
-        button:active, a.nav-link:active, .project-card:active {
-            transform: scale(0.96);
+        #edit-task-modal {
+            transition: opacity 0.3s ease-in-out;
+        }
+        #edit-task-modal.hidden {
+            pointer-events: none;
+        }
+        #edit-task-modal .modal-content {
+             transition: transform 0.3s ease-in-out;
+        }
+         #edit-task-modal.hidden .modal-content {
+             transform: scale(0.95);
         }
     </style>
 </head>
 <body class="antialiased">
 
     <main class="pb-24">
-        <!-- All pages are dynamically rendered by app.js into these containers -->
+        <!-- All page content is now fully managed by JavaScript -->
         <section id="page-dashboard" class="page"></section>
         <section id="page-projects" class="page hidden"></section>
         <section id="page-add-project" class="page hidden"></section>
@@ -68,7 +77,6 @@
         <div class="modal-content bg-gray-800 rounded-2xl w-full max-w-md p-6">
             <h2 class="text-2xl font-bold mb-6">Edit Task</h2>
             <form id="edit-task-form" class="flex flex-col gap-6">
-                <!-- Hidden input to store task ID -->
                 <input type="hidden" id="edit-task-id">
                 <div>
                     <label for="edit-task-title" class="text-gray-400 mb-2 block">Task Title</label>
