@@ -218,9 +218,12 @@
                                     <i class="fas fa-images mr-2 text-violet-500"></i> Quick Preview
                                 </h2>
                                 <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-                                    <div v-for="(photo, index) in activeWedding.photos" :key="index" class="group aspect-square bg-slate-100 rounded-lg overflow-hidden relative">
+                                    <div v-for="(photo, index) in activeWedding.photos" :key="index" class="group aspect-square bg-slate-100 rounded-lg overflow-hidden relative cursor-pointer" @click="openPhotoPreview(photo.url)">
                                         <img :src="photo.url" class="w-full h-full object-cover" alt="Wedding preview">
-                                        <button @click="deletePhoto(index)" class="absolute top-1 right-1 bg-black bg-opacity-40 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">&times;</button>
+                                        <div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                             <i class="fas fa-eye text-white text-2xl"></i>
+                                        </div>
+                                        <button @click.stop="deletePhoto(index)" class="absolute top-1 right-1 bg-black bg-opacity-40 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">&times;</button>
                                     </div>
                                     <button @click="addPhoto" class="aspect-square bg-slate-50 rounded-lg flex items-center justify-center text-slate-400 border-2 border-dashed border-slate-300 hover:border-violet-400 hover:text-violet-500 transition-colors">
                                         <i class="fas fa-plus text-3xl"></i>
@@ -284,6 +287,13 @@
         <div v-if="showCopyMessage" class="fade-in-out-active fixed bottom-10 left-1/2 -translate-x-1/2 bg-slate-800 text-white px-4 py-2 rounded-lg shadow-lg z-50">
            <i class="fas fa-check-circle mr-2"></i> Detail disalin ke clipboard!
         </div>
+        
+        <!-- Photo Preview Modal -->
+        <div v-if="photoToPreview" @click="closePhotoPreview" class="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 p-4 cursor-pointer">
+            <img :src="photoToPreview" class="max-w-full max-h-full object-contain rounded-lg shadow-2xl" @click.stop>
+            <button @click.stop="closePhotoPreview" class="absolute top-4 right-4 text-white text-4xl font-light hover:opacity-75 transition-opacity">&times;</button>
+        </div>
+
 
         <!-- Add Shot Modal -->
         <div v-if="showShotModal" class="fixed inset-0 flex items-center justify-center z-40">
@@ -399,6 +409,7 @@
                     showEditModal: false,
                     showTimelineModal: false,
                     showCopyMessage: false,
+                    photoToPreview: null,
                     weddingToEdit: null,
                     newTag: '',
                     newShot: { title: '', description: '' },
@@ -444,7 +455,6 @@
                     this.activeWedding = wedding;
                 },
                 saveWeddings() {
-                    // Use a non-reactive copy for saving
                     idbKeyval.set('weddings', JSON.parse(JSON.stringify(this.weddings)))
                       .catch(err => console.error("Could not save weddings to IndexedDB:", err));
                 },
@@ -490,6 +500,8 @@
                 closeEditModal() { this.showEditModal = false; this.weddingToEdit = null; },
                 openTimelineModal() { if (this.activeWedding) this.showTimelineModal = true; },
                 closeTimelineModal() { this.showTimelineModal = false; this.newTimelineItem = { title: '', time: '', notes: '' };},
+                openPhotoPreview(url) { this.photoToPreview = url; },
+                closePhotoPreview() { this.photoToPreview = null; },
                 
                 updateWedding() {
                     if (!this.weddingToEdit) return;
@@ -550,7 +562,7 @@
                         this.saveActiveWedding();
                     };
                     reader.readAsDataURL(file);
-                    event.target.value = ''; // Reset file input
+                    event.target.value = '';
                 },
                 deletePhoto(index) {
                      if (!this.activeWedding) return;
