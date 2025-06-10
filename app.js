@@ -10,6 +10,9 @@ document.addEventListener('DOMContentLoaded', () => {
         projects: [],
         currentProjectId: null
     };
+    
+    // Variable to hold the install prompt event
+    let deferredPrompt;
 
     const ICONS = {
         Check: '<svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>',
@@ -31,28 +34,34 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     
     // ===================================================================
-    //  PAGE NAVIGATION (MISSING FUNCTION)
+    //  PAGE NAVIGATION
     // ===================================================================
-    function showPage(pageName) {
+    function showPage(pageKey) {
+        const pageName = `page-${pageKey}`;
         // Hide all pages
         Object.values(pageContainers).forEach(page => {
             if (page) page.classList.add('hidden');
         });
         
+        // Update active nav link
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.classList.toggle('active', link.dataset.target === pageName);
+        });
+        
         // Show requested page
-        const pageElement = pageContainers[pageName];
+        const pageElement = pageContainers[pageKey];
         if (pageElement) {
             pageElement.classList.remove('hidden');
             
             // Re-render page if needed
-            if (render[pageName]) {
-                render[pageName]();
+            if (render[pageKey]) {
+                render[pageKey]();
             }
         }
     }
 
     // ===================================================================
-    //  CORE RENDERING ENGINE (FIXED JSX SYNTAX)
+    //  CORE RENDERING ENGINE
     // ===================================================================
     const render = {
         dashboard: () => {
@@ -124,12 +133,12 @@ document.addEventListener('DOMContentLoaded', () => {
             const projects = appState.projects || [];
             let listHtml = '';
             if (projects.length === 0) {
-                listHtml = '<p class="text-gray-400 text-center col-span-2 py-8">No projects yet.</p>';
+                listHtml = '<p class="text-gray-400 text-center col-span-2 py-8">No projects yet. Click below to create one.</p>';
             } else {
                 listHtml = projects.map(project => {
                     const isActive = project.id === appState.currentProjectId;
                     return `
-                        <div data-project-id="${project.id}" class="project-card bg-gray-800 rounded-xl overflow-hidden cursor-pointer ${isActive ? 'active-project' : ''}">
+                        <div data-project-id="${project.id}" class="project-card-clickable project-card bg-gray-800 rounded-xl overflow-hidden cursor-pointer ${isActive ? 'active-project' : ''}">
                             <img src="${project.imageUrl}" class="h-24 w-full object-cover pointer-events-none" alt="${project.title}">
                             <div class="p-3 pointer-events-none">
                                 <p class="font-bold text-white truncate">${project.title}</p>
@@ -145,7 +154,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <h1 class="text-3xl font-bold">Projects</h1>
                     <p class="text-gray-400">Select a project to view its schedule</p>
                 </div>
-                <div id="projects-list-container" class="px-6 grid grid-cols-2 gap-4">
+                <div class="px-6 grid grid-cols-2 gap-4">
                     ${listHtml}
                 </div>
                 <div class="p-6">
@@ -163,6 +172,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (!project) {
                 listHtml = '<p class="text-gray-400 text-center px-4 py-8">No active project selected.</p>';
+                 headerHtml = `<div class="p-6"><h1 class="text-3xl font-bold">No Project</h1></div>`;
             } else {
                 const projectDate = new Date((project.date || "2024-01-01") + 'T00:00:00');
                 headerHtml = `
@@ -197,77 +207,70 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     function renderAllPages() {
-        Object.values(render).forEach(renderFunc => renderFunc());
+        Object.keys(render).forEach(pageKey => render[pageKey]());
     }
 
     // ===================================================================
-    //  EVENT LISTENERS (FIXED AND OPTIMIZED)
+    //  EVENT LISTENERS
     // ===================================================================
     document.body.addEventListener('click', (e) => {
+        const targetElement = e.target;
+
         // Navigation buttons
-        if (e.target.matches('[data-target]') || e.target.closest('[data-target]')) {
-            const navLink = e.target.closest('[data-target]');
-            const targetId = navLink.dataset.target;
-            
-            if (targetId === 'page-shot-list' && !getCurrentProject()) {
-                alert("Please select a project first.");
-                showPage('projects');
-                return;
-            }
-            
-            showPage(targetId.replace('page-', ''));
+        const navButton = targetElement.closest('[data-target]');
+        if (navButton) {
+            const targetId = navButton.dataset.target.replace('page-', '');
+            showPage(targetId);
             return;
         }
 
         // Project selection
-        if (e.target.closest('.project-card')) {
-            const projectCard = e.target.closest('.project-card');
+        const projectCard = targetElement.closest('.project-card-clickable');
+        if (projectCard) {
             appState.currentProjectId = projectCard.dataset.projectId;
             saveState();
-            showPage('shotList');
+            render.projects(); // Re-render to show active state
+            render.shotList();
+            render.dashboard();
+            showPage('dashboard');
             return;
         }
 
-        // Task completion toggle
-        if (e.target.closest('.task-checkbox-outer')) {
-            const taskCard = e.target.closest('.task-card');
-            const taskId = taskCard.dataset.id;
-            const project = getCurrentProject();
-            const task = project?.shotLists?.main.find(t => t.id === taskId);
-            
-            if (task) {
-                task.checked = !task.checked;
-                saveState();
-                render.shotList();
-                render.dashboard();
+        // Task card wrapper (for editing)
+        const taskCard = targetElement.closest('.task-card');
+        if (taskCard) {
+            // Check if the checkbox itself was clicked
+            if (targetElement.closest('.task-checkbox-outer')) {
+                 const taskId = taskCard.dataset.id;
+                 const project = getCurrentProject();
+                 const task = project?.shotLists?.main.find(t => t.id === taskId);
+                 
+                 if (task) {
+                     task.checked = !task.checked;
+                     saveState();
+                     render.shotList();
+                     render.dashboard();
+                 }
+            } else {
+                // Click was on the card but not the checkbox, open edit modal
+                const taskId = taskCard.dataset.id;
+                const project = getCurrentProject();
+                const task = project?.shotLists?.main.find(t => t.id === taskId);
+                
+                if (task) {
+                    populateEditModal(task);
+                    document.getElementById('edit-task-modal').classList.remove('hidden', 'opacity-0');
+                }
             }
             return;
         }
 
-        // Task editing
-        if (e.target.closest('.task-card')) {
-            const taskCard = e.target.closest('.task-card');
-            const taskId = taskCard.dataset.id;
-            const project = getCurrentProject();
-            const task = project?.shotLists?.main.find(t => t.id === taskId);
-            
-            if (task) {
-                populateEditModal(task);
-                document.getElementById('edit-task-modal').classList.remove('hidden');
-            }
-            return;
-        }
-
-        // Category selection
-        if (e.target.closest('.category-pill')) {
-            const pill = e.target.closest('.category-pill');
-            const container = pill.closest('#category-pills-container, #edit-category-pills-container');
-            
-            container.querySelectorAll('.category-pill').forEach(p => {
-                p.classList.remove('active');
-            });
-            
-            pill.classList.add('active');
+        // Category selection in forms
+        const categoryPill = targetElement.closest('.category-pill');
+        if (categoryPill) {
+            const container = categoryPill.parentElement;
+            container.querySelectorAll('.category-pill').forEach(p => p.classList.remove('active'));
+            categoryPill.classList.add('active');
             return;
         }
     });
@@ -281,14 +284,16 @@ document.addEventListener('DOMContentLoaded', () => {
             title: title,
             category: document.getElementById('project-category').value,
             date: document.getElementById('project-date').value,
-            imageUrl: `https://placehold.co/600x400/333/fff?text=${encodeURIComponent(title)}`,
+            imageUrl: `https://placehold.co/600x400/222/FFF?text=${encodeURIComponent(title)}`,
             shotLists: { main: [] }
         };
         
         appState.projects.push(newProject);
         appState.currentProjectId = newProject.id;
         saveState();
-        showPage('shotList');
+        e.target.reset();
+        renderAllPages();
+        showPage('dashboard');
     });
 
     document.getElementById('add-shot-form')?.addEventListener('submit', e => {
@@ -308,6 +313,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!project.shotLists.main) project.shotLists.main = [];
         project.shotLists.main.push(newTask);
         saveState();
+        render.shotList();
+        render.dashboard();
         showPage('shotList');
     });
 
@@ -339,10 +346,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const h = new Date().getHours(); 
         return h < 12 ? "Good morning" : h < 18 ? "Good afternoon" : "Good evening"; 
     };
-    const saveState = () => localStorage.setItem('photographerAppState', JSON.stringify(appState));
+    const saveState = () => localStorage.setItem('amloTaskManagerAppState', JSON.stringify(appState));
     
     function loadState() {
-        const savedState = localStorage.getItem('photographerAppState');
+        const savedState = localStorage.getItem('amloTaskManagerAppState');
         if (savedState) {
             appState = JSON.parse(savedState);
         } else {
@@ -362,17 +369,17 @@ document.addEventListener('DOMContentLoaded', () => {
         const checkIcon = shot.checked ? ICONS.Check : '';
         
         return `
-            <div data-id="${shot.id}" class="task-card flex items-center gap-4 bg-gray-800 p-4 rounded-lg border-l-4 border-gray-700 cursor-pointer ${isComplete}">
+            <div data-id="${shot.id}" class="task-card flex items-center gap-4 bg-gray-800 p-4 rounded-lg cursor-pointer transition-opacity ${isComplete}">
                 <div class="task-checkbox-outer w-6 h-6 rounded-md border-2 border-gray-500 flex items-center justify-center shrink-0">
                     ${checkIcon}
                 </div>
-                <div class="flex-shrink-0 w-10 h-10 rounded-lg bg-gray-700 flex items-center justify-center">
+                <div class="flex-shrink-0 w-10 h-10 rounded-lg bg-gray-700 flex items-center justify-center pointer-events-none">
                     ${icon}
                 </div>
-                <div class="flex-grow">
+                <div class="flex-grow pointer-events-none">
                     <p class="task-title text-white font-semibold">${shot.text}</p>
                 </div>
-                <p class="text-sm text-gray-400">${shot.time || ""}</p>
+                <p class="text-sm text-gray-400 pointer-events-none">${shot.time || ""}</p>
             </div>
         `;
     }
@@ -392,17 +399,43 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ===================================================================
-    //  INITIALIZATION (FIXED EVENT LISTENERS)
+    //  INITIALIZATION
     // ===================================================================
     function init() {
         loadState();
         renderAllPages();
         showPage(appState.currentProjectId ? 'dashboard' : 'projects');
 
+        // PWA Install Button handler
+        const installContainer = document.getElementById('install-pwa-container');
+        const installButton = document.getElementById('install-pwa-button');
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            installContainer.classList.remove('hidden');
+        });
+        
+        installButton.addEventListener('click', async () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                console.log(`User response to the install prompt: ${outcome}`);
+                deferredPrompt = null;
+                installContainer.classList.add('hidden');
+            }
+        });
+        
+        window.addEventListener('appinstalled', () => {
+            deferredPrompt = null;
+            installContainer.classList.add('hidden');
+            console.log('PWA was installed');
+        });
+
         // Add button handler
         document.getElementById('nav-add-button').addEventListener('click', () => {
             if (!getCurrentProject()) {
-                alert("Please select a project before adding a task.");
+                alert("Please select or create a project before adding a task.");
                 showPage('projects');
                 return;
             }
@@ -426,7 +459,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Data reset
         document.getElementById('reset-data-button').addEventListener('click', () => {
             if (confirm("ARE YOU SURE? This will delete all projects and settings permanently.")) {
-                localStorage.removeItem('photographerAppState');
+                localStorage.removeItem('amloTaskManagerAppState');
                 location.reload();
             }
         });
