@@ -370,9 +370,28 @@ document.addEventListener('DOMContentLoaded', () => {
         if (savedState) {
             appState = JSON.parse(savedState);
             console.log("App state loaded.");
+
+            // **BUG FIX AREA START**
+            // Ensure the current project ID is valid after loading.
+            if (!appState.projects) appState.projects = [];
+            const projectExists = appState.projects.some(p => p.id === appState.currentProjectId);
+
+            if (!appState.currentProjectId || !projectExists) {
+                if (appState.projects.length > 0) {
+                    appState.currentProjectId = appState.projects[0].id;
+                    console.log("Current project was invalid, reset to the first available project.");
+                } else {
+                    appState.currentProjectId = null;
+                    console.log("No projects exist, current project is null.");
+                }
+            }
+            // **BUG FIX AREA END**
+
         } else {
             // Use a deep copy to prevent mutation of the defaultState constant
             appState = JSON.parse(JSON.stringify(defaultState));
+            // Set the current project ID on first load
+            appState.currentProjectId = appState.projects.length > 0 ? appState.projects[0].id : null;
             console.log("No saved state, initialized with default.");
         }
     }
@@ -380,21 +399,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // ===================================================================
     //  INITIAL APP LOAD & RENDER ALL
     // ===================================================================
-    function validateCurrentProject() {
-        if (!appState.projects) appState.projects = [];
-        const projectExists = appState.projects.some(p => p.id === appState.currentProjectId);
-
-        if (!appState.currentProjectId || !projectExists) {
-            if (appState.projects.length > 0) {
-                appState.currentProjectId = appState.projects[0].id;
-                console.log("Current project was invalid or null, reset to the first available project.");
-            } else {
-                appState.currentProjectId = null;
-                console.log("No projects exist, current project is null.");
-            }
-        }
-    }
-    
     function renderAll() {
         renderDashboard();
         renderProjectsList();
@@ -403,7 +407,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function init() {
         loadState();
-        validateCurrentProject();
         applyTheme();
         renderAll();
         showPage('page-dashboard');
