@@ -42,17 +42,12 @@
             animation: slideUpIn 0.4s ease-out forwards;
         }
         
-        #edit-task-modal {
-            transition: opacity 0.3s ease-in-out;
+        button, a.nav-link, .project-card {
+            transition: transform 0.1s ease, box-shadow 0.2s ease;
         }
-        #edit-task-modal.hidden {
-            pointer-events: none;
-        }
-        #edit-task-modal .modal-content {
-             transition: transform 0.3s ease-in-out;
-        }
-         #edit-task-modal.hidden .modal-content {
-             transform: scale(0.95);
+
+        button:active, a.nav-link:active, .project-card:active {
+            transform: scale(0.96);
         }
     </style>
 </head>
