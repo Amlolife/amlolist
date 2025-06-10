@@ -147,33 +147,35 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if(addProjectButton) addProjectButton.addEventListener('click', createNewProject);
 
-    if(projectsListContainer) {
-        projectsListContainer.addEventListener('click', e => {
-            const card = e.target.closest('.project-card-clickable');
-            if (!card) return;
+    function handleProjectCardClick(event) {
+        const card = event.target.closest('.project-card-clickable');
+        if (!card) return;
 
-            const projectId = card.dataset.projectId;
+        const projectId = card.dataset.projectId;
 
-            if (e.target.closest('.delete-project-btn')) {
-                e.stopPropagation();
-                if(confirm('Are you sure you want to delete this project and all its data?')){
-                    appState.projects = appState.projects.filter(p => p.id !== projectId);
-                    if(appState.currentProjectId === projectId){
-                        appState.currentProjectId = appState.projects.length > 0 ? appState.projects[0].id : null;
-                    }
-                    saveState();
-                    renderAll();
+        if (event.target.closest('.delete-project-btn')) {
+            event.stopPropagation();
+            if(confirm('Are you sure you want to delete this project and all its data?')){
+                appState.projects = appState.projects.filter(p => p.id !== projectId);
+                if(appState.currentProjectId === projectId){
+                    appState.currentProjectId = appState.projects.length > 0 ? appState.projects[0].id : null;
                 }
-                return;
+                saveState();
+                renderAll();
             }
+            return;
+        }
 
-            appState.currentProjectId = projectId;
-            saveState();
-            renderAll();
-            showPage('page-shot-list');
-        });
+        appState.currentProjectId = projectId;
+        saveState();
+        renderAll();
+        showPage('page-shot-list');
     }
-
+    
+    if(projectsListContainer) {
+        projectsListContainer.addEventListener('click', handleProjectCardClick);
+    }
+    
     // ===================================================================
     //  DASHBOARD LOGIC
     // ===================================================================
@@ -195,7 +197,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!project) {
             tasksHtml = `<div class="px-6"><p class="text-gray-400 text-center py-8">No active project. Select one from the Projects page.</p></div>`;
         } else {
-            const tasks = (project.shotLists.main || []).slice(0, 4); // Show first 4 tasks
+            const tasks = (project.shotLists.main || []).slice(0, 4);
             if (tasks.length === 0) {
                  tasksHtml = `<div class="px-6"><p class="text-gray-400 py-4">No tasks for ${project.title} today.</p></div>`;
             } else {
@@ -205,8 +207,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         let projectsHtml = `
             <div class="px-6 mt-6">
-                <h2 class="text-2xl font-bold mb-4">Ongoing Projects</h2>
-                <div class="flex flex-col gap-3">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-2xl font-bold">Ongoing Projects</h2>
+                    <button data-target="page-projects" class="nav-link text-purple-400 text-sm">View All</button>
+                </div>
+                <div id="dashboard-projects-list" class="flex flex-col gap-3">
                     ${(appState.projects || []).map(p => {
                         const isActive = p.id === appState.currentProjectId;
                         return `
@@ -220,6 +225,10 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>`;
 
         dashboardContainer.innerHTML = headerHtml + tasksHtml + projectsHtml;
+    }
+    
+    if(dashboardContainer) {
+        dashboardContainer.addEventListener('click', handleProjectCardClick);
     }
 
     // ===================================================================
@@ -235,14 +244,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (!project) {
             shotListContainer.innerHTML = `<p class="text-gray-400 text-center px-4 py-8">No active project selected.</p>`;
-            scheduleDay.textContent = "No Project";
-            scheduleDate.textContent = "Please select a project";
+            if (scheduleDay) scheduleDay.textContent = "No Project";
+            if (scheduleDate) scheduleDate.textContent = "Please select a project";
             return;
         }
 
-        const projectDate = new Date(project.date + 'T00:00:00');
-        scheduleDay.textContent = project.title;
-        scheduleDate.textContent = projectDate.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+        const projectDate = new Date((project.date || "2024-01-01") + 'T00:00:00');
+        if (scheduleDay) scheduleDay.textContent = project.title;
+        if (scheduleDate) scheduleDate.textContent = projectDate.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
 
         const shots = project.shotLists.main || [];
         
@@ -392,6 +401,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // ===================================================================
+    //  INITIAL APP LOAD & RENDER ALL
+    // ===================================================================
     function renderAll() {
         renderDashboard();
         renderProjectsList();
@@ -402,7 +414,7 @@ document.addEventListener('DOMContentLoaded', () => {
         loadState();
         applyTheme();
         renderAll();
-        showPage('page-dashboard'); // Start on the new dashboard page
+        showPage('page-dashboard');
     }
 
     init();
