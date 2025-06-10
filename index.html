@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Amlo - Task Manager</title>
+    
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#1F2937">
+    
     <link rel="icon" type="image/x-icon" href="data:image/x-icon;base64,">
     <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?display=swap&family=Plus+Jakarta+Sans:wght@400;500;700;800">
@@ -63,22 +67,11 @@
 <body class="antialiased">
 
     <main class="pb-24">
-        <!-- Dashboard Page -->
         <section id="page-dashboard" class="page"></section>
         
-        <!-- Projects Page -->
         <section id="page-projects" class="page hidden">
-            <div class="p-6">
-                <h1 class="text-3xl font-bold">Projects</h1>
-                <p class="text-gray-400">Select a project to view its schedule</p>
-            </div>
-            <div id="projects-list-container" class="px-6 grid grid-cols-2 gap-4"></div>
-            <div class="p-6">
-                <button data-target="page-add-project" class="w-full flex items-center justify-center rounded-lg h-12 px-5 bg-purple-600 hover:bg-purple-500 text-white text-base font-bold">Create New Project</button>
-            </div>
-        </section>
+            </section>
 
-        <!-- Create New Project Page -->
         <section id="page-add-project" class="page hidden">
             <div class="p-6">
                 <div class="flex items-center">
@@ -101,23 +94,21 @@
                     <label for="project-date" class="text-gray-400 mb-2 block">Date</label>
                     <input type="date" id="project-date" required class="w-full bg-gray-800 border border-gray-700 rounded-lg p-3 focus:ring-purple-500 focus:border-purple-500">
                 </div>
-                 <button type="submit" class="w-full mt-4 flex items-center justify-center rounded-lg h-12 px-5 bg-purple-600 hover:bg-purple-500 text-white text-base font-bold">
+                <button type="submit" class="w-full mt-4 flex items-center justify-center rounded-lg h-12 px-5 bg-purple-600 hover:bg-purple-500 text-white text-base font-bold">
                     Create Project
                 </button>
             </form>
         </section>
 
-        <!-- Shot List Page -->
         <section id="page-shot-list" class="page hidden"></section>
         
-        <!-- Create New Task Page -->
         <section id="page-add-shot" class="page hidden">
              <div class="p-6">
                  <div class="flex items-center">
-                    <button data-target="page-shot-list" class="p-2 -ml-2">
-                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
-                    </button>
-                    <h1 class="text-3xl font-bold text-center flex-1 pr-8">Create New Task</h1>
+                     <button data-target="page-shot-list" class="p-2 -ml-2">
+                         <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                     </button>
+                     <h1 class="text-3xl font-bold text-center flex-1 pr-8">Create New Task</h1>
                  </div>
             </div>
             <form id="add-shot-form" class="px-6 flex flex-col gap-6">
@@ -133,13 +124,12 @@
                     <h3 class="text-gray-400 mb-2">Category</h3>
                     <div id="category-pills-container" class="flex flex-wrap gap-2"></div>
                 </div>
-                 <button type="submit" class="w-full mt-4 flex items-center justify-center rounded-lg h-12 px-5 bg-purple-600 hover:bg-purple-500 text-white text-base font-bold">
+                <button type="submit" class="w-full mt-4 flex items-center justify-center rounded-lg h-12 px-5 bg-purple-600 hover:bg-purple-500 text-white text-base font-bold">
                     Create Task
                 </button>
             </form>
         </section>
 
-        <!-- Settings Page -->
         <section id="page-settings" class="page hidden">
             <div class="p-6">
                 <h1 class="text-3xl font-bold text-center">Settings</h1>
@@ -152,6 +142,16 @@
                         <input id="dark-mode-toggle" type="checkbox" class="invisible absolute" />
                     </label>
                 </div>
+                
+                <div id="install-pwa-container" class="hidden">
+                    <div class="flex items-center justify-between bg-gray-800 p-4 rounded-lg">
+                        <p class="text-lg">Install App</p>
+                        <button id="install-pwa-button" class="flex items-center justify-center rounded-lg h-10 px-4 bg-green-600 hover:bg-green-500 text-white font-medium">
+                            Install
+                        </button>
+                    </div>
+                </div>
+                
                  <div class="flex items-center justify-between bg-gray-800 p-4 rounded-lg">
                     <p class="text-lg">Reset All Data</p>
                     <button id="reset-data-button" class="flex items-center justify-center rounded-lg h-10 px-4 bg-red-700 hover:bg-red-600 text-white font-medium">
@@ -163,7 +163,6 @@
 
     </main>
     
-    <!-- EDIT TASK MODAL -->
     <div id="edit-task-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-50">
         <div class="modal-content bg-gray-800 rounded-2xl w-full max-w-md p-6">
             <h2 class="text-2xl font-bold mb-6">Edit Task</h2>
@@ -189,7 +188,6 @@
         </div>
     </div>
     
-    <!-- GLOBAL BOTTOM NAVIGATION BAR -->
     <nav class="fixed bottom-0 left-0 right-0 bg-[#1F2937] border-t border-gray-700">
         <div class="flex justify-around items-center h-20 max-w-lg mx-auto">
             <a data-target="page-dashboard" class="nav-link flex-1 flex flex-col items-center justify-center text-gray-400 cursor-pointer">
@@ -206,6 +204,20 @@
             </a>
         </div>
     </nav>
+    
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js')
+                    .then(registration => {
+                        console.log('ServiceWorker registration successful with scope: ', registration.scope);
+                    })
+                    .catch(err => {
+                        console.log('ServiceWorker registration failed: ', err);
+                    });
+            });
+        }
+    </script>
     
     <script src="app.js" defer></script>
 </body>
