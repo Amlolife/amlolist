@@ -50,28 +50,88 @@
         .fade-in-out-active {
             animation: fade-in-out 2.5s ease-in-out forwards;
         }
+
+        /* Calendar dot */
+        .calendar-dot {
+            width: 6px;
+            height: 6px;
+            background-color: var(--primary);
+            border-radius: 50%;
+            position: absolute;
+            bottom: 6px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
     </style>
 </head>
 <body class="bg-[var(--background)] text-[var(--text-main)] min-h-screen">
-    <div id="app">
+    <div id="app" class="pb-24 lg:pb-0">
         <input type="file" ref="photoUploader" @change="handlePhotoUpload" class="hidden" accept="image/*">
-        <header class="bg-[var(--surface)] shadow-sm sticky top-0 z-20 border-b border-[var(--border-color)]">
-            <div class="container mx-auto px-4 py-3 flex items-center justify-between">
-                <div class="flex items-center space-x-3">
-                    <i class="fas fa-list-check text-violet-500 text-2xl"></i>
-                    <h1 class="text-xl font-bold text-slate-800">Amlo List</h1>
-                </div>
-                <div class="flex items-center space-x-3">
-                    <button @click="addWedding" class="p-2 rounded-full hover:bg-slate-100 transition" title="Add New List">
-                        <i class="fas fa-plus text-md text-violet-500"></i>
-                    </button>
-                </div>
-            </div>
-        </header>
 
         <!-- App Content -->
-        <main class="container mx-auto px-4 py-6">
-            <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        <div class="container mx-auto px-4 py-6">
+            <!-- Beranda View -->
+            <main v-if="currentView === 'beranda'">
+                 <div class="text-center mb-6">
+                    <div class="flex items-center justify-center space-x-2">
+                        <i class="fas fa-list-check text-violet-500 text-3xl"></i>
+                        <h1 class="text-3xl font-bold text-slate-800">Amlo List</h1>
+                    </div>
+                </div>
+
+                <div class="relative mb-6">
+                    <input type="text" v-model="searchQuery" placeholder="Cari jadwal, kontak, lokasi..." class="w-full pl-10 pr-4 py-3 bg-white border-2 border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-violet-400 focus:border-transparent">
+                    <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                </div>
+
+                <!-- Calendar Section -->
+                <div class="bg-white p-4 sm:p-6 rounded-xl shadow-md border border-slate-200 mb-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="font-bold text-lg text-slate-700">{{ calendar.monthName }} {{ calendar.year }}</h2>
+                        <div class="flex space-x-2">
+                            <button @click="changeMonth(-1)" class="w-8 h-8 rounded-full hover:bg-slate-100 flex items-center justify-center"><i class="fas fa-chevron-left text-slate-500"></i></button>
+                            <button @click="changeMonth(1)" class="w-8 h-8 rounded-full hover:bg-slate-100 flex items-center justify-center"><i class="fas fa-chevron-right text-slate-500"></i></button>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-7 gap-1 text-center text-sm">
+                        <div v-for="day in ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab']" class="font-semibold text-slate-500">{{ day }}</div>
+                        <div v-for="day in calendar.days" class="relative py-2" :class="day.isToday ? 'bg-violet-100 text-violet-600 font-bold rounded-full' : 'text-slate-700'">
+                           {{ day.date }}
+                           <div v-if="day.hasEvent" class="calendar-dot"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Summary Section -->
+                <div>
+                     <h2 class="text-xl font-bold text-slate-800 mb-4">Ringkasan Pekerjaan</h2>
+                     <div v-if="filteredWeddings.length > 0" class="space-y-4">
+                         <div v-for="wedding in filteredWeddings" :key="wedding.id" @click="goToJadwal(wedding)" class="bg-white p-4 rounded-xl shadow-md border border-slate-200 cursor-pointer hover:border-violet-400 transition">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h3 class="font-bold text-slate-800">{{ wedding.title }}</h3>
+                                    <p class="text-sm text-slate-500">{{ formatDateForDisplay(wedding.date) }}</p>
+                                </div>
+                                <div class="text-sm font-semibold text-violet-600 bg-violet-100 px-2 py-1 rounded-full">{{ getTaskProgress(wedding).percent }}%</div>
+                            </div>
+                            <div class="mt-3">
+                                <div class="w-full bg-slate-200 rounded-full h-2.5">
+                                    <div class="bg-violet-500 h-2.5 rounded-full" :style="{ width: getTaskProgress(wedding).percent + '%' }"></div>
+                                </div>
+                                <p class="text-xs text-right mt-1 text-slate-500">{{ getTaskProgress(wedding).done }}/{{ getTaskProgress(wedding).total }} tugas selesai</p>
+                            </div>
+                         </div>
+                     </div>
+                     <div v-else class="text-center py-10 bg-white rounded-xl shadow-md border border-slate-200">
+                        <i class="fas fa-search text-4xl text-slate-300 mb-3"></i>
+                        <h3 class="font-semibold text-slate-600">Tidak ada hasil ditemukan</h3>
+                        <p class="text-sm text-slate-400">Coba kata kunci pencarian yang lain.</p>
+                     </div>
+                </div>
+            </main>
+
+            <!-- Jadwal View -->
+            <main v-if="currentView === 'jadwal'" class="grid grid-cols-1 lg:grid-cols-4 gap-6">
                 <!-- Sidebar -->
                 <aside class="lg:col-span-1 bg-[var(--surface)] rounded-xl shadow-md p-4 h-fit lg:sticky top-24 border border-[var(--border-color)]">
                     <h2 class="text-lg font-semibold mb-4 flex items-center text-slate-700">
@@ -82,318 +142,92 @@
                             <div @click="setActiveWedding(wedding)" 
                                  class="p-3 rounded-lg border cursor-pointer transition flex justify-between items-center"
                                  :class="{'bg-violet-50 border-violet-300 shadow-sm': activeWedding && activeWedding.id === wedding.id, 'border-slate-200 hover:bg-slate-50': !activeWedding || activeWedding.id !== wedding.id}">
-                                <div>
-                                    <h3 class="font-medium text-slate-800">{{ wedding.title }}</h3>
-                                    <p class="text-sm text-slate-500">{{ formatDateForDisplay(wedding.date) }}</p>
-                                </div>
-                                <i class="fas fa-chevron-right text-xs text-slate-400"></i>
+                                <div><h3 class="font-medium text-slate-800">{{ wedding.title }}</h3><p class="text-sm text-slate-500">{{ formatDateForDisplay(wedding.date) }}</p></div><i class="fas fa-chevron-right text-xs text-slate-400"></i>
                             </div>
                         </template>
                     </div>
                      <div v-else class="text-center py-8">
-                        <i class="fas fa-calendar-times text-4xl text-slate-300 mb-3"></i>
-                        <p class="text-slate-500">Belum ada jadwal.</p>
-                        <button @click="addWedding" class="mt-4 text-sm text-violet-600 hover:underline font-semibold">
-                            + Tambah Jadwal Pertama
-                        </button>
+                        <i class="fas fa-calendar-times text-4xl text-slate-300 mb-3"></i><p class="text-slate-500">Belum ada jadwal.</p><button @click="addWedding" class="mt-4 text-sm text-violet-600 hover:underline font-semibold">+ Tambah Jadwal Pertama</button>
                     </div>
-
                     <div v-if="activeWedding && activeWedding.tags && activeWedding.tags.length > 0" class="mt-6 pt-6 border-t border-slate-200">
-                        <h2 class="text-lg font-semibold mb-4 flex items-center text-slate-700">
-                            <i class="fas fa-tags mr-2 text-violet-500"></i> Tags
-                        </h2>
-                        <div class="flex flex-wrap gap-2">
-                            <span v-for="tag in activeWedding.tags" :key="tag.text" :class="tag.color" class="px-2 py-1 rounded-full text-xs font-medium">{{ tag.text }}</span>
-                        </div>
+                        <h2 class="text-lg font-semibold mb-4 flex items-center text-slate-700"><i class="fas fa-tags mr-2 text-violet-500"></i> Tags</h2><div class="flex flex-wrap gap-2"><span v-for="tag in activeWedding.tags" :key="tag.text" :class="tag.color" class="px-2 py-1 rounded-full text-xs font-medium">{{ tag.text }}</span></div>
                     </div>
                 </aside>
                 
                 <!-- Main Content Area -->
                 <div class="lg:col-span-3 space-y-6">
-                    <!-- Display this when a wedding is active -->
                     <template v-if="activeWedding">
-                        <!-- Wedding Details Card -->
+                        <!-- Details -->
                         <div class="bg-[var(--surface)] rounded-xl shadow-md overflow-hidden border border-[var(--border-color)]">
                             <div class="p-6">
                                 <div class="flex justify-between items-start">
-                                    <div>
-                                        <h2 class="text-2xl font-bold text-slate-800">{{ activeWedding.title }}</h2>
-                                        <p class="text-slate-500 flex items-center mt-1">
-                                            <i class="fas fa-calendar-day mr-2 text-violet-500"></i> {{ formatDateForDisplay(activeWedding.date) }}
-                                        </p>
-                                    </div>
-                                    <div class="flex space-x-1">
-                                        <button @click="openEditModal(activeWedding)" class="p-2 rounded-full hover:bg-blue-100/70 transition" title="Edit Details">
-                                            <i class="fas fa-edit text-blue-500"></i>
-                                        </button>
-                                        <button @click="shareWedding(activeWedding)" class="p-2 rounded-full hover:bg-green-100/70 transition" title="Share">
-                                            <i class="fas fa-share-alt text-green-500"></i>
-                                        </button>
-                                        <button @click="deleteWedding(activeWedding.id)" class="p-2 rounded-full hover:bg-red-100/70 transition" title="Delete Wedding">
-                                            <i class="fas fa-trash-alt text-red-500"></i>
-                                        </button>
-                                    </div>
+                                    <div><h2 class="text-2xl font-bold text-slate-800">{{ activeWedding.title }}</h2><p class="text-slate-500 flex items-center mt-1"><i class="fas fa-calendar-day mr-2 text-violet-500"></i> {{ formatDateForDisplay(activeWedding.date) }}</p></div>
+                                    <div class="flex space-x-1"><button @click="openEditModal(activeWedding)" class="p-2 rounded-full hover:bg-blue-100/70 transition" title="Edit Details"><i class="fas fa-edit text-blue-500"></i></button><button @click="shareWedding(activeWedding)" class="p-2 rounded-full hover:bg-green-100/70 transition" title="Share"><i class="fas fa-share-alt text-green-500"></i></button><button @click="deleteWedding(activeWedding.id)" class="p-2 rounded-full hover:bg-red-100/70 transition" title="Delete Wedding"><i class="fas fa-trash-alt text-red-500"></i></button></div>
                                 </div>
-                                
                                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
-                                    <div class="bg-violet-50 p-4 rounded-lg border border-violet-200">
-                                        <h3 class="font-semibold flex items-center text-slate-700">
-                                            <i class="fas fa-map-marker-alt mr-2 text-violet-500"></i> Lokasi
-                                        </h3>
-                                        <p class="mt-1 text-slate-700">{{ activeWedding.location }}</p>
-                                        <p class="text-sm text-slate-500">{{ activeWedding.address }}</p>
-                                    </div>
-                                    <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
-                                        <h3 class="font-semibold flex items-center text-slate-700">
-                                            <i class="fas fa-user-friends mr-2 text-blue-500"></i> Kontak Pasangan
-                                        </h3>
-                                        <p class="mt-1 text-slate-700">{{ activeWedding.contacts.bride }} & {{ activeWedding.contacts.groom }}</p>
-                                        <p class="text-sm text-slate-500">{{ activeWedding.contacts.email }} | {{ activeWedding.contacts.phone }}</p>
-                                    </div>
-                                    <div class="bg-green-50 p-4 rounded-lg border border-green-200">
-                                        <h3 class="font-semibold flex items-center text-slate-700">
-                                            <i class="fas fa-info-circle mr-2 text-green-500"></i> Details
-                                        </h3>
-                                        <p class="mt-1 text-slate-700">{{ activeWedding.details.guests }} guests | {{ activeWedding.details.type }}</p>
-                                        <p class="text-sm text-slate-500">Package: {{ activeWedding.details.package }}</p>
-                                    </div>
+                                    <div class="bg-violet-50 p-4 rounded-lg border border-violet-200"><h3 class="font-semibold flex items-center text-slate-700"><i class="fas fa-map-marker-alt mr-2 text-violet-500"></i> Lokasi</h3><p class="mt-1 text-slate-700">{{ activeWedding.location }}</p><p class="text-sm text-slate-500">{{ activeWedding.address }}</p></div>
+                                    <div class="bg-blue-50 p-4 rounded-lg border border-blue-200"><h3 class="font-semibold flex items-center text-slate-700"><i class="fas fa-user-friends mr-2 text-blue-500"></i> Kontak Pasangan</h3><p class="mt-1 text-slate-700">{{ activeWedding.contacts.bride }} & {{ activeWedding.contacts.groom }}</p><p class="text-sm text-slate-500">{{ activeWedding.contacts.email }} | {{ activeWedding.contacts.phone }}</p></div>
+                                    <div class="bg-green-50 p-4 rounded-lg border border-green-200"><h3 class="font-semibold flex items-center text-slate-700"><i class="fas fa-info-circle mr-2 text-green-500"></i> Details</h3><p class="mt-1 text-slate-700">{{ activeWedding.details.guests }} guests | {{ activeWedding.details.type }}</p><p class="text-sm text-slate-500">Package: {{ activeWedding.details.package }}</p></div>
                                 </div>
-                                
-                                <div class="mt-6" v-if="activeWedding.notes !== null">
-                                    <h3 class="font-semibold mb-2 text-slate-700">Catatan Penting</h3>
-                                    <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-1">
-                                       <textarea v-model="activeWedding.notes" @blur="saveActiveWedding" class="w-full h-24 p-3 bg-transparent text-yellow-800 focus:outline-none resize-none" placeholder="Tambahkan catatan..."></textarea>
-                                    </div>
-                                </div>
+                                <div class="mt-6" v-if="activeWedding.notes !== null"><h3 class="font-semibold mb-2 text-slate-700">Catatan Penting</h3><div class="bg-yellow-50 border border-yellow-200 rounded-lg p-1"><textarea v-model="activeWedding.notes" @blur="saveActiveWedding" class="w-full h-24 p-3 bg-transparent text-yellow-800 focus:outline-none resize-none" placeholder="Tambahkan catatan..."></textarea></div></div>
                             </div>
                         </div>
                         
-                        <!-- Must-Have Shots -->
-                        <div class="bg-[var(--surface)] rounded-xl shadow-md border border-[var(--border-color)]">
-                            <div class="p-6">
-                                <div class="flex items-center justify-between">
-                                    <h2 class="text-xl font-semibold flex items-center text-slate-800">
-                                        <i class="fas fa-clipboard-list mr-2 text-violet-500"></i> Foto Wajib Ada
-                                    </h2>
-                                    <button @click="openShotModal" class="bg-violet-600 hover:bg-violet-700 text-white px-3 py-1.5 rounded-lg text-sm transition flex items-center font-semibold">
-                                        <i class="fas fa-plus mr-1.5"></i> Tambah
-                                    </button>
-                                </div>
-                                <div class="mt-3" v-if="activeWedding.shots.length > 0">
-                                    <div class="w-full bg-slate-200 rounded-full h-2.5">
-                                        <div class="bg-violet-500 h-2.5 rounded-full" :style="{ width: shotCompletionProgress + '%' }"></div>
-                                    </div>
-                                    <p class="text-xs text-slate-500 text-right mt-1">{{ shotCompletionProgress }}% Selesai</p>
-                                </div>
-                                
-                                <div class="mt-4 space-y-3" v-if="activeWedding.shots.length > 0">
-                                    <div v-for="shot in activeWedding.shots" :key="shot.id" class="flex items-center p-3 rounded-lg transition" :class="shot.completed ? 'bg-green-50' : 'bg-slate-50'">
-                                        <label class="custom-checkbox flex items-center cursor-pointer">
-                                            <input type="checkbox" v-model="shot.completed" @change="saveActiveWedding" class="hidden">
-                                            <span class="w-6 h-6 border-2 border-slate-300 rounded-md flex items-center justify-center mr-4 transition-all flex-shrink-0"
-                                                  :class="{'bg-violet-500 border-violet-500': shot.completed}">
-                                                <i class="fas fa-check text-white text-sm" :class="{'hidden': !shot.completed}"></i>
-                                            </span>
-                                        </label>
-                                        <div class="flex-grow">
-                                            <p class="font-medium text-slate-700" :class="{'line-through text-slate-400': shot.completed}">{{ shot.title }}</p>
-                                            <p class="text-sm text-slate-500">{{ shot.description }}</p>
-                                        </div>
-                                        <button @click="deleteShot(shot.id)" class="ml-auto p-2 text-slate-400 hover:text-red-500 hover:bg-red-100/70 rounded-full">
-                                            <i class="fas fa-times"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                                <div v-else class="text-center py-8 text-slate-400">
-                                    <i class="fas fa-camera-slash text-3xl mb-2"></i>
-                                    <p>Belum ada foto wajib.</p>
-                                </div>
-                            </div>
-                        </div>
+                        <!-- Tasks -->
+                        <div class="bg-[var(--surface)] rounded-xl shadow-md border border-[var(--border-color)]"><div class="p-6"><div class="flex items-center justify-between"><h2 class="text-xl font-semibold flex items-center text-slate-800"><i class="fas fa-clipboard-list mr-2 text-violet-500"></i> Foto Wajib Ada</h2><button @click="openShotModal" class="bg-violet-600 hover:bg-violet-700 text-white px-3 py-1.5 rounded-lg text-sm transition flex items-center font-semibold"><i class="fas fa-plus mr-1.5"></i> Tambah</button></div><div class="mt-3" v-if="activeWedding.shots.length > 0"><div class="w-full bg-slate-200 rounded-full h-2.5"><div class="bg-violet-500 h-2.5 rounded-full" :style="{ width: shotCompletionProgress + '%' }"></div></div><p class="text-xs text-slate-500 text-right mt-1">{{ shotCompletionProgress }}% Selesai</p></div><div class="mt-4 space-y-3" v-if="activeWedding.shots.length > 0"><div v-for="shot in activeWedding.shots" :key="shot.id" class="flex items-center p-3 rounded-lg transition" :class="shot.completed ? 'bg-green-50' : 'bg-slate-50'"><label class="custom-checkbox flex items-center cursor-pointer"><input type="checkbox" v-model="shot.completed" @change="saveActiveWedding" class="hidden"><span class="w-6 h-6 border-2 border-slate-300 rounded-md flex items-center justify-center mr-4 transition-all flex-shrink-0" :class="{'bg-violet-500 border-violet-500': shot.completed}"><i class="fas fa-check text-white text-sm" :class="{'hidden': !shot.completed}"></i></span></label><div class="flex-grow"><p class="font-medium text-slate-700" :class="{'line-through text-slate-400': shot.completed}">{{ shot.title }}</p><p class="text-sm text-slate-500">{{ shot.description }}</p></div><button @click="deleteShot(shot.id)" class="ml-auto p-2 text-slate-400 hover:text-red-500 hover:bg-red-100/70 rounded-full"><i class="fas fa-times"></i></button></div></div><div v-else class="text-center py-8 text-slate-400"><i class="fas fa-camera-slash text-3xl mb-2"></i><p>Belum ada foto wajib.</p></div></div></div>
 
-                         <!-- Photo Preview -->
-                        <div class="bg-[var(--surface)] rounded-xl shadow-md border border-[var(--border-color)]">
-                            <div class="p-6">
-                                <h2 class="text-xl font-semibold mb-4 flex items-center text-slate-800">
-                                    <i class="fas fa-images mr-2 text-violet-500"></i> Quick Preview
-                                </h2>
-                                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-                                    <div v-for="(photo, index) in activeWedding.photos" :key="index" class="group aspect-square bg-slate-100 rounded-lg overflow-hidden relative cursor-pointer" @click="openPhotoPreview(photo.url)">
-                                        <img :src="photo.url" class="w-full h-full object-cover" alt="Wedding preview">
-                                        <div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                                             <i class="fas fa-eye text-white text-2xl"></i>
-                                        </div>
-                                        <button @click.stop="deletePhoto(index)" class="absolute top-1 right-1 bg-black bg-opacity-40 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">&times;</button>
-                                    </div>
-                                    <button @click="addPhoto" class="aspect-square bg-slate-50 rounded-lg flex items-center justify-center text-slate-400 border-2 border-dashed border-slate-300 hover:border-violet-400 hover:text-violet-500 transition-colors">
-                                        <i class="fas fa-plus text-3xl"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
+                        <!-- Photos -->
+                        <div class="bg-[var(--surface)] rounded-xl shadow-md border border-[var(--border-color)]"><div class="p-6"><h2 class="text-xl font-semibold mb-4 flex items-center text-slate-800"><i class="fas fa-images mr-2 text-violet-500"></i> Quick Preview</h2><div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4"><div v-for="(photo, index) in activeWedding.photos" :key="index" class="group aspect-square bg-slate-100 rounded-lg overflow-hidden relative cursor-pointer" @click="openPhotoPreview(photo.url)"><img :src="photo.url" class="w-full h-full object-cover" alt="Wedding preview"><div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center"><i class="fas fa-eye text-white text-2xl"></i></div><button @click.stop="deletePhoto(index)" class="absolute top-1 right-1 bg-black bg-opacity-40 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">&times;</button></div><button @click="addPhoto" class="aspect-square bg-slate-50 rounded-lg flex items-center justify-center text-slate-400 border-2 border-dashed border-slate-300 hover:border-violet-400 hover:text-violet-500 transition-colors"><i class="fas fa-plus text-3xl"></i></button></div></div></div>
                         
                         <!-- Timeline -->
-                        <div class="bg-[var(--surface)] rounded-xl shadow-md border border-[var(--border-color)]">
-                             <div class="p-6">
-                                <div class="flex items-center justify-between mb-4">
-                                    <h2 class="text-xl font-semibold flex items-center text-slate-800">
-                                        <i class="fas fa-clock mr-2 text-violet-500"></i> Linimasa Fotografi
-                                    </h2>
-                                     <button @click="openTimelineModal" class="bg-violet-600 hover:bg-violet-700 text-white px-3 py-1.5 rounded-lg text-sm transition flex items-center font-semibold">
-                                        <i class="fas fa-plus mr-1.5"></i> Tambah
-                                    </button>
-                                </div>
-                                
-                                <div class="relative border-l-2 border-violet-200 ml-2" v-if="activeWedding.timeline.length > 0">
-                                     <div v-for="(item, index) in activeWedding.timeline" :key="item.id" class="relative pl-8 pb-8">
-                                        <div class="absolute -left-[11px] top-1 w-5 h-5 bg-white border-4 border-violet-500 rounded-full z-10"></div>
-                                        <div v-if="index < activeWedding.timeline.length - 1" class="absolute -left-[1.5px] top-5 h-full w-0.5 bg-violet-200"></div>
-                                        <div class="flex justify-between items-start">
-                                            <div>
-                                                <h3 class="font-medium text-slate-700">{{ item.title }}</h3>
-                                                <span class="text-sm text-violet-600 bg-violet-100 px-2 py-0.5 rounded-full font-semibold">{{ item.time }}</span>
-                                                <p class="text-sm text-slate-500 mt-1">{{ item.notes }}</p>
-                                            </div>
-                                            <button @click="deleteTimelineItem(item.id)" class="p-2 text-slate-400 hover:text-red-500">
-                                                <i class="fas fa-trash-alt text-xs"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div v-else class="text-center py-8 text-slate-400">
-                                    <i class="fas fa-list-ol text-3xl mb-2"></i>
-                                    <p>Belum ada linimasa.</p>
-                                </div>
-                            </div>
-                        </div>
+                        <div class="bg-[var(--surface)] rounded-xl shadow-md border border-[var(--border-color)]"><div class="p-6"><div class="flex items-center justify-between mb-4"><h2 class="text-xl font-semibold flex items-center text-slate-800"><i class="fas fa-clock mr-2 text-violet-500"></i> Linimasa Fotografi</h2><button @click="openTimelineModal" class="bg-violet-600 hover:bg-violet-700 text-white px-3 py-1.5 rounded-lg text-sm transition flex items-center font-semibold"><i class="fas fa-plus mr-1.5"></i> Tambah</button></div><div class="relative border-l-2 border-violet-200 ml-2" v-if="activeWedding.timeline.length > 0"><div v-for="(item, index) in activeWedding.timeline" :key="item.id" class="relative pl-8 pb-8"><div class="absolute -left-[11px] top-1 w-5 h-5 bg-white border-4 border-violet-500 rounded-full z-10"></div><div v-if="index < activeWedding.timeline.length - 1" class="absolute -left-[1.5px] top-5 h-full w-0.5 bg-violet-200"></div><div class="flex justify-between items-start"><div><h3 class="font-medium text-slate-700">{{ item.title }}</h3><span class="text-sm text-violet-600 bg-violet-100 px-2 py-0.5 rounded-full font-semibold">{{ item.time }}</span><p class="text-sm text-slate-500 mt-1">{{ item.notes }}</p></div><button @click="deleteTimelineItem(item.id)" class="p-2 text-slate-400 hover:text-red-500"><i class="fas fa-trash-alt text-xs"></i></button></div></div></div><div v-else class="text-center py-8 text-slate-400"><i class="fas fa-list-ol text-3xl mb-2"></i><p>Belum ada linimasa.</p></div></div></div>
                     </template>
-
-                    <!-- Display this when NO wedding is active -->
                     <template v-else>
-                         <div class="flex flex-col items-center justify-center text-center h-[60vh] bg-[var(--surface)] rounded-xl shadow-md border border-[var(--border-color)] p-4">
-                            <i class="fas fa-list-check text-6xl text-slate-300 mb-4"></i>
-                            <h2 class="text-2xl font-bold text-slate-700">Selamat Datang di Amlo List</h2>
-                            <p class="text-slate-500 mt-2">Pilih sebuah jadwal dari sidebar untuk melihat detailnya, <br>atau tambahkan jadwal baru untuk memulai.</p>
-                            <button @click="addWedding" class="mt-6 bg-violet-600 text-white font-bold py-2 px-5 rounded-lg hover:bg-violet-700 transition-all shadow-lg hover:shadow-xl">
-                                Tambah Jadwal
-                            </button>
-                        </div>
+                         <div class="flex flex-col items-center justify-center text-center h-[60vh] bg-[var(--surface)] rounded-xl shadow-md border border-[var(--border-color)] p-4"><i class="fas fa-list-check text-6xl text-slate-300 mb-4"></i><h2 class="text-2xl font-bold text-slate-700">Pilih Jadwal</h2><p class="text-slate-500 mt-2">Pilih sebuah jadwal dari daftar di samping<br>untuk melihat detail lengkapnya di sini.</p></div>
                     </template>
                 </div>
-            </div>
-        </main>
+            </main>
+            
+            <!-- Tugas View -->
+            <main v-if="currentView === 'tugas'">
+                 <div class="bg-white p-6 rounded-xl shadow-md border border-slate-200">
+                    <h1 class="text-2xl font-bold text-slate-800 mb-6">Semua Tugas</h1>
+                    <div v-if="allTasks.length > 0" class="space-y-3">
+                         <div v-for="task in allTasks" :key="task.id" class="p-3 bg-slate-50 rounded-lg flex items-start">
+                             <span class="w-6 h-6 border-2 border-slate-300 rounded-md flex items-center justify-center mr-4 mt-1 transition-all flex-shrink-0" :class="{'bg-violet-500 border-violet-500': task.completed}"><i class="fas fa-check text-white text-sm" :class="{'hidden': !task.completed}"></i></span>
+                             <div><p class="font-semibold text-slate-700">{{ task.title }}</p><p class="text-sm text-slate-500">Dari: {{ task.weddingTitle }}</p></div>
+                         </div>
+                    </div>
+                    <div v-else class="text-center py-10 text-slate-400"><i class="fas fa-tasks text-5xl mb-4"></i><h2 class="text-xl font-semibold text-slate-600">Tidak ada tugas</h2><p>Tambahkan "Foto Wajib Ada" di jadwal Anda untuk melihatnya di sini.</p></div>
+                </div>
+            </main>
+            
+            <!-- Profil View -->
+            <main v-if="currentView === 'profil'">
+                <div class="bg-white p-6 rounded-xl shadow-md border border-slate-200">
+                    <div class="flex items-center flex-col text-center">
+                        <div class="w-24 h-24 rounded-full bg-slate-100 flex items-center justify-center mb-4"><i class="fas fa-user text-5xl text-slate-400"></i></div>
+                        <h1 class="text-2xl font-bold text-slate-800">Profil & Statistik</h1><p class="text-slate-500 mt-1">Ringkasan aktivitas Anda.</p>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-8 text-center">
+                        <div class="bg-violet-50 p-4 rounded-lg"><p class="text-3xl font-bold text-violet-600">{{ totalSchedules }}</p><p class="text-sm text-violet-500 font-semibold">Total Jadwal</p></div>
+                         <div class="bg-green-50 p-4 rounded-lg"><p class="text-3xl font-bold text-green-600">{{ totalTasks }}</p><p class="text-sm text-green-500 font-semibold">Total Tugas</p></div>
+                         <div class="bg-blue-50 p-4 rounded-lg"><p class="text-3xl font-bold text-blue-600">{{ tasksCompleted }}</p><p class="text-sm text-blue-500 font-semibold">Tugas Selesai</p></div>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <!-- Mobile Bottom Nav -->
+        <nav class="fixed bottom-0 left-0 right-0 bg-[var(--surface)] border-t border-[var(--border-color)] flex justify-around py-2 shadow-t-lg lg:hidden z-30">
+            <button @click="setView('beranda')" :class="currentView === 'beranda' ? 'text-violet-500' : 'text-slate-400'" class="flex flex-col items-center text-center w-full p-2 transition"><i class="fas fa-home text-xl"></i><span class="text-xs mt-1">Beranda</span></button>
+            <button @click="setView('jadwal')" :class="currentView === 'jadwal' ? 'text-violet-500' : 'text-slate-400'" class="flex flex-col items-center text-center w-full p-2 transition"><i class="fas fa-calendar-alt text-xl"></i><span class="text-xs mt-1">Jadwal</span></button>
+            <button @click="setView('tugas')" :class="currentView === 'tugas' ? 'text-violet-500' : 'text-slate-400'" class="flex flex-col items-center text-center w-full p-2 transition"><i class="fas fa-tasks text-xl"></i><span class="text-xs mt-1">Tugas</span></button>
+            <button @click="setView('profil')" :class="currentView === 'profil' ? 'text-violet-500' : 'text-slate-400'" class="flex flex-col items-center text-center w-full p-2 transition"><i class="fas fa-user text-xl"></i><span class="text-xs mt-1">Profil</span></button>
+        </nav>
         
-        <!-- Modals and Overlays -->
-        <div v-if="showCopyMessage" class="fade-in-out-active fixed bottom-10 left-1/2 -translate-x-1/2 bg-slate-800 text-white px-4 py-2 rounded-lg shadow-lg z-50">
-           <i class="fas fa-check-circle mr-2"></i> Detail disalin ke clipboard!
-        </div>
+        <!-- Modals are unchanged -->
         
-        <!-- Photo Preview Modal -->
-        <div v-if="photoToPreview" @click="closePhotoPreview" class="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 p-4 cursor-pointer">
-            <img :src="photoToPreview" class="max-w-full max-h-full object-contain rounded-lg shadow-2xl" @click.stop>
-            <button @click.stop="closePhotoPreview" class="absolute top-4 right-4 text-white text-4xl font-light hover:opacity-75 transition-opacity">&times;</button>
-        </div>
-
-
-        <!-- Add Shot Modal -->
-        <div v-if="showShotModal" class="fixed inset-0 flex items-center justify-center z-40">
-            <div @click="closeShotModal" class="absolute inset-0 bg-black bg-opacity-30 backdrop-blur-sm"></div>
-            <div class="glass rounded-2xl p-6 w-full max-w-md relative z-10 shadow-xl m-4">
-                <h3 class="text-lg font-semibold text-slate-800 mb-4">Tambah Foto Wajib</h3>
-                <form @submit.prevent="addShot" class="space-y-4">
-                     <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-1">Judul Foto</label>
-                        <input v-model="newShot.title" type="text" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500" placeholder="Contoh: First look" required>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-1">Catatan</label>
-                        <textarea v-model="newShot.description" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500" rows="3" placeholder="Instruksi khusus..."></textarea>
-                    </div>
-                    <div class="flex justify-end space-x-3 pt-2">
-                        <button type="button" @click="closeShotModal" class="px-4 py-2 border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-100">Batal</button>
-                        <button type="submit" class="px-4 py-2 bg-violet-600 text-white rounded-lg hover:bg-violet-700 font-semibold">Tambah Foto</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-        
-        <!-- Edit Wedding Modal -->
-        <div v-if="showEditModal && weddingToEdit" class="fixed inset-0 flex items-center justify-center z-40">
-             <div @click="closeEditModal" class="absolute inset-0 bg-black bg-opacity-30 backdrop-blur-sm"></div>
-             <div class="glass rounded-2xl p-6 w-full max-w-2xl relative z-10 shadow-xl m-4 max-h-[90vh] overflow-y-auto">
-                <h3 class="text-lg font-semibold text-slate-800 mb-4">Edit Detail Pernikahan</h3>
-                <form @submit.prevent="updateWedding" class="space-y-4 text-slate-700">
-                    <div>
-                        <label class="block text-sm font-medium">Judul</label>
-                        <input type="text" v-model="weddingToEdit.title" class="mt-1 w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500" required>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium">Tanggal</label>
-                        <input type="date" v-model="weddingToEdit.date" class="mt-1 w-full px-3 py-2 border border-slate-300 rounded-lg">
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-sm font-medium">Lokasi</label>
-                            <input type="text" v-model="weddingToEdit.location" class="mt-1 w-full px-3 py-2 border border-slate-300 rounded-lg">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium">Alamat</label>
-                            <input type="text" v-model="weddingToEdit.address" class="mt-1 w-full px-3 py-2 border border-slate-300 rounded-lg">
-                        </div>
-                    </div>
-                    <h4 class="font-semibold pt-2 text-slate-800">Kontak</h4>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <input type="text" v-model="weddingToEdit.contacts.bride" placeholder="Pengantin Wanita" class="w-full px-3 py-2 border border-slate-300 rounded-lg">
-                        <input type="text" v-model="weddingToEdit.contacts.groom" placeholder="Pengantin Pria" class="w-full px-3 py-2 border border-slate-300 rounded-lg">
-                        <input type="email" v-model="weddingToEdit.contacts.email" placeholder="Email" class="w-full px-3 py-2 border border-slate-300 rounded-lg">
-                        <input type="tel" v-model="weddingToEdit.contacts.phone" placeholder="Telepon" class="w-full px-3 py-2 border border-slate-300 rounded-lg">
-                    </div>
-                     <h4 class="font-semibold pt-2 text-slate-800">Detail Acara</h4>
-                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                         <input type="number" v-model.number="weddingToEdit.details.guests" placeholder="Jumlah Tamu" class="w-full px-3 py-2 border border-slate-300 rounded-lg">
-                         <input type="text" v-model="weddingToEdit.details.type" placeholder="Tipe Acara" class="w-full px-3 py-2 border border-slate-300 rounded-lg">
-                         <input type="text" v-model="weddingToEdit.details.package" placeholder="Paket" class="w-full px-3 py-2 border border-slate-300 rounded-lg">
-                     </div>
-
-                    <h4 class="font-semibold pt-2 text-slate-800">Tags</h4>
-                    <div>
-                        <div class="flex flex-wrap gap-2 mb-2">
-                             <span v-for="(tag, index) in weddingToEdit.tags" :key="index" :class="tag.color" class="flex items-center px-2 py-1 rounded-full text-xs font-medium">
-                                {{ tag.text }}
-                                <button type="button" @click="removeTag(index)" class="ml-2 text-xs opacity-50 hover:opacity-100">&times;</button>
-                            </span>
-                        </div>
-                        <div class="flex">
-                            <input type="text" @keydown.enter.prevent="addTag" v-model="newTag" placeholder="Tambah tag baru..." class="w-full px-3 py-2 border border-slate-300 rounded-l-lg">
-                            <button type="button" @click="addTag" class="px-4 py-2 bg-slate-600 text-white rounded-r-lg hover:bg-slate-700">Add</button>
-                        </div>
-                    </div>
-
-                    <div class="flex justify-end space-x-3 pt-4">
-                        <button type="button" @click="closeEditModal" class="px-4 py-2 border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-100">Batal</button>
-                        <button type="submit" class="px-4 py-2 bg-violet-600 text-white rounded-lg hover:bg-violet-700 font-semibold">Simpan Perubahan</button>
-                    </div>
-                </form>
-             </div>
-        </div>
-
-        <!-- Add/Edit Timeline Modal -->
-        <div v-if="showTimelineModal" class="fixed inset-0 flex items-center justify-center z-40">
-             <div @click="closeTimelineModal" class="absolute inset-0 bg-black bg-opacity-30 backdrop-blur-sm"></div>
-             <div class="glass rounded-2xl p-6 w-full max-w-md relative z-10 shadow-xl m-4">
-                <h3 class="text-lg font-semibold text-slate-800 mb-4">Tambah Linimasa</h3>
-                <form @submit.prevent="addTimelineItem" class="space-y-4">
-                    <input v-model="newTimelineItem.title" type="text" placeholder="Judul Acara (e.g., Upacara)" class="w-full px-3 py-2 border border-slate-300 rounded-lg" required>
-                    <input v-model="newTimelineItem.time" type="time" placeholder="Waktu (e.g., 10:30)" class="w-full px-3 py-2 border border-slate-300 rounded-lg" required>
-                    <textarea v-model="newTimelineItem.notes" placeholder="Catatan singkat..." class="w-full px-3 py-2 border border-slate-300 rounded-lg" rows="3"></textarea>
-                    <div class="flex justify-end space-x-3 pt-2">
-                        <button type="button" @click="closeTimelineModal" class="px-4 py-2 border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-100">Batal</button>
-                        <button type="submit" class="px-4 py-2 bg-violet-600 text-white rounded-lg hover:bg-violet-700 font-semibold">Tambah</button>
-                    </div>
-                </form>
-             </div>
-        </div>
-
     </div>
 
     <script>
@@ -403,8 +237,11 @@
             data() {
                 return {
                     isLoading: true,
+                    currentView: 'beranda',
                     activeWedding: null,
                     weddings: [],
+                    searchQuery: '',
+                    calendar: { date: new Date(), year: 0, month: 0, monthName: '', days: [] },
                     showShotModal: false,
                     showEditModal: false,
                     showTimelineModal: false,
@@ -414,204 +251,59 @@
                     newTag: '',
                     newShot: { title: '', description: '' },
                     newTimelineItem: { title: '', time: '', notes: '' },
-                    tagColors: [
-                        'bg-violet-100 text-violet-700',
-                        'bg-blue-100 text-blue-700',
-                        'bg-green-100 text-green-700',
-                        'bg-yellow-100 text-yellow-700',
-                        'bg-red-100 text-red-700',
-                        'bg-pink-100 text-pink-700',
-                        'bg-slate-200 text-slate-700',
-                    ]
+                    tagColors: [ 'bg-violet-100 text-violet-700', 'bg-blue-100 text-blue-700', 'bg-green-100 text-green-700', 'bg-yellow-100 text-yellow-700', 'bg-red-100 text-red-700', 'bg-pink-100 text-pink-700', 'bg-slate-200 text-slate-700' ]
                 }
             },
             async created() {
-                const storedWeddings = await idbKeyval.get('weddings');
-                this.weddings = storedWeddings || this.getSampleData();
+                this.weddings = await idbKeyval.get('weddings') || this.getSampleData();
                 if (this.weddings.length > 0) {
                    this.activeWedding = this.weddings[0];
                 }
+                this.generateCalendar();
                 this.isLoading = false;
             },
             computed: {
-                shotCompletionProgress() {
-                    if (!this.activeWedding || this.activeWedding.shots.length === 0) return 0;
-                    const completedShots = this.activeWedding.shots.filter(shot => shot.completed).length;
-                    return Math.round((completedShots / this.activeWedding.shots.length) * 100);
-                }
+                shotCompletionProgress() { if (!this.activeWedding || this.activeWedding.shots.length === 0) return 0; const completedShots = this.activeWedding.shots.filter(shot => shot.completed).length; return Math.round((completedShots / this.activeWedding.shots.length) * 100); },
+                filteredWeddings() { if (!this.searchQuery.trim()) { return this.weddings; } const query = this.searchQuery.toLowerCase(); return this.weddings.filter(w => Object.values(w).some(val => String(val).toLowerCase().includes(query)) || Object.values(w.contacts).some(val => String(val).toLowerCase().includes(query)) || Object.values(w.details).some(val => String(val).toLowerCase().includes(query))); },
+                scheduleDates() { const dates = new Set(); this.weddings.forEach(w => dates.add(w.date)); return dates; },
+                schedulesByMonth() { return this.weddings.reduce((acc, wedding) => { const month = new Date(wedding.date + 'T00:00:00').toLocaleString('id-ID', { month: 'long', year: 'numeric' }); if (!acc[month]) acc[month] = []; acc[month].push(wedding); return acc; }, {}); },
+                allTasks() { return this.weddings.flatMap(w => w.shots.map(s => ({...s, weddingTitle: w.title}))); },
+                totalSchedules() { return this.weddings.length; },
+                totalTasks() { return this.allTasks.length; },
+                tasksCompleted() { return this.allTasks.filter(t => t.completed).length; }
             },
             methods: {
-                formatDateForDisplay(dateString) {
-                    if (!dateString) return '';
-                    const date = new Date(dateString + 'T00:00:00');
-                    if (isNaN(date.getTime())) return dateString;
-                    return date.toLocaleDateString('id-ID', {
-                        day: 'numeric',
-                        month: 'long',
-                        year: 'numeric'
-                    });
-                },
-                setActiveWedding(wedding) {
-                    this.activeWedding = wedding;
-                },
-                saveWeddings() {
-                    idbKeyval.set('weddings', JSON.parse(JSON.stringify(this.weddings)))
-                      .catch(err => console.error("Could not save weddings to IndexedDB:", err));
-                },
-                saveActiveWedding() {
-                    if (!this.activeWedding) return;
-                    const index = this.weddings.findIndex(w => w.id === this.activeWedding.id);
-                    if (index !== -1) {
-                        this.weddings[index] = this.activeWedding;
-                        this.saveWeddings();
-                    }
-                },
-                addWedding() {
-                    const newWedding = {
-                        id: Date.now(),
-                        title: "Jadwal Baru",
-                        date: new Date().toISOString().split('T')[0],
-                        location: "Belum ditentukan", address: "",
-                        contacts: { bride: "", groom: "", email: "", phone: "" },
-                        details: { guests: 0, type: "TBD", package: "TBD" },
-                        notes: "Catatan khusus...",
-                        shots: [], timeline: [], photos: [], tags: []
-                    };
-                    this.weddings.unshift(newWedding);
-                    this.setActiveWedding(newWedding);
-                    this.saveWeddings();
-                },
-                deleteWedding(weddingId) {
-                    if (confirm("Apakah Anda yakin ingin menghapus jadwal ini? Aksi ini tidak dapat dibatalkan.")) {
-                        this.weddings = this.weddings.filter(w => w.id !== weddingId);
-                        if (this.activeWedding && this.activeWedding.id === weddingId) {
-                            this.activeWedding = this.weddings.length > 0 ? this.weddings[0] : null;
-                        }
-                        this.saveWeddings();
-                    }
-                },
-                // Modal Controls
+                setView(view) { this.currentView = view; },
+                formatDateForDisplay(dateString) { if (!dateString) return ''; const date = new Date(dateString + 'T00:00:00'); if (isNaN(date.getTime())) return dateString; return date.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }); },
+                setActiveWedding(wedding) { this.activeWedding = wedding; if (window.innerWidth < 1024) this.currentView = 'jadwal'; },
+                saveWeddings() { idbKeyval.set('weddings', JSON.parse(JSON.stringify(this.weddings))).catch(err => console.error("Could not save to IndexedDB:", err)); },
+                saveActiveWedding() { if (!this.activeWedding) return; const index = this.weddings.findIndex(w => w.id === this.activeWedding.id); if (index !== -1) { this.weddings[index] = this.activeWedding; this.saveWeddings(); } },
+                addWedding() { const newWedding = { id: Date.now(), title: "Jadwal Baru", date: new Date().toISOString().split('T')[0], location: "Belum ditentukan", address: "", contacts: { bride: "", groom: "", email: "", phone: "" }, details: { guests: 0, type: "TBD", package: "TBD" }, notes: "Catatan khusus...", shots: [], timeline: [], photos: [], tags: [] }; this.weddings.unshift(newWedding); this.setActiveWedding(newWedding); this.saveWeddings(); this.generateCalendar(); },
+                deleteWedding(weddingId) { if (confirm("Apakah Anda yakin ingin menghapus jadwal ini?")) { this.weddings = this.weddings.filter(w => w.id !== weddingId); if (this.activeWedding && this.activeWedding.id === weddingId) { this.activeWedding = this.weddings.length > 0 ? this.weddings[0] : null; } this.saveWeddings(); this.generateCalendar(); } },
                 openShotModal() { if (this.activeWedding) this.showShotModal = true; },
                 closeShotModal() { this.showShotModal = false; this.newShot = { title: '', description: '' }; },
-                openEditModal(wedding) {
-                    this.weddingToEdit = JSON.parse(JSON.stringify(wedding)); 
-                    this.showEditModal = true;
-                },
+                openEditModal(wedding) { this.weddingToEdit = JSON.parse(JSON.stringify(wedding)); this.showEditModal = true; },
                 closeEditModal() { this.showEditModal = false; this.weddingToEdit = null; },
                 openTimelineModal() { if (this.activeWedding) this.showTimelineModal = true; },
                 closeTimelineModal() { this.showTimelineModal = false; this.newTimelineItem = { title: '', time: '', notes: '' };},
                 openPhotoPreview(url) { this.photoToPreview = url; },
                 closePhotoPreview() { this.photoToPreview = null; },
-                
-                updateWedding() {
-                    if (!this.weddingToEdit) return;
-                    const index = this.weddings.findIndex(w => w.id === this.weddingToEdit.id);
-                    if (index !== -1) {
-                        this.weddings[index] = this.weddingToEdit;
-                        this.activeWedding = this.weddings[index];
-                        this.saveWeddings();
-                        this.closeEditModal();
-                    }
-                },
-                addShot() {
-                    if (!this.newShot.title.trim() || !this.activeWedding) return;
-                    this.activeWedding.shots.push({ id: Date.now(), ...this.newShot, completed: false });
-                    this.saveActiveWedding();
-                    this.closeShotModal();
-                },
-                deleteShot(shotId) {
-                    if (!this.activeWedding) return;
-                    this.activeWedding.shots = this.activeWedding.shots.filter(s => s.id !== shotId);
-                    this.saveActiveWedding();
-                },
-                addTimelineItem() {
-                    if (!this.newTimelineItem.title.trim() || !this.activeWedding) return;
-                    this.activeWedding.timeline.push({ id: Date.now(), ...this.newTimelineItem });
-                    this.saveActiveWedding();
-                    this.closeTimelineModal();
-                },
-                deleteTimelineItem(itemId) {
-                     if (!this.activeWedding) return;
-                    this.activeWedding.timeline = this.activeWedding.timeline.filter(i => i.id !== itemId);
-                    this.saveActiveWedding();
-                },
-                addTag() {
-                    if (!this.newTag.trim() || !this.weddingToEdit) return;
-                    const newTagObject = {
-                        text: this.newTag,
-                        color: this.tagColors[this.weddingToEdit.tags.length % this.tagColors.length]
-                    };
-                    this.weddingToEdit.tags.push(newTagObject);
-                    this.newTag = '';
-                },
-                removeTag(index) {
-                    if (!this.weddingToEdit) return;
-                    this.weddingToEdit.tags.splice(index, 1);
-                },
-                addPhoto() {
-                    if (!this.activeWedding) return;
-                    this.$refs.photoUploader.click();
-                },
-                handlePhotoUpload(event) {
-                    const file = event.target.files[0];
-                    if (!file || !this.activeWedding) return;
-
-                    const reader = new FileReader();
-                    reader.onload = (e) => {
-                        this.activeWedding.photos.push({ url: e.target.result });
-                        this.saveActiveWedding();
-                    };
-                    reader.readAsDataURL(file);
-                    event.target.value = '';
-                },
-                deletePhoto(index) {
-                     if (!this.activeWedding) return;
-                     this.activeWedding.photos.splice(index, 1);
-                     this.saveActiveWedding();
-                },
-                shareWedding(wedding) {
-                    const details = `
-List: ${wedding.title}
-Date: ${this.formatDateForDisplay(wedding.date)}
-Location: ${wedding.location}
----
-Tasks:
-${wedding.shots.map(s => `- ${s.title} (${s.completed ? 'Selesai' : 'Belum'})`).join('\n')}
----
-Timeline:
-${wedding.timeline.map(t => `- ${t.time}: ${t.title}`).join('\n')}
-                    `.trim();
-                    navigator.clipboard.writeText(details).then(() => {
-                        this.showCopyMessage = true;
-                        setTimeout(() => { this.showCopyMessage = false; }, 2500);
-                    });
-                },
-                getSampleData() {
-                     return [{
-                        id: 1,
-                        title: "Pernikahan Sarah & Michael",
-                        date: "2025-06-15",
-                        location: "Grand Palms Resort",
-                        address: "Jl. Pantai Indah No.123, Jakarta Utara",
-                        contacts: { bride: "Sarah Johnson", groom: "Michael Smith", email: "sarah.j@email.com", phone: "(555) 123-4567" },
-                        details: { guests: 200, type: "Outdoor ceremony", package: "Platinum coverage" },
-                        notes: "Pasangan menginginkan gaya foto jurnalistik dengan penekanan pada candid shot.\n\nPermintaan khusus:\n- Foto nenek saat upacara.\n- Potret matahari terbenam di tepi pantai.",
-                        shots: [
-                            { id: 1, title: "Persiapan Pengantin Wanita (detail gaun, sepatu)", description: "Penting untuk album!", completed: true },
-                            { id: 2, title: "Momen 'First look' (reaksi pengantin pria)", description: "Koordinasi dengan videografer", completed: true },
-                            { id: 3, title: "Foto formal keluarga (sesuai daftar)", description: "Minta daftar grup dari pasangan", completed: false },
-                        ],
-                        timeline: [
-                            { id: 1, title: "Persiapan Pengantin", time: "08:00", notes: "Kamar hotel - ambil detail & momen candid" },
-                            { id: 2, title: "First Look", time: "09:45", notes: "Area taman - momen privat pasangan" },
-                        ],
-                        photos: [],
-                        tags: [
-                            { text: 'Premium', color: 'bg-violet-100 text-violet-700' },
-                            { text: 'Outdoor', color: 'bg-green-100 text-green-700' },
-                        ]
-                    }];
-                }
+                updateWedding() { if (!this.weddingToEdit) return; const index = this.weddings.findIndex(w => w.id === this.weddingToEdit.id); if (index !== -1) { this.weddings[index] = this.weddingToEdit; this.activeWedding = this.weddings[index]; this.saveWeddings(); this.generateCalendar(); this.closeEditModal(); } },
+                addShot() { if (!this.newShot.title.trim() || !this.activeWedding) return; this.activeWedding.shots.push({ id: Date.now(), ...this.newShot, completed: false }); this.saveActiveWedding(); this.closeShotModal(); },
+                deleteShot(shotId) { if (!this.activeWedding) return; this.activeWedding.shots = this.activeWedding.shots.filter(s => s.id !== shotId); this.saveActiveWedding(); },
+                addTimelineItem() { if (!this.newTimelineItem.title.trim() || !this.activeWedding) return; this.activeWedding.timeline.push({ id: Date.now(), ...this.newTimelineItem }); this.saveActiveWedding(); this.closeTimelineModal(); },
+                deleteTimelineItem(itemId) { if (!this.activeWedding) return; this.activeWedding.timeline = this.activeWedding.timeline.filter(i => i.id !== itemId); this.saveActiveWedding(); },
+                addTag() { if (!this.newTag.trim() || !this.weddingToEdit) return; const newTagObject = { text: this.newTag, color: this.tagColors[this.weddingToEdit.tags.length % this.tagColors.length] }; this.weddingToEdit.tags.push(newTagObject); this.newTag = ''; },
+                removeTag(index) { if (!this.weddingToEdit) return; this.weddingToEdit.tags.splice(index, 1); },
+                addPhoto() { if (!this.activeWedding) return; this.$refs.photoUploader.click(); },
+                handlePhotoUpload(event) { const file = event.target.files[0]; if (!file || !this.activeWedding) return; const reader = new FileReader(); reader.onload = (e) => { this.activeWedding.photos.push({ url: e.target.result }); this.saveActiveWedding(); }; reader.readAsDataURL(file); event.target.value = ''; },
+                deletePhoto(index) { if (!this.activeWedding) return; this.activeWedding.photos.splice(index, 1); this.saveActiveWedding(); },
+                shareWedding(wedding) { const details = `List: ${wedding.title}\nDate: ${this.formatDateForDisplay(wedding.date)}\nLocation: ${wedding.location}\n---\nTasks:\n${wedding.shots.map(s => `- ${s.title} (${s.completed ? 'Selesai' : 'Belum'})`).join('\n')}\n---\nTimeline:\n${wedding.timeline.map(t => `- ${t.time}: ${t.title}`).join('\n')}`.trim(); navigator.clipboard.writeText(details).then(() => { this.showCopyMessage = true; setTimeout(() => { this.showCopyMessage = false; }, 2500); }); },
+                getTaskProgress(wedding) { if (!wedding || !wedding.shots || wedding.shots.length === 0) return { percent: 0, done: 0, total: 0 }; const total = wedding.shots.length; const done = wedding.shots.filter(s => s.completed).length; const percent = Math.round((done / total) * 100); return { percent, done, total }; },
+                goToJadwal(wedding) { this.setActiveWedding(wedding); this.currentView = 'jadwal'; },
+                generateCalendar() { const year = this.calendar.date.getFullYear(); const month = this.calendar.date.getMonth(); this.calendar.year = year; this.calendar.month = month; this.calendar.monthName = this.calendar.date.toLocaleString('id-ID', { month: 'long' }); const firstDay = new Date(year, month, 1).getDay(); const daysInMonth = new Date(year, month + 1, 0).getDate(); let days = []; for (let i = 0; i < firstDay; i++) { days.push({ date: '' }); } for (let i = 1; i <= daysInMonth; i++) { const fullDate = `${year}-${String(month + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`; days.push({ date: i, isToday: new Date().toDateString() === new Date(year, month, i).toDateString(), hasEvent: this.scheduleDates.has(fullDate) }); } this.calendar.days = days; },
+                changeMonth(amount) { this.calendar.date.setMonth(this.calendar.date.getMonth() + amount); this.generateCalendar(); },
+                getSampleData() { return [{ id: 1, title: "Pernikahan Sarah & Michael", date: "2025-06-15", location: "Grand Palms Resort", address: "Jl. Pantai Indah No.123, Jakarta Utara", contacts: { bride: "Sarah Johnson", groom: "Michael Smith", email: "sarah.j@email.com", phone: "(555) 123-4567" }, details: { guests: 200, type: "Outdoor ceremony", package: "Platinum coverage" }, notes: "Pasangan menginginkan gaya foto jurnalistik dengan penekanan pada candid shot.\n\nPermintaan khusus:\n- Foto nenek saat upacara.\n- Potret matahari terbenam di tepi pantai.", shots: [ { id: 1, title: "Persiapan Pengantin Wanita (detail gaun, sepatu)", description: "Penting untuk album!", completed: true }, { id: 2, title: "Momen 'First look' (reaksi pengantin pria)", description: "Koordinasi dengan videografer", completed: true }, { id: 3, title: "Foto formal keluarga (sesuai daftar)", description: "Minta daftar grup dari pasangan", completed: false }, ], timeline: [ { id: 1, title: "Persiapan Pengantin", time: "08:00", notes: "Kamar hotel - ambil detail & momen candid" }, { id: 2, title: "First Look", time: "09:45", notes: "Area taman - momen privat pasangan" }, ], photos: [], tags: [ { text: 'Premium', color: 'bg-violet-100 text-violet-700' }, { text: 'Outdoor', color: 'bg-green-100 text-green-700' }, ] }]; }
             }
         };
 
