@@ -476,8 +476,9 @@
                     if (!this.weddingToEdit) return;
                     const index = this.weddings.findIndex(w => w.id === this.weddingToEdit.id);
                     if (index !== -1) {
-                        this.weddings.splice(index, 1, this.weddingToEdit);
-                        this.activeWedding = this.weddingToEdit;
+                        // This robustly updates the original object, ensuring reactivity.
+                        Object.assign(this.weddings[index], this.weddingToEdit);
+                        this.activeWedding = this.weddings[index];
                         this.saveWeddings();
                         this.closeEditModal();
                     }
