@@ -131,10 +131,15 @@
                     </button>
                 </form>
 
-                <div class="text-center">
+                <div class="text-center space-y-2">
                     <button @click="isRegisterView = !isRegisterView" class="text-sm text-violet-600 hover:underline font-semibold">
                         {{ isRegisterView ? 'Sudah punya akun? Login' : 'Belum punya akun? Register' }}
                     </button>
+                    <div v-if="!isRegisterView">
+                        <button @click="openForgotPasswordModal" class="text-sm text-slate-500 hover:underline">
+                            Lupa Password?
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -206,7 +211,8 @@
                             </div>
                         </main>
 
-                        <main v-if="currentView === 'jadwal'" class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+                        <main v-if="currentView === 'jadwal'">
+                            <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
                             <aside class="lg:col-span-1 bg-[var(--surface)] rounded-xl shadow-md p-4 h-fit lg:sticky top-24 border border-[var(--border-color)]">
                                 <div class="flex justify-between items-center mb-4">
                                     <h2 class="text-lg font-semibold flex items-center text-slate-700"><i class="fas fa-calendar-alt mr-2 text-violet-500"></i> Daftar Jadwal</h2>
@@ -250,10 +256,11 @@
                                     <div class="flex flex-col items-center justify-center text-center h-[60vh] bg-[var(--surface)] rounded-xl shadow-md border border-[var(--border-color)] p-4"><i class="fas fa-list-check text-6xl text-slate-300 mb-4"></i><h2 class="text-2xl font-bold text-slate-700">Pilih Jadwal</h2><p class="text-slate-500 mt-2">Pilih sebuah jadwal dari daftar di samping<br>untuk melihat detail lengkapnya di sini.</p></div>
                                 </template>
                             </div>
+                        </div>
                         </main>
                         
                         <main v-if="currentView === 'invoice'">
-                            <div class="bg-white p-6 sm:p-8 rounded-xl shadow-md border border-slate-200">
+                           <div class="bg-white p-6 sm:p-8 rounded-xl shadow-md border border-slate-200">
                                 <h1 class="text-3xl font-bold text-slate-800 mb-2">Amlo Invoice Maker</h1>
                                 <p class="text-slate-500 mb-6">Buat, simpan template, dan ekspor invoice profesional dengan mudah.</p>
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -313,16 +320,23 @@
                             <div class="bg-white p-6 rounded-xl shadow-md border border-slate-200">
                                 <div class="flex items-center flex-col text-center">
                                     <div class="w-24 h-24 rounded-full bg-slate-100 flex items-center justify-center mb-4"><i class="fas fa-user text-5xl text-slate-400"></i></div>
-                                    <h1 class="text-2xl font-bold text-slate-800">Profil & Statistik</h1>
+                                    <h1 class="text-2xl font-bold text-slate-800">Profil & Akun</h1>
                                     <p v-if="user" class="text-slate-500 mt-1">{{ user.email }}</p>
                                 </div>
-                                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-8 text-center">
+                                
+                                <div class="mt-8 border-t pt-6 text-center space-y-4">
+                                    <button @click="openChangePasswordModal" class="bg-slate-600 text-white font-bold py-2 px-5 rounded-lg hover:bg-slate-700 transition w-full max-w-xs">
+                                        <i class="fas fa-key mr-2"></i>Ubah Password
+                                    </button>
+                                    <button @click="logout" class="bg-red-500 text-white font-bold py-2 px-5 rounded-lg hover:bg-red-600 transition w-full max-w-xs">
+                                        <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                                    </button>
+                                </div>
+
+                                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-8 text-center border-t pt-6">
                                     <div class="bg-violet-50 p-4 rounded-lg"><p class="text-3xl font-bold text-violet-600">{{ totalSchedules }}</p><p class="text-sm text-violet-500 font-semibold">Total Jadwal</p></div>
                                     <div class="bg-green-50 p-4 rounded-lg"><p class="text-3xl font-bold text-green-600">{{ totalTasks }}</p><p class="text-sm text-green-500 font-semibold">Total Tugas</p></div>
                                     <div class="bg-blue-50 p-4 rounded-lg"><p class="text-3xl font-bold text-blue-600">{{ tasksCompleted }}</p><p class="text-sm text-blue-500 font-semibold">Tugas Selesai</p></div>
-                                </div>
-                                <div class="mt-8 text-center">
-                                    <button @click="logout" class="bg-red-500 text-white font-bold py-2 px-5 rounded-lg hover:bg-red-600 transition">Logout</button>
                                 </div>
                             </div>
                         </main>
@@ -338,40 +352,56 @@
             </nav>
             
             <div v-if="showCopyMessage" class="fade-in-out-active fixed bottom-24 left-1/2 -translate-x-1/2 bg-slate-800 text-white px-4 py-2 rounded-lg shadow-lg z-50"><i class="fas fa-check-circle mr-2"></i> Detail disalin ke clipboard!</div>
+            <transition name="modal"><div v-if="photoToPreview" @click="closePhotoPreview" class="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 p-4 cursor-pointer"><img :src="photoToPreview" class="max-w-full max-h-full object-contain rounded-lg shadow-2xl" @click.stop><button @click.stop="closePhotoPreview" class="absolute top-4 right-4 text-white text-4xl font-light hover:opacity-75 transition-opacity">&times;</button></div></transition>
+            <transition name="modal"><div v-if="showShotModal" class="fixed inset-0 flex items-center justify-center z-40"><div @click="closeShotModal" class="absolute inset-0 bg-black bg-opacity-30 backdrop-blur-sm"></div><div class="glass rounded-2xl p-6 w-full max-w-md relative z-10 shadow-xl m-4"><h3 class="text-lg font-semibold text-slate-800 mb-4">Tambah Foto Wajib</h3><form @submit.prevent="addShot" class="space-y-4"><div><label class="block text-sm font-medium text-slate-700 mb-1">Judul Foto</label><input v-model="newShot.title" type="text" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500" placeholder="Contoh: First look" required></div><div><label class="block text-sm font-medium text-slate-700 mb-1">Catatan</label><textarea v-model="newShot.description" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500" rows="3" placeholder="Instruksi khusus..."></textarea></div><div class="flex justify-end space-x-3 pt-2"><button type="button" @click="closeShotModal" class="px-4 py-2 border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-100">Batal</button><button type="submit" class="px-4 py-2 bg-violet-600 text-white rounded-lg hover:bg-violet-700 font-semibold">Tambah Foto</button></div></form></div></div></transition>
+            <transition name="modal"><div v-if="showEditModal && weddingToEdit" class="fixed inset-0 flex items-center justify-center z-40"><div @click="closeEditModal" class="absolute inset-0 bg-black bg-opacity-30 backdrop-blur-sm"></div><div class="glass rounded-2xl p-6 w-full max-w-2xl relative z-10 shadow-xl m-4 max-h-[90vh] overflow-y-auto"><h3 class="text-lg font-semibold text-slate-800 mb-4">Edit Detail Pernikahan</h3><form @submit.prevent="updateWedding" class="space-y-4 text-slate-700"><div><label class="block text-sm font-medium">Judul</label><input type="text" v-model="weddingToEdit.title" class="mt-1 w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500" required></div><div><label class="block text-sm font-medium">Tanggal</label><input type="date" v-model="weddingToEdit.date" class="mt-1 w-full px-3 py-2 border border-slate-300 rounded-lg"></div><div class="grid grid-cols-1 md:grid-cols-2 gap-4"><div><label class="block text-sm font-medium">Lokasi</label><input type="text" v-model="weddingToEdit.location" class="mt-1 w-full px-3 py-2 border border-slate-300 rounded-lg"></div><div><label class="block text-sm font-medium">Alamat</label><input type="text" v-model="weddingToEdit.address" class="mt-1 w-full px-3 py-2 border border-slate-300 rounded-lg"></div></div><h4 class="font-semibold pt-2 text-slate-800">Kontak</h4><div class="grid grid-cols-1 md:grid-cols-2 gap-4"><input type="text" v-model="weddingToEdit.contacts.bride" placeholder="Pengantin Wanita" class="w-full px-3 py-2 border border-slate-300 rounded-lg"><input type="text" v-model="weddingToEdit.contacts.groom" placeholder="Pengantin Pria" class="w-full px-3 py-2 border border-slate-300 rounded-lg"><input type="email" v-model="weddingToEdit.contacts.email" placeholder="Email" class="w-full px-3 py-2 border border-slate-300 rounded-lg"><input type="tel" v-model="weddingToEdit.contacts.phone" placeholder="Telepon" class="w-full px-3 py-2 border border-slate-300 rounded-lg"></div><h4 class="font-semibold pt-2 text-slate-800">Detail Acara</h4><div class="grid grid-cols-1 md:grid-cols-3 gap-4"><input type="number" v-model.number="weddingToEdit.details.guests" placeholder="Jumlah Tamu" class="w-full px-3 py-2 border border-slate-300 rounded-lg"><input type="text" v-model="weddingToEdit.details.type" placeholder="Tipe Acara" class="w-full px-3 py-2 border border-slate-300 rounded-lg"><input type="text" v-model="weddingToEdit.details.package" placeholder="Paket" class="w-full px-3 py-2 border border-slate-300 rounded-lg"></div><h4 class="font-semibold pt-2 text-slate-800">Tags</h4><div><div class="flex flex-wrap gap-2 mb-2"><span v-for="(tag, index) in weddingToEdit.tags" :key="index" :class="tag.color" class="flex items-center px-2 py-1 rounded-full text-xs font-medium">{{ tag.text }}<button type="button" @click="removeTag(index)" class="ml-2 text-xs opacity-50 hover:opacity-100">&times;</button></span></div><div class="flex"><input type="text" @keydown.enter.prevent="addTag" v-model="newTag" placeholder="Tambah tag baru..." class="w-full px-3 py-2 border border-slate-300 rounded-l-lg"><button type="button" @click="addTag" class="px-4 py-2 bg-slate-600 text-white rounded-r-lg hover:bg-slate-700">Add</button></div></div><div class="flex justify-end space-x-3 pt-4"><button type="button" @click="closeEditModal" class="px-4 py-2 border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-100">Batal</button><button type="submit" class="px-4 py-2 bg-violet-600 text-white rounded-lg hover:bg-violet-700 font-semibold">Simpan Perubahan</button></div></form></div></div></transition>
+            <transition name="modal"><div v-if="showTimelineModal" class="fixed inset-0 flex items-center justify-center z-40"><div @click="closeTimelineModal" class="absolute inset-0 bg-black bg-opacity-30 backdrop-blur-sm"></div><div class="glass rounded-2xl p-6 w-full max-w-md relative z-10 shadow-xl m-4"><h3 class="text-lg font-semibold text-slate-800 mb-4">Tambah Linimasa</h3><form @submit.prevent="addTimelineItem" class="space-y-4"><input v-model="newTimelineItem.title" type="text" placeholder="Judul Acara (e.g., Upacara)" class="w-full px-3 py-2 border border-slate-300 rounded-lg" required><input v-model="newTimelineItem.time" type="time" placeholder="Waktu (e.g., 10:30)" class="w-full px-3 py-2 border border-slate-300 rounded-lg" required><textarea v-model="newTimelineItem.notes" placeholder="Catatan singkat..." class="w-full px-3 py-2 border border-slate-300 rounded-lg" rows="3"></textarea><div class="flex justify-end space-x-3 pt-2"><button type="button" @click="closeTimelineModal" class="px-4 py-2 border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-100">Batal</button><button type="submit" class="px-4 py-2 bg-violet-600 text-white rounded-lg hover:bg-violet-700 font-semibold">Tambah</button></div></form></div></div></transition>
+
             <transition name="modal">
-                <div v-if="photoToPreview" @click="closePhotoPreview" class="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 p-4 cursor-pointer">
-                    <img :src="photoToPreview" class="max-w-full max-h-full object-contain rounded-lg shadow-2xl" @click.stop>
-                    <button @click.stop="closePhotoPreview" class="absolute top-4 right-4 text-white text-4xl font-light hover:opacity-75 transition-opacity">&times;</button>
+                <div v-if="showForgotPasswordModal" class="fixed inset-0 flex items-center justify-center z-40">
+                    <div @click="closeForgotPasswordModal" class="absolute inset-0 bg-black bg-opacity-30 backdrop-blur-sm"></div>
+                    <div class="glass rounded-2xl p-6 w-full max-w-md relative z-10 shadow-xl m-4">
+                        <h3 class="text-lg font-semibold text-slate-800 mb-4">Reset Password</h3>
+                        <form @submit.prevent="sendResetEmail" class="space-y-4">
+                            <p class="text-sm text-slate-600">Masukkan email Anda. Kami akan mengirimkan link untuk mereset password Anda.</p>
+                            <div>
+                                <label for="reset-email" class="sr-only">Email</label>
+                                <input v-model="forgotPassword.email" type="email" id="reset-email" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500" placeholder="Email terdaftar" required>
+                            </div>
+                            <p v-if="forgotPassword.error" class="text-red-500 text-sm text-center">{{ forgotPassword.error }}</p>
+                            <p v-if="forgotPassword.success" class="text-green-600 text-sm text-center">{{ forgotPassword.success }}</p>
+                            <div class="flex justify-end space-x-3 pt-2">
+                                <button type="button" @click="closeForgotPasswordModal" class="px-4 py-2 border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-100">Batal</button>
+                                <button type="submit" class="px-4 py-2 bg-violet-600 text-white rounded-lg hover:bg-violet-700 font-semibold">Kirim Link</button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </transition>
+
             <transition name="modal">
-                <div v-if="showShotModal" class="fixed inset-0 flex items-center justify-center z-40"><div @click="closeShotModal" class="absolute inset-0 bg-black bg-opacity-30 backdrop-blur-sm"></div><div class="glass rounded-2xl p-6 w-full max-w-md relative z-10 shadow-xl m-4"><h3 class="text-lg font-semibold text-slate-800 mb-4">Tambah Foto Wajib</h3><form @submit.prevent="addShot" class="space-y-4"><div><label class="block text-sm font-medium text-slate-700 mb-1">Judul Foto</label><input v-model="newShot.title" type="text" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500" placeholder="Contoh: First look" required></div><div><label class="block text-sm font-medium text-slate-700 mb-1">Catatan</label><textarea v-model="newShot.description" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500" rows="3" placeholder="Instruksi khusus..."></textarea></div><div class="flex justify-end space-x-3 pt-2"><button type="button" @click="closeShotModal" class="px-4 py-2 border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-100">Batal</button><button type="submit" class="px-4 py-2 bg-violet-600 text-white rounded-lg hover:bg-violet-700 font-semibold">Tambah Foto</button></div></form></div></div>
-            </transition>
-            <transition name="modal">
-                <div v-if="showEditModal && weddingToEdit" class="fixed inset-0 flex items-center justify-center z-40"><div @click="closeEditModal" class="absolute inset-0 bg-black bg-opacity-30 backdrop-blur-sm"></div><div class="glass rounded-2xl p-6 w-full max-w-2xl relative z-10 shadow-xl m-4 max-h-[90vh] overflow-y-auto"><h3 class="text-lg font-semibold text-slate-800 mb-4">Edit Detail Pernikahan</h3><form @submit.prevent="updateWedding" class="space-y-4 text-slate-700"><div><label class="block text-sm font-medium">Judul</label><input type="text" v-model="weddingToEdit.title" class="mt-1 w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500" required></div><div><label class="block text-sm font-medium">Tanggal</label><input type="date" v-model="weddingToEdit.date" class="mt-1 w-full px-3 py-2 border border-slate-300 rounded-lg"></div><div class="grid grid-cols-1 md:grid-cols-2 gap-4"><div><label class="block text-sm font-medium">Lokasi</label><input type="text" v-model="weddingToEdit.location" class="mt-1 w-full px-3 py-2 border border-slate-300 rounded-lg"></div><div><label class="block text-sm font-medium">Alamat</label><input type="text" v-model="weddingToEdit.address" class="mt-1 w-full px-3 py-2 border border-slate-300 rounded-lg"></div></div><h4 class="font-semibold pt-2 text-slate-800">Kontak</h4><div class="grid grid-cols-1 md:grid-cols-2 gap-4"><input type="text" v-model="weddingToEdit.contacts.bride" placeholder="Pengantin Wanita" class="w-full px-3 py-2 border border-slate-300 rounded-lg"><input type="text" v-model="weddingToEdit.contacts.groom" placeholder="Pengantin Pria" class="w-full px-3 py-2 border border-slate-300 rounded-lg"><input type="email" v-model="weddingToEdit.contacts.email" placeholder="Email" class="w-full px-3 py-2 border border-slate-300 rounded-lg"><input type="tel" v-model="weddingToEdit.contacts.phone" placeholder="Telepon" class="w-full px-3 py-2 border border-slate-300 rounded-lg"></div><h4 class="font-semibold pt-2 text-slate-800">Detail Acara</h4><div class="grid grid-cols-1 md:grid-cols-3 gap-4"><input type="number" v-model.number="weddingToEdit.details.guests" placeholder="Jumlah Tamu" class="w-full px-3 py-2 border border-slate-300 rounded-lg"><input type="text" v-model="weddingToEdit.details.type" placeholder="Tipe Acara" class="w-full px-3 py-2 border border-slate-300 rounded-lg"><input type="text" v-model="weddingToEdit.details.package" placeholder="Paket" class="w-full px-3 py-2 border border-slate-300 rounded-lg"></div><h4 class="font-semibold pt-2 text-slate-800">Tags</h4><div><div class="flex flex-wrap gap-2 mb-2"><span v-for="(tag, index) in weddingToEdit.tags" :key="index" :class="tag.color" class="flex items-center px-2 py-1 rounded-full text-xs font-medium">{{ tag.text }}<button type="button" @click="removeTag(index)" class="ml-2 text-xs opacity-50 hover:opacity-100">&times;</button></span></div><div class="flex"><input type="text" @keydown.enter.prevent="addTag" v-model="newTag" placeholder="Tambah tag baru..." class="w-full px-3 py-2 border border-slate-300 rounded-l-lg"><button type="button" @click="addTag" class="px-4 py-2 bg-slate-600 text-white rounded-r-lg hover:bg-slate-700">Add</button></div></div><div class="flex justify-end space-x-3 pt-4"><button type="button" @click="closeEditModal" class="px-4 py-2 border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-100">Batal</button><button type="submit" class="px-4 py-2 bg-violet-600 text-white rounded-lg hover:bg-violet-700 font-semibold">Simpan Perubahan</button></div></form></div></div>
-            </transition>
-            <transition name="modal">
-                <div v-if="showTimelineModal" class="fixed inset-0 flex items-center justify-center z-40"><div @click="closeTimelineModal" class="absolute inset-0 bg-black bg-opacity-30 backdrop-blur-sm"></div><div class="glass rounded-2xl p-6 w-full max-w-md relative z-10 shadow-xl m-4"><h3 class="text-lg font-semibold text-slate-800 mb-4">Tambah Linimasa</h3><form @submit.prevent="addTimelineItem" class="space-y-4"><input v-model="newTimelineItem.title" type="text" placeholder="Judul Acara (e.g., Upacara)" class="w-full px-3 py-2 border border-slate-300 rounded-lg" required><input v-model="newTimelineItem.time" type="time" placeholder="Waktu (e.g., 10:30)" class="w-full px-3 py-2 border border-slate-300 rounded-lg" required><textarea v-model="newTimelineItem.notes" placeholder="Catatan singkat..." class="w-full px-3 py-2 border border-slate-300 rounded-lg" rows="3"></textarea><div class="flex justify-end space-x-3 pt-2"><button type="button" @click="closeTimelineModal" class="px-4 py-2 border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-100">Batal</button><button type="submit" class="px-4 py-2 bg-violet-600 text-white rounded-lg hover:bg-violet-700 font-semibold">Tambah</button></div></form></div></div>
+                <div v-if="showChangePasswordModal" class="fixed inset-0 flex items-center justify-center z-40">
+                    <div @click="closeChangePasswordModal" class="absolute inset-0 bg-black bg-opacity-30 backdrop-blur-sm"></div>
+                    <div class="glass rounded-2xl p-6 w-full max-w-md relative z-10 shadow-xl m-4">
+                        <h3 class="text-lg font-semibold text-slate-800 mb-4">Ubah Password</h3>
+                        <form @submit.prevent="updateUserPassword" class="space-y-4">
+                            <div>
+                                <label for="new-password" class="sr-only">Password Baru</label>
+                                <input v-model="changePassword.newPassword" type="password" id="new-password" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500" placeholder="Masukkan password baru" required>
+                            </div>
+                            <p v-if="changePassword.error" class="text-red-500 text-sm text-center">{{ changePassword.error }}</p>
+                            <p v-if="changePassword.success" class="text-green-600 text-sm text-center">{{ changePassword.success }}</p>
+                            <div class="flex justify-end space-x-3 pt-2">
+                                <button type="button" @click="closeChangePasswordModal" class="px-4 py-2 border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-100">Batal</button>
+                                <button type="submit" class="px-4 py-2 bg-violet-600 text-white rounded-lg hover:bg-violet-700 font-semibold">Simpan</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
             </transition>
             
-            <div id="invoice-pdf-template" class="p-8" style="position: absolute; left: -9999px; width: 210mm; font-family: 'Inter', sans-serif; color: #1e293b;">
-                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 2rem;">
-                    <div><h1 style="font-size: 2.25rem; font-weight: bold;">INVOICE</h1><p style="color: #64748b;">{{ invoice.number }}</p></div>
-                    <div style="text-align: right;"><h2 style="font-size: 1.5rem; font-weight: bold; color: #8b5cf6;">{{ invoice.invoicerName }}</h2><p style="color: #64748b;">{{ invoice.invoicerSlogan }}</p></div>
-                </div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem;">
-                    <div><h3 style="font-weight: 600; color: #64748b; margin-bottom: 0.5rem;">DITAGIHKAN KEPADA</h3><p style="font-weight: bold; font-size: 1.125rem;">{{ invoice.client.name }}</p><p style="color: #64748b;">{{ invoice.client.address }}</p></div>
-                    <div style="text-align: right;"><p><span style="font-weight: 600; color: #64748b;">Tanggal Invoice: </span><span>{{ formatDateForDisplay(invoice.date) }}</span></p><p><span style="font-weight: 600; color: #64748b;">Jatuh Tempo: </span><span>{{ formatDateForDisplay(invoice.dueDate) }}</span></p></div>
-                </div>
-                <table style="width: 100%; text-align: left; border-collapse: collapse; margin-bottom: 2rem;">
-                    <thead><tr style="background-color: #f1f5f9; color: #475569;"><th style="padding: 0.75rem; font-weight: 600;">Deskripsi</th><th style="padding: 0.75rem; text-align: center; font-weight: 600;">Jumlah</th><th style="padding: 0.75rem; text-align: right; font-weight: 600;">Harga</th><th style="padding: 0.75rem; text-align: right; font-weight: 600;">Total</th></tr></thead>
-                    <tbody><tr v-for="item in invoice.items" style="border-bottom: 1px solid #e2e8f0;"><td style="padding: 0.75rem;">{{ item.description }}</td><td style="padding: 0.75rem; text-align: center;">{{ item.quantity }}</td><td style="padding: 0.75rem; text-align: right;">{{ formatCurrency(item.rate) }}</td><td style="padding: 0.75rem; text-align: right;">{{ formatCurrency(item.quantity * item.rate) }}</td></tr></tbody>
-                </table>
-                <div style="display: flex; justify-content: flex-end;">
-                    <div style="width: 256px;"><div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;"><span style="color: #64748b;">Subtotal</span><span style="font-weight: 500;">{{ formatCurrency(invoiceSubtotal) }}</span></div><div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;"><span style="color: #64748b;">Pajak ({{ invoice.taxRate }}%)</span><span style="font-weight: 500;">{{ formatCurrency(invoiceSubtotal * (invoice.taxRate / 100)) }}</span></div><div style="display: flex; justify-content: space-between; font-weight: bold; font-size: 1.25rem; border-top: 2px solid #e2e8f0; padding-top: 0.5rem; margin-top: 0.5rem;"><span style="color: #1e293b;">Total</span><span style="color: #8b5cf6;">{{ formatCurrency(invoiceTotal) }}</span></div></div>
-                </div>
-                <div style="margin-top: 3rem; text-align: center; color: #94a3b8; font-size: 0.875rem;"><p>Terima Kasih!</p></div>
-            </div>
+            <div id="invoice-pdf-template">
+              </div>
         </div>
     </div>
 
@@ -402,12 +432,25 @@ const firebaseConfig = {
                 return {
                     // Auth-related data
                     isLoggedIn: false,
-                    isRegisterView: false, // To toggle between Login and Register forms
+                    isRegisterView: false,
                     user: null,
                     auth: {
                         email: '',
                         password: '',
                         error: ''
+                    },
+                    // NEW: Modal states and forms
+                    showForgotPasswordModal: false,
+                    showChangePasswordModal: false,
+                    forgotPassword: {
+                        email: '',
+                        error: '',
+                        success: ''
+                    },
+                    changePassword: {
+                        newPassword: '',
+                        error: '',
+                        success: ''
                     },
                     
                     // Existing app data
@@ -447,6 +490,7 @@ const firebaseConfig = {
                 });
             },
             computed: {
+                // ... existing computed properties
                 shotCompletionProgress() { if (!this.activeWedding || this.activeWedding.shots.length === 0) return 0; const completedShots = this.activeWedding.shots.filter(shot => shot.completed).length; return Math.round((completedShots / this.activeWedding.shots.length) * 100); },
                 filteredWeddings() { 
                     let weddings = this.weddings;
@@ -479,7 +523,6 @@ const firebaseConfig = {
                             } else {
                                 this.auth.error = "Terjadi kesalahan. Silakan coba lagi.";
                             }
-                            console.error("Login Error:", error.message);
                         });
                 },
                 register() {
@@ -494,17 +537,68 @@ const firebaseConfig = {
                             } else {
                                 this.auth.error = "Gagal melakukan registrasi. Silakan coba lagi.";
                             }
-                            console.error("Register Error:", error.message);
                         });
                 },
                 logout() {
                     auth.signOut();
                 },
 
+                // NEW: Forgot/Change Password Methods
+                openForgotPasswordModal() {
+                    this.forgotPassword = { email: '', error: '', success: '' };
+                    this.showForgotPasswordModal = true;
+                },
+                closeForgotPasswordModal() {
+                    this.showForgotPasswordModal = false;
+                },
+                sendResetEmail() {
+                    this.forgotPassword.error = '';
+                    this.forgotPassword.success = '';
+                    auth.sendPasswordResetEmail(this.forgotPassword.email)
+                        .then(() => {
+                            this.forgotPassword.success = 'Link reset password telah dikirim ke email Anda.';
+                        })
+                        .catch(error => {
+                            if (error.code === 'auth/user-not-found') {
+                                this.forgotPassword.error = 'Email tidak ditemukan.';
+                            } else {
+                                this.forgotPassword.error = 'Gagal mengirim email. Coba lagi.';
+                            }
+                        });
+                },
+                openChangePasswordModal() {
+                    this.changePassword = { newPassword: '', error: '', success: '' };
+                    this.showChangePasswordModal = true;
+                },
+                closeChangePasswordModal() {
+                    this.showChangePasswordModal = false;
+                },
+                updateUserPassword() {
+                    this.changePassword.error = '';
+                    this.changePassword.success = '';
+                    const user = auth.currentUser;
+
+                    if (user) {
+                        user.updatePassword(this.changePassword.newPassword)
+                            .then(() => {
+                                this.changePassword.success = 'Password berhasil diubah!';
+                                this.changePassword.newPassword = '';
+                                setTimeout(() => this.closeChangePasswordModal(), 2000);
+                            })
+                            .catch(error => {
+                                if (error.code === 'auth/weak-password') {
+                                    this.changePassword.error = 'Password baru terlalu lemah (minimal 6 karakter).';
+                                } else {
+                                    this.changePassword.error = 'Gagal mengubah password. Coba lagi.';
+                                }
+                            });
+                    }
+                },
+                
                 // Method to load data after successful login
                 async loadAppData() {
-                    // NOTE: You might want to make this user-specific in the future by using the user's UID (this.user.uid) as part of the IndexedDB key.
-                    // For now, it loads the same data for all users.
+                    // NOTE: In a real app, you would scope data to the user's ID (this.user.uid)
+                    // Example: const key = `weddings_${this.user.uid}`;
                     this.weddings = await idbKeyval.get('weddings') || this.getSampleData();
                     this.invoice = await idbKeyval.get('invoiceTemplate') || this.invoice;
                     if (this.weddings.length > 0) { this.activeWedding = this.weddings[0]; }
@@ -512,7 +606,7 @@ const firebaseConfig = {
                     this.isLoading = false;
                 },
                 
-                // Existing methods
+                // ... all other existing methods
                 setView(view) { this.currentView = view; },
                 formatDateForDisplay(dateString) { if (!dateString) return ''; const date = new Date(dateString + 'T00:00:00'); if (isNaN(date.getTime())) return dateString; return date.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }); },
                 setActiveWedding(wedding) { this.activeWedding = wedding; if (window.innerWidth < 1024) this.currentView = 'jadwal'; },
