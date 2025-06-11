@@ -13,7 +13,7 @@
     <!-- Third-party Libraries -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-    <script src="https://unpkg.com/idb-keyval@6/dist/umd.js"></script> <!-- For robust storage -->
+    <script src="https://unpkg.com/idb-keyval@6/dist/umd.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -22,8 +22,8 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
     <script>
-      // TODO: Replace with your Firebase config
-    const firebaseConfig = {
+      // TODO: Ganti dengan config Firebase kamu
+     const firebaseConfig = {
   apiKey: "AIzaSyB1bkUfIggcgcgTHGPGyY8zOaCgnR7wtFU",
   authDomain: "amlolist.firebaseapp.com",
   projectId: "amlolist",
@@ -42,44 +42,37 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --primary: #8b5cf6; /* Violet 500 */
-            --background: #f8fafc; /* Slate 50 */
-            --surface: #ffffff; 
-            --text-main: #1e293b; /* Slate 800 */
-            --text-muted: #64748b; /* Slate 500 */
-            --border-color: #e2e8f0; /* Slate 200 */
-            --light-violet-bg: #f5f3ff; /* Violet 50 */
-        }
+        :root { --primary: #8b5cf6; --background: #f8fafc; --surface: #ffffff; --text-main: #1e293b; --text-muted: #64748b; --border-color: #e2e8f0; }
         body { font-family: 'Inter', sans-serif; }
-        /* Custom scrollbar */
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: #f1f5f9; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
-        .glass { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid var(--border-color); }
-        /* Animations omitted for brevity... */
+        .glass { background: rgba(255,255,255,0.8); backdrop-filter: blur(10px); border:1px solid var(--border-color); }
     </style>
 </head>
 <body class="bg-[var(--background)] text-[var(--text-main)] min-h-screen">
   <div id="app">
-    <!-- Login Modal -->
+    <!-- Login/Register Modal -->
     <div v-if="showLoginModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
-        <h2 class="text-2xl font-bold mb-4 text-center">Login Amlo List</h2>
-        <input v-model="loginEmail" type="email" placeholder="Email" class="w-full px-3 py-2 border border-slate-300 rounded-lg mb-3 focus:outline-none" />
-        <input v-model="loginPassword" type="password" placeholder="Password" class="w-full px-3 py-2 border border-slate-300 rounded-lg mb-4 focus:outline-none" />
-        <div class="flex justify-between">
-          <button @click="login" class="w-1/2 mr-2 bg-violet-600 text-white py-2 rounded-lg hover:bg-violet-700">Login</button>
-          <button @click="register" class="w-1/2 ml-2 bg-green-600 text-white py-2 rounded-lg hover:bg-green-700">Register</button>
+      <div class="bg-white p-6 rounded-lg w-full max-w-sm shadow-lg">
+        <h2 class="text-xl font-semibold mb-4 text-center">Login Amlo List</h2>
+        <input v-model="loginEmail" type="email" placeholder="Email" class="w-full mb-3 px-3 py-2 border rounded-lg focus:outline-none" />
+        <input v-model="loginPassword" type="password" placeholder="Password" class="w-full mb-4 px-3 py-2 border rounded-lg focus:outline-none" />
+        <div class="flex space-x-2">
+          <button @click="login" class="flex-1 bg-violet-600 text-white py-2 rounded-lg hover:bg-violet-700">Login</button>
+          <button @click="register" class="flex-1 bg-green-600 text-white py-2 rounded-lg hover:bg-green-700">Register</button>
         </div>
       </div>
     </div>
 
-    <!-- Main App Content -->
-    <template v-if="!showLoginModal">
-      <!-- existing PWA content here... -->
-      <!-- e.g., container, nav, modals, etc. -->
+    <template v-else>
+      <!-- ORIGINAL APP CONTENT START -->
+      <input type="file" ref="photoUploader" @change="handlePhotoUpload" class="hidden" accept="image/*">
+      <div class="container mx-auto px-4 py-6">
+        <!-- ... semua markup PWA kamu ... (Beranda, Jadwal, Invoice, Profil, Nav, Modals) -->
+      </div>
+      <!-- ORIGINAL APP CONTENT END -->
     </template>
   </div>
 
@@ -87,24 +80,22 @@
     const { createApp } = Vue;
     const { jsPDF } = window.jspdf;
 
-    const App = {
+    createApp({
       data() {
         return {
-          // Firebase-auth
           showLoginModal: true,
           loginEmail: '',
           loginPassword: '',
           user: null,
-          // existing data properties...
+          // ... semua data properties sebelumnya (weddings, invoice, dll.) ...
         }
       },
-      async created() {
-        // Firebase auth state listener
-        auth.onAuthStateChanged((u) => {
+      created() {
+        auth.onAuthStateChanged(u => {
           this.user = u;
           this.showLoginModal = !u;
           if (u) {
-            // load existing data
+            // muat data setelah login
             this.weddings = idbKeyval.get('weddings') || this.getSampleData();
             this.invoice = idbKeyval.get('invoiceTemplate') || this.invoice;
             if (this.weddings.length) this.activeWedding = this.weddings[0];
@@ -113,29 +104,16 @@
         });
       },
       methods: {
-        login() {
-          auth.signInWithEmailAndPassword(this.loginEmail, this.loginPassword)
-            .catch(err => alert(err.message));
-        },
-        register() {
-          auth.createUserWithEmailAndPassword(this.loginEmail, this.loginPassword)
-            .catch(err => alert(err.message));
-        },
-        logout() {
-          auth.signOut();
-        },
-        // existing methods (saveWeddings, addWedding, etc.)...
+        login() { auth.signInWithEmailAndPassword(this.loginEmail, this.loginPassword).catch(e => alert(e.message)); },
+        register() { auth.createUserWithEmailAndPassword(this.loginEmail, this.loginPassword).catch(e => alert(e.message)); },
+        logout() { auth.signOut(); },
+        // ... semua methods sebelumnya (saveWeddings, addWedding, dll.) ...
       }
-    };
+    }).mount('#app');
 
-    createApp(App).mount('#app');
-
-    // PWA Service Worker Registration
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./service-worker.js')
-          .then(reg => console.log('SW registered:', reg.scope))
-          .catch(err => console.error('SW registration failed:', err));
+        navigator.serviceWorker.register('./service-worker.js').catch(console.error);
       });
     }
   </script>
