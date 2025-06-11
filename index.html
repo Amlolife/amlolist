@@ -106,27 +106,36 @@
 </head>
 <body class="bg-[var(--background)] text-[var(--text-main)] min-h-screen">
     <div id="app" class="pb-24 lg:pb-0">
-        <div v-if="!isLoggedIn" class="min-h-screen flex items-center justify-center bg-slate-50">
+        <div v-if="!isLoggedIn" class="min-h-screen flex items-center justify-center bg-slate-50 p-4">
             <div class="w-full max-w-sm p-8 space-y-6 bg-white rounded-2xl shadow-lg border border-slate-200">
                 <div class="text-center">
                     <div class="flex items-center justify-center space-x-2">
                         <i class="fas fa-list-check text-violet-500 text-3xl"></i>
                         <h1 class="text-3xl font-bold text-slate-800">Amlo List</h1>
                     </div>
-                    <p class="mt-2 text-slate-500">Silakan login untuk melanjutkan</p>
+                    <p class="mt-2 text-slate-500">{{ isRegisterView ? 'Buat akun baru' : 'Silakan login untuk melanjutkan' }}</p>
                 </div>
-                <form @submit.prevent="login" class="space-y-4">
+                
+                <form @submit.prevent="isRegisterView ? register() : login()" class="space-y-4">
                     <div>
                         <label for="email" class="sr-only">Email</label>
                         <input v-model="auth.email" type="email" id="email" required class="w-full px-4 py-3 bg-slate-50 border-2 border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-violet-400" placeholder="Email">
                     </div>
                     <div>
                         <label for="password" class="sr-only">Password</label>
-                        <input v-model="auth.password" type="password" id="password" required class="w-full px-4 py-3 bg-slate-50 border-2 border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-violet-400" placeholder="Password">
+                        <input v-model="auth.password" type="password" id="password" required class="w-full px-4 py-3 bg-slate-50 border-2 border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-violet-400" placeholder="Password (min. 6 karakter)">
                     </div>
                     <p v-if="auth.error" class="text-red-500 text-sm text-center">{{ auth.error }}</p>
-                    <button type="submit" class="w-full py-3 font-semibold text-white bg-violet-600 rounded-xl hover:bg-violet-700 transition">Login</button>
+                    <button type="submit" class="w-full py-3 font-semibold text-white bg-violet-600 rounded-xl hover:bg-violet-700 transition">
+                        {{ isRegisterView ? 'Register' : 'Login' }}
+                    </button>
                 </form>
+
+                <div class="text-center">
+                    <button @click="isRegisterView = !isRegisterView" class="text-sm text-violet-600 hover:underline font-semibold">
+                        {{ isRegisterView ? 'Sudah punya akun? Login' : 'Belum punya akun? Register' }}
+                    </button>
+                </div>
             </div>
         </div>
         
@@ -393,6 +402,7 @@ const firebaseConfig = {
                 return {
                     // Auth-related data
                     isLoggedIn: false,
+                    isRegisterView: false, // To toggle between Login and Register forms
                     user: null,
                     auth: {
                         email: '',
@@ -426,15 +436,13 @@ const firebaseConfig = {
                 auth.onAuthStateChanged(user => {
                     this.isLoading = true; 
                     if (user) {
-                        // User is signed in.
                         this.isLoggedIn = true;
                         this.user = user;
-                        this.loadAppData(); // Now load the main app data
+                        this.loadAppData();
                     } else {
-                        // User is signed out.
                         this.isLoggedIn = false;
                         this.user = null;
-                        this.isLoading = false; // Stop loading, show login page
+                        this.isLoading = false;
                     }
                 });
             },
@@ -462,14 +470,31 @@ const firebaseConfig = {
             methods: {
                 // Auth methods
                 login() {
-                    this.auth.error = ''; // Reset error message
+                    this.auth.error = '';
                     auth.signInWithEmailAndPassword(this.auth.email, this.auth.password)
-                        .then(userCredential => {
-                            // Signed in. The onAuthStateChanged listener will handle UI changes.
-                        })
+                        .then(userCredential => {})
                         .catch(error => {
-                            this.auth.error = "Email atau password salah.";
+                            if (error.code === 'auth/invalid-credential' || error.code === 'auth/wrong-password' || error.code === 'auth/user-not-found') {
+                                this.auth.error = "Email atau password salah.";
+                            } else {
+                                this.auth.error = "Terjadi kesalahan. Silakan coba lagi.";
+                            }
                             console.error("Login Error:", error.message);
+                        });
+                },
+                register() {
+                    this.auth.error = '';
+                    auth.createUserWithEmailAndPassword(this.auth.email, this.auth.password)
+                        .then(userCredential => {})
+                        .catch(error => {
+                             if (error.code === 'auth/email-already-in-use') {
+                                this.auth.error = 'Email ini sudah terdaftar.';
+                            } else if (error.code === 'auth/weak-password') {
+                                this.auth.error = 'Password terlalu lemah (minimal 6 karakter).';
+                            } else {
+                                this.auth.error = "Gagal melakukan registrasi. Silakan coba lagi.";
+                            }
+                            console.error("Register Error:", error.message);
                         });
                 },
                 logout() {
@@ -478,11 +503,13 @@ const firebaseConfig = {
 
                 // Method to load data after successful login
                 async loadAppData() {
+                    // NOTE: You might want to make this user-specific in the future by using the user's UID (this.user.uid) as part of the IndexedDB key.
+                    // For now, it loads the same data for all users.
                     this.weddings = await idbKeyval.get('weddings') || this.getSampleData();
                     this.invoice = await idbKeyval.get('invoiceTemplate') || this.invoice;
                     if (this.weddings.length > 0) { this.activeWedding = this.weddings[0]; }
                     this.generateCalendar();
-                    this.isLoading = false; // Data loaded, app is ready
+                    this.isLoading = false;
                 },
                 
                 // Existing methods
