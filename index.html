@@ -243,7 +243,6 @@
                 closeTimelineModal(goBack = true) { this.showTimelineModal = false; goBack && history.back() },
                 setView(view, pushState = true) { if(this.currentView === view && pushState) { return; } this.currentView = view; if (pushState) { history.pushState({ view: view }, '', `#${view}`); } },
 
-                // Auth Methods
                 login() { 
                     this.auth.error = ""; this.auth.loading = true;
                     auth.signInWithEmailAndPassword(this.auth.email, this.auth.password)
@@ -279,11 +278,9 @@
                         .catch(e => { this.forgotPassword.error = "Email tidak ditemukan." });
                 },
                 
-                // Firestore Data Methods
                 loadAppData() { 
                     this.appReady = false;
                     if (this.firestoreUnsubscribe) { this.firestoreUnsubscribe(); }
-                    
                     this.firestoreUnsubscribe = db.collection('weddings')
                         .where('ownerId', '==', this.user.uid)
                         .orderBy('date', 'desc')
@@ -297,7 +294,6 @@
                         }, (error) => {
                             console.error("Error fetching weddings:", error); this.addToast("Gagal memuat data jadwal.", "error"); this.isLoading = false;
                         });
-                    
                     this.loadInvoiceTemplate(false);
                 },
                 addWedding() {
@@ -314,7 +310,6 @@
                         tags:[], 
                         contacts: {bride:"",groom:"",email:"",phone:""}, 
                         details:{guests:0,type:"TBD",package:"TBD"},
-                        portalPassword: Math.random().toString(36).substring(2, 10),
                         showTimelineInPortal: false 
                     };
                     db.collection('weddings').add(newWeddingData)
