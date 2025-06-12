@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Client Portal</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-storage-compat.js"></script>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary: #1a1a1a; --surface: #ffffff; --background: #f8f8f8; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--background); }
+        .photo-upload-overlay { position: absolute; inset: 0; background-color: rgba(255,255,255,0.7); display: flex; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
+    </style>
+</head>
+<body class="text-slate-800">
+    <div id="app">
+        <div v-if="isLoading" class="min-h-screen flex items-center justify-center">
+            <i class="fas fa-spinner fa-spin text-slate-500 text-4xl"></i>
+        </div>
+
+        <div v-else>
+            <div v-if="!isLoggedIn" class="min-h-screen bg-slate-100 flex items-center justify-center p-4">
+                <div class="w-full max-w-sm bg-white p-8 rounded-2xl shadow-lg">
+                    <h1 class="text-2xl font-bold text-center">Client Portal</h1>
+                    <p class="text-slate-500 text-center mt-2 mb-6">Masukkan password akses Anda.</p>
+                    <form @submit.prevent="login">
+                        <input v-model="password" type="password" class="w-full px-4 py-3 bg-slate-100 rounded-lg text-center" placeholder="Password">
+                        <p v-if="loginError" class="text-red-500 text-sm text-center mt-2">{{ loginError }}</p>
+                        <button type="submit" class="w-full mt-4 py-3 bg-slate-800 text-white font-semibold rounded-lg">Login</button>
+                    </form>
+                </div>
+            </div>
+
+            <div v-else class="container mx-auto max-w-4xl p-4 sm:p-8">
+                <header class="text-center mb-12">
+                    <h1 class="text-4xl font-extrabold">{{ wedding.title }}</h1>
+                    <p class="text-slate-500 text-lg mt-2">{{ formatDate(wedding.date) }}</p>
+                </header>
+
+                <div class="space-y-10">
+                    <!-- Referensi Photos -->
+                    <section>
+                        <h2 class="text-2xl font-bold mb-4">Referensi Foto</h2>
+                        <p class="text-slate-500 mb-4">Silakan upload foto referensi Anda di sini (misal: gaya foto, pose, atau suasana yang diinginkan). Foto ini akan menjadi inspirasi bagi kami.</p>
+                        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                            <div v-for="(photo, index) in wedding.photos" :key="photo.path" class="group aspect-square bg-slate-100 rounded-lg overflow-hidden relative">
+                                <img :src="photo.url" class="w-full h-full object-cover">
+                                <button @click.stop="deletePhoto(index, photo)" class="absolute top-1 right-1 bg-black bg-opacity-40 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">×</button>
+                            </div>
+                            <div class="relative">
+                                <button @click="$refs.photoUploader.click()" class="aspect-square bg-slate-100/60 rounded-lg flex items-center justify-center text-slate-400 border-2 border-dashed border-slate-300 hover:border-slate-400 hover:text-slate-500 transition-colors w-full h-full">
+                                    <i class="fas fa-plus text-3xl"></i>
+                                </button>
+                                <div v-if="isUploading" class="photo-upload-overlay rounded-lg"><i class="fas fa-spinner fa-spin text-slate-600 text-2xl"></i></div>
+                            </div>
+                        </div>
+                        <input type="file" ref="photoUploader" @change="handlePhotoUpload" class="hidden" accept="image/*">
+                    </section>
+
+                    <!-- Must Have Shots -->
+                    <section>
+                        <h2 class="text-2xl font-bold mb-4">Foto Wajib</h2>
+                        <p class="text-slate-500 mb-4">Ini adalah daftar foto wajib yang telah kita sepakati. Daftar ini tidak bisa diubah dari portal ini.</p>
+                        <div v-if="wedding.shots && wedding.shots.length > 0" class="space-y-3">
+                            <div v-for="shot in wedding.shots" :key="shot.id" class="flex items-center p-4 bg-slate-100 rounded-lg">
+                                <span class="w-6 h-6 flex items-center justify-center mr-4">
+                                    <i class="fas" :class="shot.completed ? 'fa-check-circle text-green-500' : 'fa-circle text-slate-300'"></i>
+                                </span>
+                                <p class="font-medium">{{ shot.title }}</p>
+                            </div>
+                        </div>
+                        <div v-else class="text-center py-8 text-slate-400 bg-slate-50 rounded-lg">
+                            <p>Belum ada daftar foto wajib.</p>
+                        </div>
+                    </section>
+                    
+                    <!-- Timeline (Optional) -->
+                    <section v-if="wedding.showTimelineInPortal">
+                        <h2 class="text-2xl font-bold mb-4">Linimasa Acara</h2>
+                        <div v-if="wedding.timeline && wedding.timeline.length > 0" class="relative border-l-2 border-slate-200 ml-2">
+                             <div v-for="item in wedding.timeline" :key="item.id" class="relative pl-8 pb-8">
+                                <div class="absolute -left-[9px] top-1 w-4 h-4 bg-white border-4 border-slate-800 rounded-full z-10"></div>
+                                <div>
+                                    <span class="text-sm font-semibold bg-slate-800 text-white px-2 py-0.5 rounded-full">{{ item.time }}</span>
+                                    <p class="font-semibold text-slate-800 mt-2">{{ item.title }}</p>
+                                    <p class="text-sm text-slate-500 mt-1">{{ item.notes }}</p>
+                                </div>
+                            </div>
+                        </div>
+                         <div v-else class="text-center py-8 text-slate-400 bg-slate-50 rounded-lg">
+                            <p>Belum ada linimasa acara.</p>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const { createApp } = Vue;
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCBij3UUC9XvrkmrtVB8vZxWg_6685ce1o",
+  authDomain: "amlolist-final.firebaseapp.com",
+  projectId: "amlolist-final",
+  storageBucket: "amlolist-final.firebasestorage.app",
+  messagingSenderId: "25110140647",
+  appId: "1:25110140647:web:740485070c06bfb13b3442"
+};
+        
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const storage = firebase.storage();
+
+        const App = {
+            data() {
+                return {
+                    isLoading: true,
+                    isLoggedIn: false,
+                    password: '',
+                    loginError: '',
+                    weddingId: '',
+                    wedding: null,
+                    firestoreUnsubscribe: null,
+                    isUploading: false
+                }
+            },
+            created() {
+                const params = new URLSearchParams(window.location.search);
+                this.weddingId = params.get('id');
+
+                if (!this.weddingId) {
+                    this.isLoading = false;
+                    this.loginError = "ID Jadwal tidak ditemukan. Silakan gunakan link yang diberikan.";
+                    return;
+                }
+                
+                // For simplicity, we store login state in session storage
+                if (sessionStorage.getItem('portal_wedding_id') === this.weddingId) {
+                    this.isLoggedIn = true;
+                    this.loadWeddingData();
+                } else {
+                    this.isLoading = false;
+                }
+            },
+            beforeUnmount() {
+                if (this.firestoreUnsubscribe) {
+                    this.firestoreUnsubscribe();
+                }
+            },
+            methods: {
+                login() {
+                    if (!this.password) return;
+                    this.isLoading = true;
+                    this.loginError = '';
+                    
+                    const docRef = db.collection('weddings').doc(this.weddingId);
+                    docRef.get().then(doc => {
+                        if (doc.exists && doc.data().portalPassword === this.password) {
+                            this.isLoggedIn = true;
+                            sessionStorage.setItem('portal_wedding_id', this.weddingId);
+                            this.loadWeddingData();
+                        } else {
+                            this.loginError = "Password salah atau jadwal tidak ditemukan.";
+                            this.isLoading = false;
+                        }
+                    }).catch(err => {
+                        console.error(err);
+                        this.loginError = "Terjadi kesalahan. Coba lagi.";
+                        this.isLoading = false;
+                    });
+                },
+                loadWeddingData() {
+                    this.isLoading = true;
+                    this.firestoreUnsubscribe = db.collection('weddings').doc(this.weddingId)
+                        .onSnapshot(doc => {
+                            if (doc.exists) {
+                                this.wedding = { id: doc.id, ...doc.data() };
+                            } else {
+                                this.isLoggedIn = false;
+                                this.loginError = "Jadwal ini tidak lagi tersedia.";
+                                sessionStorage.removeItem('portal_wedding_id');
+                            }
+                            this.isLoading = false;
+                        }, error => {
+                            console.error("Error fetching wedding:", error);
+                            this.loginError = "Gagal memuat data.";
+                            this.isLoading = false;
+                        });
+                },
+                saveWeddingData() {
+                    if (!this.wedding) return;
+                    const weddingRef = db.collection('weddings').doc(this.wedding.id);
+                    // We only save the photos array to avoid clients overwriting other data
+                    weddingRef.update({
+                        photos: this.wedding.photos
+                    }).catch(err => console.error("Error saving photo list:", err));
+                },
+                handlePhotoUpload(e) {
+                    const file = e.target.files[0];
+                    if (!file) return;
+                    this.isUploading = true;
+                    
+                    const uniqueFileName = `${Date.now()}-${file.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`;
+                    const filePath = `client_uploads/${this.wedding.id}/${uniqueFileName}`;
+                    
+                    const storageRef = storage.ref(filePath);
+                    const uploadTask = storageRef.put(file);
+
+                    uploadTask.on('state_changed', 
+                        () => {}, 
+                        (error) => {
+                            console.error("Upload failed:", error);
+                            this.isUploading = false;
+                        }, 
+                        () => {
+                            uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
+                                if (!this.wedding.photos) { this.wedding.photos = []; }
+                                this.wedding.photos.push({ path: filePath, url: downloadURL });
+                                this.saveWeddingData();
+                                this.isUploading = false;
+                            });
+                        }
+                    );
+                    e.target.value = "";
+                },
+                deletePhoto(index, photo) {
+                    if (!confirm("Hapus foto referensi ini?")) return;
+
+                    const photoRef = storage.ref(photo.path);
+                    photoRef.delete().then(() => {
+                        this.wedding.photos.splice(index, 1);
+                        this.saveWeddingData();
+                    }).catch((error) => {
+                        console.error("Error deleting photo:", error);
+                        if (error.code === 'storage/object-not-found') {
+                            this.wedding.photos.splice(index, 1);
+                            this.saveWeddingData();
+                        }
+                    });
+                },
+                formatDate(dateString) {
+                    if (!dateString) return "-";
+                    const date = new Date(dateString);
+                    if (dateString.length === 10) { date.setUTCHours(0,0,0,0); }
+                    return isNaN(date.getTime()) ? dateString : date.toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" });
+                }
+            }
+        };
+
+        createApp(App).mount('#app');
+    </script>
+</body>
+</html>
