@@ -137,13 +137,6 @@
                             <button type="button" @click="copyToClipboard(getClientPortalLink(weddingToEdit.id))" class="text-slate-500 hover:text-slate-800 p-1"><i class="fas fa-copy"></i></button>
                         </div>
                     </div>
-                    <div class="bg-slate-100 p-3 rounded-lg">
-                        <label class="text-xs font-bold text-slate-500">Password</label>
-                         <div class="flex items-center space-x-2">
-                            <input :value="weddingToEdit.portalPassword" type="text" readonly class="w-full bg-transparent font-mono text-sm p-1">
-                            <button type="button" @click="copyToClipboard(weddingToEdit.portalPassword)" class="text-slate-500 hover:text-slate-800 p-1"><i class="fas fa-copy"></i></button>
-                        </div>
-                    </div>
                 </div>
             </div>
         <div class="flex justify-end space-x-3 pt-4"><button type="button" @click="closeEditModal()" class="px-5 py-2 bg-slate-200 rounded-lg font-semibold">Batal</button><button type="submit" class="px-5 py-2 bg-slate-800 text-white rounded-lg font-semibold">Simpan</button></div></form></div></div></div></transition>
@@ -316,7 +309,6 @@
                         tags:[], 
                         contacts: {bride:"",groom:"",email:"",phone:""}, 
                         details:{guests:0,type:"TBD",package:"TBD"},
-                        portalPassword: Math.random().toString(36).substring(2, 10),
                         showTimelineInPortal: false 
                     };
                     db.collection('weddings').add(newWeddingData)
