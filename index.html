@@ -100,7 +100,148 @@
                         <transition name="fade" mode="out-in"><div :key="currentView">
                             <main v-if="currentView === 'beranda'"><div class="flex justify-between items-center mb-6"><h1 class="text-3xl font-extrabold">Ringkasan</h1><button @click="setView('profil')" class="w-10 h-10 rounded-full bg-slate-200 flex items-center justify-center"><i class="fas fa-user"></i></button></div><div class="relative mb-6"><i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-[var(--text-muted)]"></i><input type="text" v-model="searchQuery" placeholder="Cari jadwal atau kontak..." class="w-full pl-12 pr-4 py-3 bg-slate-200/50 border-none rounded-full focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"></div><div class="bg-[var(--surface)] p-4 sm:p-5 rounded-2xl shadow-sm border border-[var(--border-color)] mb-6"><div class="flex items-center justify-between mb-4"><h2 class="font-bold text-lg">{{ calendar.monthName }} {{ calendar.year }}</h2><div class="flex space-x-2"><button @click="changeMonth(-1)" class="w-8 h-8 rounded-full hover:bg-slate-100 flex items-center justify-center"><i class="fas fa-chevron-left text-slate-500"></i></button><button @click="changeMonth(1)" class="w-8 h-8 rounded-full hover:bg-slate-100 flex items-center justify-center"><i class="fas fa-chevron-right text-slate-500"></i></button></div></div><div class="grid grid-cols-7 gap-1 text-center text-sm"><div v-for="day in ['M', 'S', 'S', 'R', 'K', 'J', 'S']" class="font-semibold text-[var(--text-muted)]">{{ day }}</div><div v-for="day in calendar.days" @click="selectDate(day)" class="relative py-2 rounded-full transition-colors" :class="{'cursor-pointer': day.date, 'bg-lime-300 text-slate-900 font-bold': day.fullDate === selectedDate, 'hover:bg-slate-100': day.date && day.fullDate !== selectedDate }"><span :class="{'opacity-50': !day.date}">{{ day.date }}</span><div v-if="day.hasEvent && day.fullDate !== selectedDate" class="w-1.5 h-1.5 bg-slate-800 rounded-full absolute bottom-1.5 left-1/2 -translate-x-1/2"></div></div></div></div><transition-group tag="div" name="list" class="space-y-4"><div v-for="wedding in filteredWeddings" :key="wedding.id" @click="goToJadwal(wedding)" class="bg-[var(--surface)] p-5 rounded-2xl shadow-sm border border-[var(--border-color)] cursor-pointer transition-all hover:border-slate-300"><div class="flex justify-between items-start"><div><h3 class="font-bold text-lg text-[var(--text-main)]">{{ wedding.title }}</h3><p class="text-sm text-[var(--text-muted)]">{{ formatDateForDisplay(wedding.date) }}</p></div><div class="text-sm font-semibold bg-slate-100 px-3 py-1 rounded-full">{{ getTaskProgress(wedding).percent }}%</div></div><div class="mt-4"><div class="w-full bg-slate-100 rounded-full h-2"><div class="bg-slate-800 h-2 rounded-full" :style="{ width: getTaskProgress(wedding).percent + '%' }"></div></div></div></div></transition-group><div v-if="filteredWeddings.length === 0" class="text-center py-16 bg-white rounded-2xl border border-slate-200"><i class="fas fa-calendar-check text-4xl text-slate-300 mb-4"></i><h3 class="font-semibold text-slate-600">Tidak ada jadwal ditemukan</h3><p class="text-sm text-slate-400">Coba hapus filter atau buat jadwal baru.</p></div></main>
                             <main v-if="currentView === 'jadwal'" class="grid grid-cols-1 lg:grid-cols-4 gap-6"><aside class="lg:col-span-1 bg-[var(--surface)] rounded-2xl shadow-sm border border-[var(--border-color)] p-5 h-fit lg:sticky top-6"><h2 class="text-xl font-bold flex items-center text-[var(--text-main)] mb-4">Daftar Jadwal</h2><div class="space-y-2 max-h-[60vh] overflow-y-auto" v-if="weddings.length > 0"><template v-for="wedding in weddings" :key="wedding.id"><div @click="setActiveWedding(wedding)" class="p-4 rounded-lg border-2 cursor-pointer transition" :class="{'bg-lime-100/50 border-lime-300': activeWedding && activeWedding.id === wedding.id, 'border-transparent bg-slate-100/60 hover:bg-slate-200/60': !activeWedding || activeWedding.id !== wedding.id}"><h3 class="font-semibold text-slate-800">{{ wedding.title }}</h3><p class="text-sm text-[var(--text-muted)]">{{ formatDateForDisplay(wedding.date) }}</p></div></template></div><div v-else class="text-center py-8"><i class="fas fa-calendar-times text-4xl text-slate-300 mb-3"></i><p class="text-[var(--text-muted)]">Belum ada jadwal.</p><button @click="addWedding" class="mt-4 text-sm text-slate-800 hover:underline font-semibold">+ Tambah Jadwal</button></div></aside><div class="lg:col-span-3 space-y-6"><template v-if="activeWedding"><div class="bg-[var(--surface)] rounded-2xl shadow-sm border border-[var(--border-color)] p-6"><div class="flex justify-between items-start mb-6"><div><h2 class="text-3xl font-extrabold text-[var(--text-main)]">{{ activeWedding.title }}</h2><p class="text-[var(--text-muted)] flex items-center mt-1"><i class="fas fa-calendar-day mr-2"></i> {{ formatDateForDisplay(activeWedding.date) }}</p></div><div class="flex space-x-1"><button @click="openEditModal(activeWedding)" class="w-9 h-9 flex items-center justify-center rounded-full hover:bg-slate-100 transition" title="Edit"><i class="fas fa-edit text-slate-500"></i></button><button @click="deleteWedding(activeWedding.id)" class="w-9 h-9 flex items-center justify-center rounded-full hover:bg-red-100 transition" title="Delete"><i class="fas fa-trash-alt text-red-500"></i></button></div></div><div class="grid grid-cols-1 md:grid-cols-2 gap-4"><div class="bg-slate-100/60 p-4 rounded-lg"><h3 class="font-bold flex items-center text-slate-800 mb-1">Lokasi</h3><p class="text-[var(--text-muted)]">{{ activeWedding.location }}</p></div><div class="bg-slate-100/60 p-4 rounded-lg"><h3 class="font-bold flex items-center text-slate-800 mb-1">Kontak</h3><p class="text-[var(--text-muted)]">{{ activeWedding.contacts.bride }} & {{ activeWedding.contacts.groom }}</p></div></div><div class="mt-4"><h3 class="font-bold mb-2 text-slate-800">Catatan</h3><textarea v-model="activeWedding.notes" @blur="saveActiveWedding" class="w-full h-24 p-3 bg-slate-100/60 text-slate-700 focus:outline-none rounded-lg resize-none focus:ring-2 focus:ring-[var(--primary)]" placeholder="Tambahkan catatan..."></textarea></div></div><div class="bg-[var(--surface)] rounded-2xl shadow-sm border border-[var(--border-color)] p-6"><div class="flex items-center justify-between mb-4"><h2 class="text-xl font-bold text-[var(--text-main)]">Foto Wajib</h2><button @click="openShotModal" class="font-semibold text-slate-900 bg-lime-300 px-4 py-1.5 rounded-lg text-sm transition hover:opacity-90">Tambah</button></div><div ref="shotListContainer" class="mt-4 space-y-3" v-if="activeWedding.shots.length > 0"><div v-for="shot in activeWedding.shots" :key="shot.id" class="flex items-center p-3 rounded-lg bg-slate-100/60"><i class="fas fa-grip-vertical drag-handle text-slate-400 mr-3"></i><label class="flex items-center cursor-pointer flex-grow"><input type="checkbox" v-model="shot.completed" @change="saveActiveWedding" class="hidden"><span class="w-6 h-6 border-2 border-slate-300 rounded-md flex items-center justify-center mr-4 transition-all" :class="{'bg-slate-800 border-slate-800': shot.completed}"><i class="fas fa-check text-white text-sm" v-show="shot.completed"></i></span><p class="font-medium" :class="{'line-through text-[var(--text-muted)]': shot.completed}">{{ shot.title }}</p></label><button @click="deleteShot(shot.id)" class="ml-auto w-8 h-8 flex items-center justify-center text-slate-400 hover:text-red-500 hover:bg-red-100/70 rounded-full"><i class="fas fa-times"></i></button></div></div><div v-else class="text-center py-8 text-[var(--text-muted)]"><i class="fas fa-camera-slash text-4xl mb-4"></i><p class="font-semibold text-slate-600">Belum ada foto wajib.</p><p class="text-sm text-slate-500 mt-1">Tambahkan daftar foto yang harus diambil.</p><button @click="openShotModal" class="mt-4 font-semibold text-slate-900 bg-lime-300 px-4 py-2 rounded-lg text-sm transition hover:opacity-90">Tambah Foto Wajib</button></div></div><div class="bg-[var(--surface)] rounded-2xl shadow-sm border border-[var(--border-color)] p-6"><h2 class="text-xl font-bold text-[var(--text-main)] mb-4">Quick Preview</h2><div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4"><div v-for="(photo, index) in activeWedding.photos" :key="index" class="group aspect-square bg-slate-100 rounded-lg overflow-hidden relative cursor-pointer" @click="openPhotoPreview(photo.url)"><img :src="photo.url" class="w-full h-full object-cover" alt="Wedding preview"><div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center"><i class="fas fa-eye text-white text-2xl"></i></div><button @click.stop="deletePhoto(index)" class="absolute top-1 right-1 bg-black bg-opacity-40 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">×</button></div><button @click="addPhoto" class="aspect-square bg-slate-100/60 rounded-lg flex items-center justify-center text-slate-400 border-2 border-dashed border-slate-300 hover:border-lime-400 hover:text-lime-500 transition-colors"><i class="fas fa-plus text-3xl"></i></button></div></div><div class="bg-[var(--surface)] rounded-2xl shadow-sm border border-[var(--border-color)] p-6"><div class="flex items-center justify-between mb-4"><h2 class="text-xl font-bold text-[var(--text-main)]">Linimasa</h2><button @click="openTimelineModal" class="font-semibold text-slate-900 bg-lime-300 px-4 py-1.5 rounded-lg text-sm transition hover:opacity-90">Tambah</button></div><div ref="timelineContainer" class="relative border-l-2 border-slate-200 ml-2" v-if="activeWedding.timeline.length > 0"><div v-for="(item, index) in activeWedding.timeline" :key="item.id" class="relative pl-8 pb-8"><div class="absolute -left-2.5 top-1 flex items-center"><i class="fas fa-grip-vertical drag-handle text-slate-400 -ml-5 mr-1"></i><div class="w-4 h-4 bg-[var(--background)] border-4 border-slate-800 rounded-full z-10"></div></div><div class="flex justify-between items-start"><div><p class="font-semibold text-slate-800">{{ item.title }}</p><span class="text-sm font-semibold bg-slate-800 text-white px-2 py-0.5 rounded-full">{{ item.time }}</span><p class="text-sm text-[var(--text-muted)] mt-1">{{ item.notes }}</p></div><button @click="deleteTimelineItem(item.id)" class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-red-500"><i class="fas fa-trash-alt text-xs"></i></button></div></div></div><div v-else class="text-center py-8 text-[var(--text-muted)]"><i class="fas fa-list-ol text-4xl mb-4"></i><p class="font-semibold text-slate-600">Belum ada linimasa.</p><p class="text-sm text-slate-500 mt-1">Buat jadwal acara dari awal hingga akhir.</p><button @click="openTimelineModal" class="mt-4 font-semibold text-slate-900 bg-lime-300 px-4 py-2 rounded-lg text-sm transition hover:opacity-90">Tambah Linimasa</button></div></div></template><template v-else><div class="flex flex-col items-center justify-center text-center h-[60vh] bg-[var(--surface)] rounded-2xl shadow-sm border border-[var(--border-color)] p-4"><i class="fas fa-mouse-pointer text-5xl text-slate-300 mb-4"></i><h2 class="text-2xl font-bold text-[var(--text-main)]">Pilih Jadwal</h2><p class="text-[var(--text-muted)] mt-2">Pilih sebuah jadwal dari daftar di samping<br>untuk melihat detail lengkapnya.</p></div></template></div></main>
-                            <main v-if="currentView === 'invoice'"><div class="bg-[var(--surface)] p-6 sm:p-8 rounded-2xl shadow-sm border border-[var(--border-color)]"><h1 class="text-3xl font-extrabold text-[var(--text-main)] mb-2">Invoice Maker</h1><p class="text-[var(--text-muted)] mb-8">Buat, simpan, dan ekspor invoice profesional.</p><div class="grid grid-cols-1 md:grid-cols-2 gap-6"><div><h3 class="font-bold text-slate-600 mb-2">Detail Anda</h3><div class="space-y-4"><input type="text" class="w-full px-4 py-3 bg-slate-100/60 border-none rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary)]" v-model="invoice.invoicerName" placeholder="Nama Anda / Perusahaan"><input type="text" class="w-full px-4 py-3 bg-slate-100/60 border-none rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary)]" v-model="invoice.invoicerSlogan" placeholder="Slogan / Deskripsi"></div></div><div><h3 class="font-bold text-slate-600 mb-2">Detail Invoice</h3><div class="space-y-4"><input type="text" class="w-full px-4 py-3 bg-slate-100/60 border-none rounded-lg" v-model="invoice.number" placeholder="Nomor Invoice"><input type="date" class="w-full px-4 py-3 bg-slate-100/60 border-none rounded-lg" v-model="invoice.date"><input type="date" class="w-full px-4 py-3 bg-slate-100/60 border-none rounded-lg" v-model="invoice.dueDate"></div></div><div class="md:col-span-2"><h3 class="font-bold text-slate-600 mb-2">Info Klien</h3><div class="grid grid-cols-1 sm:grid-cols-2 gap-4"><input type="text" class="w-full px-4 py-3 bg-slate-100/60 border-none rounded-lg" v-model="invoice.client.name" placeholder="Nama Klien"><textarea class="w-full px-4 py-3 bg-slate-100/60 border-none rounded-lg resize-none" v-model="invoice.client.address" placeholder="Alamat Klien"></textarea></div></div></div><h3 class="font-bold text-slate-600 mt-8 mb-2">Item Tagihan</h3><div class="space-y-3"><div v-for="(item, index) in invoice.items" :key="index" class="flex items-center gap-2"><input type="text" class="w-full bg-slate-100/60 px-4 py-3 border-none rounded-lg" v-model="item.description" placeholder="Deskripsi item"><input type="number" class="w-24 bg-slate-100/60 px-4 py-3 border-none rounded-lg" v-model.number="item.quantity" placeholder="Jml"><input type="number" class="w-32 bg-slate-100/60 px-4 py-3 border-none rounded-lg" v-model.number="item.rate" placeholder="Harga"><button @click="removeItem(index)" class="text-red-400 hover:text-red-600 p-2"><i class="fas fa-trash"></i></button></div></div><button @click="addItem" class="text-slate-800 font-semibold mt-4">+ Tambah Baris</button><div class="mt-6 flex justify-end"><div class="w-full max-w-sm space-y-2"><div class="flex justify-between"><span class="text-[var(--text-muted)]">Subtotal</span><span class="font-medium text-slate-700">{{ formatCurrency(invoiceSubtotal) }}</span></div><div class="flex justify-between items-center"><span class="text-[var(--text-muted)]">Pajak (%)</span><input type="number" class="w-20 text-right bg-slate-100/60 rounded-md py-1 px-2 border-none" v-model.number="invoice.taxRate"></div><div class="flex justify-between font-bold text-lg border-t-2 pt-2 border-slate-200"><span class="text-slate-800">Total</span><span class="text-slate-900">{{ formatCurrency(invoiceTotal) }}</span></div></div></div></div><div class="mt-6 flex justify-between items-center"><div><button @click="saveInvoiceTemplate" class="bg-slate-200 text-slate-700 font-bold py-2 px-5 rounded-lg hover:bg-slate-300 transition">Simpan Template</button><button @click="loadInvoiceTemplate" class="ml-2 bg-slate-200 text-slate-700 font-bold py-2 px-5 rounded-lg hover:bg-slate-300 transition">Gunakan Template</button></div><button @click="generatePDF" class="bg-slate-800 text-white font-bold py-2 px-5 rounded-lg hover:bg-slate-900 transition">Ekspor ke PDF</button></div></main>
+                            
+                            <!-- FIX: New Invoice UI -->
+                            <main v-if="currentView === 'invoice'">
+                                <div class="mb-6 flex justify-between items-center">
+                                    <div>
+                                        <h1 class="text-3xl font-extrabold text-[var(--text-main)]">Invoice Maker</h1>
+                                        <p class="text-[var(--text-muted)]">Buat & lihat invoice secara real-time.</p>
+                                    </div>
+                                    <div class="flex items-center space-x-2">
+                                        <button @click="saveInvoiceTemplate" class="bg-slate-200 text-slate-700 font-bold py-2 px-4 rounded-lg hover:bg-slate-300 transition text-sm">Simpan Template</button>
+                                        <button @click="loadInvoiceTemplate" class="bg-slate-200 text-slate-700 font-bold py-2 px-4 rounded-lg hover:bg-slate-300 transition text-sm">Gunakan Template</button>
+                                        <button @click="generatePDF" class="bg-slate-800 text-white font-bold py-2 px-5 rounded-lg hover:bg-slate-900 transition text-sm flex items-center" :disabled="invoice.isGenerating">
+                                            <i v-if="invoice.isGenerating" class="fas fa-spinner fa-spin mr-2"></i> Ekspor PDF
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                                    <!-- Form Column -->
+                                    <div class="space-y-6">
+                                        <div class="bg-white p-5 rounded-xl border border-slate-200">
+                                            <h3 class="font-bold text-lg mb-4 text-slate-700">Tagihan Dari</h3>
+                                            <div class="space-y-4">
+                                                <input type="text" class="w-full px-4 py-3 bg-slate-100 border-none rounded-lg" v-model="invoice.invoicerName" placeholder="Nama Anda / Perusahaan">
+                                                <input type="text" class="w-full px-4 py-3 bg-slate-100 border-none rounded-lg" v-model="invoice.invoicerSlogan" placeholder="Slogan / Deskripsi Singkat">
+                                            </div>
+                                        </div>
+                                        <div class="bg-white p-5 rounded-xl border border-slate-200">
+                                            <h3 class="font-bold text-lg mb-4 text-slate-700">Tagihan Untuk</h3>
+                                            <div class="space-y-4">
+                                                <input type="text" class="w-full px-4 py-3 bg-slate-100 border-none rounded-lg" v-model="invoice.client.name" placeholder="Nama Klien">
+                                                <textarea class="w-full px-4 py-3 bg-slate-100 border-none rounded-lg resize-none" rows="2" v-model="invoice.client.address" placeholder="Alamat Klien"></textarea>
+                                            </div>
+                                        </div>
+                                        <div class="bg-white p-5 rounded-xl border border-slate-200">
+                                            <h3 class="font-bold text-lg mb-4 text-slate-700">Detail Invoice</h3>
+                                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                                <input type="text" class="w-full px-4 py-3 bg-slate-100 border-none rounded-lg" v-model="invoice.number" placeholder="No. Invoice">
+                                                <input type="date" class="w-full px-4 py-3 bg-slate-100 border-none rounded-lg" v-model="invoice.date">
+                                                <input type="date" class="w-full px-4 py-3 bg-slate-100 border-none rounded-lg" v-model="invoice.dueDate">
+                                            </div>
+                                        </div>
+                                        <div class="bg-white p-5 rounded-xl border border-slate-200">
+                                            <h3 class="font-bold text-lg mb-2 text-slate-700">Item Tagihan</h3>
+                                            <div class="grid grid-cols-[1fr,auto,auto,auto] gap-2 text-sm font-semibold text-slate-500 mb-2 px-2 hidden sm:grid">
+                                                <span>Deskripsi</span>
+                                                <span class="text-right">Jml</span>
+                                                <span class="text-right">Harga</span>
+                                                <span></span>
+                                            </div>
+                                            <div class="space-y-2">
+                                                <div v-for="(item, index) in invoice.items" :key="index" class="grid grid-cols-[1fr,auto,auto,auto] gap-2 items-center">
+                                                    <input type="text" class="w-full bg-slate-100 px-4 py-2 border-none rounded-lg" v-model="item.description" placeholder="Deskripsi item">
+                                                    <input type="number" class="w-16 bg-slate-100 px-3 py-2 border-none rounded-lg text-right" v-model.number="item.quantity" placeholder="Jml">
+                                                    <input type="number" class="w-28 bg-slate-100 px-3 py-2 border-none rounded-lg text-right" v-model.number="item.rate" placeholder="Harga">
+                                                    <button @click="removeItem(index)" class="text-red-400 hover:text-red-600 p-2 rounded-full w-8 h-8 flex items-center justify-center"><i class="fas fa-trash"></i></button>
+                                                </div>
+                                            </div>
+                                            <button @click="addItem" class="text-slate-800 font-semibold mt-4 hover:underline">+ Tambah Baris</button>
+                                        </div>
+                                         <div class="bg-white p-5 rounded-xl border border-slate-200">
+                                            <h3 class="font-bold text-lg mb-4 text-slate-700">Catatan & Total</h3>
+                                             <textarea class="w-full px-4 py-3 bg-slate-100 border-none rounded-lg resize-none mb-4" rows="2" v-model="invoice.notes" placeholder="Catatan tambahan (contoh: detail transfer bank)"></textarea>
+                                             <div class="w-full max-w-sm ml-auto space-y-2">
+                                                <div class="flex justify-between">
+                                                    <span class="text-slate-500">Subtotal</span>
+                                                    <span class="font-medium text-slate-700">{{ formatCurrency(invoiceSubtotal) }}</span>
+                                                </div>
+                                                <div class="flex justify-between items-center">
+                                                    <span class="text-slate-500">Pajak (%)</span>
+                                                    <input type="number" class="w-20 text-right bg-slate-100 rounded-md py-1 px-2 border-none" v-model.number="invoice.taxRate">
+                                                </div>
+                                                <div class="flex justify-between font-bold text-xl border-t-2 pt-2 mt-2 border-slate-200">
+                                                    <span class="text-slate-800">Total</span>
+                                                    <span class="text-slate-900">{{ formatCurrency(invoiceTotal) }}</span>
+                                                </div>
+                                            </div>
+                                         </div>
+                                    </div>
+
+                                    <!-- Preview Column -->
+                                    <div class="lg:sticky lg:top-6 h-fit">
+                                        <div id="invoice-preview" class="bg-white rounded-xl border border-slate-200 shadow-lg p-8 sm:p-12 text-sm text-slate-700">
+                                            <div class="flex justify-between items-start mb-12">
+                                                <div>
+                                                    <h2 class="text-2xl font-bold uppercase text-slate-800">Invoice</h2>
+                                                    <p class="text-slate-500">{{ invoice.number || 'INV-001' }}</p>
+                                                </div>
+                                                <div class="text-right">
+                                                    <h3 class="text-lg font-bold text-slate-800">{{ invoice.invoicerName || 'Nama Perusahaan' }}</h3>
+                                                    <p class="text-slate-500 max-w-[200px]">{{ invoice.invoicerSlogan || 'Slogan Anda' }}</p>
+                                                </div>
+                                            </div>
+                                            <div class="grid sm:grid-cols-2 gap-8 mb-12">
+                                                <div>
+                                                    <h4 class="font-bold text-slate-500 uppercase tracking-wider mb-2">Tagihan Untuk</h4>
+                                                    <p class="font-semibold text-slate-800">{{ invoice.client.name || 'Nama Klien' }}</p>
+                                                    <p class="whitespace-pre-line">{{ invoice.client.address || 'Alamat Klien' }}</p>
+                                                </div>
+                                                <div class="text-left sm:text-right">
+                                                     <h4 class="font-bold text-slate-500 uppercase tracking-wider mb-2">Detail</h4>
+                                                     <p><span class="font-semibold">Tanggal Invoice:</span> {{ formatDateForDisplay(invoice.date) }}</p>
+                                                     <p><span class="font-semibold">Jatuh Tempo:</span> {{ formatDateForDisplay(invoice.dueDate) }}</p>
+                                                </div>
+                                            </div>
+                                            <table class="w-full mb-8">
+                                                <thead>
+                                                    <tr class="bg-slate-100 text-slate-600 uppercase">
+                                                        <th class="p-3 text-left font-bold">Deskripsi</th>
+                                                        <th class="p-3 text-right font-bold hidden sm:table-cell">Jml</th>
+                                                        <th class="p-3 text-right font-bold hidden sm:table-cell">Harga</th>
+                                                        <th class="p-3 text-right font-bold">Total</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr v-for="(item, index) in invoice.items" :key="index">
+                                                        <td class="p-3 border-b border-slate-100">{{ item.description || 'Item' }}</td>
+                                                        <td class="p-3 border-b border-slate-100 text-right hidden sm:table-cell">{{ item.quantity }}</td>
+                                                        <td class="p-3 border-b border-slate-100 text-right hidden sm:table-cell">{{ formatCurrency(item.rate) }}</td>
+                                                        <td class="p-3 border-b border-slate-100 text-right font-medium text-slate-800">{{ formatCurrency(item.quantity * item.rate) }}</td>
+                                                    </tr>
+                                                    <tr v-if="invoice.items.length === 0">
+                                                        <td colspan="4" class="p-3 text-center text-slate-400 border-b border-slate-100">Belum ada item.</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                            <div class="flex justify-end mb-12">
+                                                <div class="w-full max-w-[250px] space-y-2">
+                                                    <div class="flex justify-between"><span>Subtotal</span><span>{{ formatCurrency(invoiceSubtotal) }}</span></div>
+                                                    <div class="flex justify-between"><span>Pajak ({{ invoice.taxRate }}%)</span><span>{{ formatCurrency(invoiceSubtotal * (invoice.taxRate / 100)) }}</span></div>
+                                                    <div class="flex justify-between text-lg font-bold text-slate-800 border-t border-slate-300 pt-2 mt-2"><span>Total</span><span>{{ formatCurrency(invoiceTotal) }}</span></div>
+                                                </div>
+                                            </div>
+                                            <div v-if="invoice.notes" class="border-t border-slate-200 pt-6">
+                                                <h4 class="font-bold text-slate-500 uppercase tracking-wider mb-2">Catatan</h4>
+                                                <p class="whitespace-pre-line">{{ invoice.notes }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </main>
+
                             <main v-if="currentView === 'profil'"><div class="bg-[var(--surface)] p-6 rounded-2xl shadow-sm border border-[var(--border-color)]"><div class="flex items-center flex-col text-center"><div class="w-24 h-24 rounded-full bg-slate-100 flex items-center justify-center mb-4"><i class="fas fa-user text-5xl text-slate-400"></i></div><h1 class="text-2xl font-bold text-[var(--text-main)]">Profil & Akun</h1><p v-if="user" class="text-[var(--text-muted)] mt-1">{{ user.email }}</p></div><div class="mt-8 border-t pt-6 text-center space-y-4"><button @click="openChangePasswordModal" class="bg-slate-200/60 text-slate-800 font-bold py-3 px-5 rounded-lg hover:bg-slate-200 transition w-full max-w-xs"><i class="fas fa-key mr-2"></i>Ubah Password</button><button @click="logout" class="bg-red-500/10 text-red-600 font-bold py-3 px-5 rounded-lg hover:bg-red-500/20 transition w-full max-w-xs"><i class="fas fa-sign-out-alt mr-2"></i>Logout</button></div><div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-8 text-center border-t pt-6"><div class="bg-slate-100/60 p-4 rounded-lg"><p class="text-3xl font-bold text-slate-800">{{ totalSchedules }}</p><p class="text-sm text-[var(--text-muted)] font-semibold">Total Jadwal</p></div><div class="bg-slate-100/60 p-4 rounded-lg"><p class="text-3xl font-bold text-slate-800">{{ totalTasks }}</p><p class="text-sm text-[var(--text-muted)] font-semibold">Total Tugas</p></div><div class="bg-slate-100/60 p-4 rounded-lg"><p class="text-3xl font-bold text-slate-800">{{ tasksCompleted }}</p<p class="text-sm text-[var(--text-muted)] font-semibold">Tugas Selesai</p></div></div></div></main>
                         </div></transition>
                     </div>
@@ -140,8 +281,6 @@
         <transition name="modal"><div v-if="showTimelineModal" class="fixed inset-0 flex items-center justify-center z-40"><div @click="closeTimelineModal()" class="absolute inset-0 bg-black bg-opacity-30"></div><div class="bg-white rounded-2xl p-6 w-full max-w-md relative z-10 shadow-xl m-4"><h3 class="text-xl font-bold text-slate-800 mb-4">Tambah Linimasa</h3><form @submit.prevent="addTimelineItem" class="space-y-4"><input v-model="newTimelineItem.title" type="text" placeholder="Judul Acara (e.g., Upacara)" class="w-full px-4 py-3 bg-slate-100 rounded-lg border-none" required><input v-model="newTimelineItem.time" type="time" class="w-full px-4 py-3 bg-slate-100 rounded-lg border-none" required><textarea v-model="newTimelineItem.notes" placeholder="Catatan singkat..." class="w-full px-4 py-3 bg-slate-100 rounded-lg border-none" rows="3"></textarea><div class="flex justify-end space-x-3 pt-2"><button type="button" @click="closeTimelineModal()" class="px-5 py-2 bg-slate-200 rounded-lg font-semibold">Batal</button><button type="submit" class="px-5 py-2 bg-slate-800 text-white rounded-lg font-semibold">Tambah</button></div></form></div></div></transition>
         <transition name="modal"><div v-if="showForgotPasswordModal" class="fixed inset-0 flex items-center justify-center z-40"><div @click="closeForgotPasswordModal()" class="absolute inset-0 bg-black bg-opacity-30"></div><div class="bg-white rounded-2xl p-6 w-full max-w-md relative z-10 shadow-xl m-4"><h3 class="text-xl font-bold">Reset Password</h3><form @submit.prevent="sendResetEmail" class="space-y-4"><p class="text-sm text-slate-600">Masukkan email Anda untuk menerima link reset password.</p><div><input v-model="forgotPassword.email" type="email" class="w-full px-4 py-3 bg-slate-100 rounded-lg border-none" placeholder="Email terdaftar" required></div><p v-if="forgotPassword.error" class="text-red-500 text-sm text-center">{{ forgotPassword.error }}</p><p v-if="forgotPassword.success" class="text-green-600 text-sm text-center">{{ forgotPassword.success }}</p><div class="flex justify-end space-x-3 pt-2"><button type="button" @click="closeForgotPasswordModal()" class="px-5 py-2 bg-slate-200 rounded-lg font-semibold">Batal</button><button type="submit" class="px-5 py-2 bg-slate-800 text-white rounded-lg font-semibold">Kirim Link</button></div></form></div></div></transition>
         <transition name="modal"><div v-if="showChangePasswordModal" class="fixed inset-0 flex items-center justify-center z-40"><div @click="closeChangePasswordModal()" class="absolute inset-0 bg-black bg-opacity-30"></div><div class="bg-white rounded-2xl p-6 w-full max-w-md relative z-10 shadow-xl m-4"><h3 class="text-xl font-bold">Ubah Password</h3><form @submit.prevent="updateUserPassword" class="space-y-4"><div class="relative"><input v-model="changePassword.newPassword" :type="changePassword.isPasswordVisible ? 'text' : 'password'" class="w-full px-4 py-3 pr-12 bg-slate-100 rounded-lg border-none" placeholder="Masukkan password baru" required><button type="button" @click="changePassword.isPasswordVisible = !changePassword.isPasswordVisible" class="absolute inset-y-0 right-0 flex items-center px-4 text-slate-500 hover:text-slate-700"><i class="fas" :class="changePassword.isPasswordVisible ? 'fa-eye-slash' : 'fa-eye'"></i></button></div><p v-if="changePassword.error" class="text-red-500 text-sm text-center">{{ changePassword.error }}</p><p v-if="changePassword.success" class="text-green-600 text-sm text-center">{{ changePassword.success }}</p><div class="flex justify-end space-x-3 pt-2"><button type="button" @click="closeChangePasswordModal()" class="px-5 py-2 bg-slate-200 rounded-lg font-semibold">Batal</button><button type="submit" class="px-5 py-2 bg-slate-800 text-white rounded-lg font-semibold">Simpan</button></div></form></div></div></transition>
-        
-        <div id="invoice-pdf-template" style="position: absolute; left: -9999px; width: 210mm; font-family: 'Inter', sans-serif; color: #1e293b; padding: 2rem;"></div>
     </div>
     
     <script>
@@ -163,7 +302,19 @@
                     currentView: 'beranda', activeWedding: null, weddings: [], searchQuery: '',
                     calendar: { date: new Date(), year: 0, month: 0, monthName: '', days: [] },
                     selectedDate: null,
-                    invoice: { number: 'INV-001', date: (new Date).toISOString().split("T")[0], dueDate: '', client: { name: '', address: '' }, items: [{ description: '', quantity: 1, rate: 0 }], taxRate: 10, invoicerName: 'Amlo List', invoicerSlogan: 'Jasa Perencanaan Acara' },
+                    // FIX: Updated invoice structure
+                    invoice: {
+                        number: 'INV-001',
+                        date: (new Date).toISOString().split("T")[0],
+                        dueDate: '',
+                        client: { name: '', address: '' },
+                        items: [{ description: 'Jasa Fotografi Hari-H', quantity: 1, rate: 5000000 }],
+                        taxRate: 10,
+                        invoicerName: 'Amlo List',
+                        invoicerSlogan: 'Jasa Perencanaan Acara Profesional',
+                        notes: 'Terima kasih atas kepercayaan Anda.\nPembayaran dapat ditransfer ke rekening:\nBCA 123456789 a/n John Doe',
+                        isGenerating: false,
+                    },
                     weddingToEdit: null, newTag: '',
                     newShot: { title: '', description: '' }, newTimelineItem: { title: '', time: '', notes: '' },
                     tagColors: [ 'bg-violet-100 text-violet-700', 'bg-blue-100 text-blue-700', 'bg-green-100 text-green-700', 'bg-yellow-100 text-yellow-700', 'bg-red-100 text-red-700', 'bg-pink-100 text-pink-700', 'bg-slate-200 text-slate-700' ],
@@ -175,33 +326,15 @@
             created() {
                 this.resetAllModals();
                 auth.onAuthStateChanged(user => {
-                    if (user) { 
-                        this.isLoggedIn = true; 
-                        this.user = user; 
-                        this.loadAppData(); 
-                    } else { 
-                        this.isLoggedIn = false; 
-                        this.user = null; 
-                        this.isLoading = false;
-                        this.appReady = false; 
-                    }
+                    if (user) { this.isLoggedIn = true; this.user = user; this.loadAppData(); } 
+                    else { this.isLoggedIn = false; this.user = null; this.isLoading = false; this.appReady = false; }
                 });
                 window.addEventListener('popstate', this.handleBackButton);
             },
             mounted() {
-                // FIX: Watcher to manage SortableJS instances correctly
                 watch(() => this.activeWedding, (newWedding, oldWedding) => {
-                    // Destroy old instances when switching weddings
-                    if (oldWedding) {
-                        this.destroySortableInstances();
-                    }
-                    // Initialize new instances after the DOM updates
-                    if (newWedding) {
-                        nextTick(() => {
-                            this.initShotListSortable();
-                            this.initTimelineSortable();
-                        });
-                    }
+                    if (oldWedding) { this.destroySortableInstances(); }
+                    if (newWedding) { nextTick(() => { this.initShotListSortable(); this.initTimelineSortable(); }); }
                 }, { immediate: true });
             },
             beforeUnmount() {
@@ -220,67 +353,14 @@
                 invoiceTotal() { const e = this.invoiceSubtotal * (this.invoice.taxRate / 100); return this.invoiceSubtotal + e }
             },
             methods: {
-                addToast(message, type = 'info', duration = 3000) {
-                    const id = Date.now();
-                    this.toasts.push({ id, message, type });
-                    if (duration) { setTimeout(() => this.removeToast(id), duration); }
-                },
+                addToast(message, type = 'info', duration = 3000) { const id = Date.now(); this.toasts.push({ id, message, type }); if (duration) { setTimeout(() => this.removeToast(id), duration); } },
                 removeToast(id) { this.toasts = this.toasts.filter(toast => toast.id !== id); },
                 
-                // FIX: Refactored and corrected SortableJS methods
-                initShotListSortable() {
-                    if (this.shotListSortable) this.shotListSortable.destroy();
-                    if (this.$refs.shotListContainer) {
-                        this.shotListSortable = new Sortable(this.$refs.shotListContainer, {
-                            handle: '.drag-handle', animation: 150, ghostClass: 'sortable-ghost', chosenClass: 'sortable-chosen',
-                            onEnd: (evt) => {
-                                const item = this.activeWedding.shots.splice(evt.oldIndex, 1)[0];
-                                this.activeWedding.shots.splice(evt.newIndex, 0, item);
-                                this.saveActiveWedding();
-                            }
-                        });
-                    }
-                },
-                initTimelineSortable() {
-                    if (this.timelineSortable) this.timelineSortable.destroy();
-                    if (this.$refs.timelineContainer) {
-                        this.timelineSortable = new Sortable(this.$refs.timelineContainer, {
-                            handle: '.drag-handle', animation: 150, ghostClass: 'sortable-ghost', chosenClass: 'sortable-chosen',
-                            onEnd: (evt) => {
-                                const item = this.activeWedding.timeline.splice(evt.oldIndex, 1)[0];
-                                this.activeWedding.timeline.splice(evt.newIndex, 0, item);
-                                this.saveActiveWedding();
-                            }
-                        });
-                    }
-                },
-                destroySortableInstances() {
-                    if (this.shotListSortable) {
-                        this.shotListSortable.destroy();
-                        this.shotListSortable = null;
-                    }
-                    if (this.timelineSortable) {
-                        this.timelineSortable.destroy();
-                        this.timelineSortable = null;
-                    }
-                },
+                initShotListSortable() { if (this.shotListSortable) this.shotListSortable.destroy(); if (this.$refs.shotListContainer) { this.shotListSortable = new Sortable(this.$refs.shotListContainer, { handle: '.drag-handle', animation: 150, ghostClass: 'sortable-ghost', chosenClass: 'sortable-chosen', onEnd: (evt) => { const item = this.activeWedding.shots.splice(evt.oldIndex, 1)[0]; this.activeWedding.shots.splice(evt.newIndex, 0, item); this.saveActiveWedding(); } }); } },
+                initTimelineSortable() { if (this.timelineSortable) this.timelineSortable.destroy(); if (this.$refs.timelineContainer) { this.timelineSortable = new Sortable(this.$refs.timelineContainer, { handle: '.drag-handle', animation: 150, ghostClass: 'sortable-ghost', chosenClass: 'sortable-chosen', onEnd: (evt) => { const item = this.activeWedding.timeline.splice(evt.oldIndex, 1)[0]; this.activeWedding.timeline.splice(evt.newIndex, 0, item); this.saveActiveWedding(); } }); } },
+                destroySortableInstances() { if (this.shotListSortable) { this.shotListSortable.destroy(); this.shotListSortable = null; } if (this.timelineSortable) { this.timelineSortable.destroy(); this.timelineSortable = null; } },
 
-                handleBackButton(event) {
-                    if (this.photoToPreview) { this.closePhotoPreview(false); return; }
-                    if (this.showShotModal) { this.closeShotModal(false); return; }
-                    if (this.showEditModal) { this.closeEditModal(false); return; }
-                    if (this.showTimelineModal) { this.closeTimelineModal(false); return; }
-                    if (this.showForgotPasswordModal) { this.closeForgotPasswordModal(false); return; }
-                    if (this.showChangePasswordModal) { this.closeChangePasswordModal(false); return; }
-                    
-                    if (event.state && event.state.view) {
-                        this.setView(event.state.view, false);
-                    } else if (this.currentView !== 'beranda') {
-                        this.setView('beranda', false);
-                    } else {
-                        history.back();
-                    }
-                },
+                handleBackButton(event) { if (this.photoToPreview) { this.closePhotoPreview(false); return; } if (this.showShotModal) { this.closeShotModal(false); return; } if (this.showEditModal) { this.closeEditModal(false); return; } if (this.showTimelineModal) { this.closeTimelineModal(false); return; } if (this.showForgotPasswordModal) { this.closeForgotPasswordModal(false); return; } if (this.showChangePasswordModal) { this.closeChangePasswordModal(false); return; } if (event.state && event.state.view) { this.setView(event.state.view, false); } else if (this.currentView !== 'beranda') { this.setView('beranda', false); } else { history.back(); } },
                 resetAllModals() { this.showForgotPasswordModal = !1, this.showChangePasswordModal = !1, this.showShotModal = !1, this.showEditModal = !1, this.showTimelineModal = !1, this.photoToPreview = null },
                 login() { this.auth.error = ""; this.auth.loading = true; auth.signInWithEmailAndPassword(this.auth.email, this.auth.password).catch(e => { "auth/invalid-credential" === e.code || "auth/wrong-password" === e.code || "auth/user-not-found" === e.code ? this.auth.error = "Email atau password salah." : this.auth.error = "Terjadi kesalahan. Silakan coba lagi." }).finally(() => { this.auth.loading = false; }); },
                 register() { this.auth.error = ""; this.auth.loading = true; auth.createUserWithEmailAndPassword(this.auth.email, this.auth.password).catch(e => { "auth/email-already-in-use" === e.code ? this.auth.error = "Email ini sudah terdaftar." : "auth/weak-password" === e.code ? this.auth.error = "Password terlalu lemah." : this.auth.error = "Gagal registrasi."; this.addToast(this.auth.error, 'error'); }).finally(() => { this.auth.loading = false; }); },
@@ -302,43 +382,155 @@
                 openTimelineModal() { this.activeWedding && (this.newTimelineItem = { title: "", time: "", notes: "" }, this.showTimelineModal = !0, history.pushState({ modal: "timelineModal" }, "", "#add-timeline")) },
                 closeTimelineModal(goBack = true) { this.showTimelineModal = !1, goBack && history.back() },
                 
-                formatDateForDisplay(e){if(!e)return"";const t=new Date(e+"T00:00:00");return isNaN(t.getTime())?e:t.toLocaleDateString("id-ID",{day:"numeric",month:"long",year:"numeric"})},setActiveWedding(e){this.activeWedding=e,window.innerWidth<1024&&(this.currentView="jadwal")},saveWeddings(){if(!this.user)return;const e=`weddings_${this.user.uid}`;idbKeyval.set(e,JSON.parse(JSON.stringify(this.weddings))).catch(e=>{console.error("Could not save to IndexedDB:",e);this.addToast("Gagal menyimpan data.", "error")})},saveActiveWedding(){if(!this.activeWedding)return;const e=this.weddings.findIndex(e=>e.id===this.activeWedding.id);-1!==e&&(this.weddings[e]=this.activeWedding,this.saveWeddings())},addWedding(){const e={id:Date.now(),title:"Jadwal Baru",date:(new Date).toISOString().split("T")[0],location:"Belum ditentukan",address:"",contacts:{bride:"",groom:"",email:"",phone:""},details:{guests:0,type:"TBD",package:"TBD"},notes:"Catatan khusus...",shots:[],timeline:[],photos:[],tags:[]};this.weddings.unshift(e),this.setActiveWedding(e),this.saveWeddings(),this.generateCalendar(),this.addToast("Jadwal baru ditambahkan", "success")},addWeddingAndGoToJadwal(){this.addWedding(),this.setView("jadwal")},deleteWedding(e){if(confirm("Apakah Anda yakin ingin menghapus jadwal ini?")){this.weddings=this.weddings.filter(t=>t.id!==e),this.activeWedding&&this.activeWedding.id===e&&(this.activeWedding=this.weddings.length>0?this.weddings[0]:null),this.saveWeddings(),this.generateCalendar(),this.addToast("Jadwal dihapus.", "info")}},updateWedding(){if(!this.weddingToEdit)return;const e=this.weddings.findIndex(e=>e.id===this.weddingToEdit.id);-1!==e&&(this.weddings[e]=this.weddingToEdit,this.activeWedding=this.weddings[e],this.saveWeddings(),this.generateCalendar(),this.closeEditModal(!0),this.addToast("Detail berhasil disimpan.", "success"))},
+                formatDateForDisplay(e){if(!e)return"-";const t=new Date(e); if(e.length === 10) { t.setUTCHours(0,0,0,0); } return isNaN(t.getTime()) ? e : t.toLocaleDateString("id-ID",{day:"numeric",month:"long",year:"numeric"})},
+                setActiveWedding(e){this.activeWedding=e,window.innerWidth<1024&&(this.currentView="jadwal")},saveWeddings(){if(!this.user)return;const e=`weddings_${this.user.uid}`;idbKeyval.set(e,JSON.parse(JSON.stringify(this.weddings))).catch(e=>{console.error("Could not save to IndexedDB:",e);this.addToast("Gagal menyimpan data.", "error")})},saveActiveWedding(){if(!this.activeWedding)return;const e=this.weddings.findIndex(e=>e.id===this.activeWedding.id);-1!==e&&(this.weddings[e]=this.activeWedding,this.saveWeddings())},addWedding(){const e={id:Date.now(),title:"Jadwal Baru",date:(new Date).toISOString().split("T")[0],location:"Belum ditentukan",address:"",contacts:{bride:"",groom:"",email:"",phone:""},details:{guests:0,type:"TBD",package:"TBD"},notes:"Catatan khusus...",shots:[],timeline:[],photos:[],tags:[]};this.weddings.unshift(e),this.setActiveWedding(e),this.saveWeddings(),this.generateCalendar(),this.addToast("Jadwal baru ditambahkan", "success")},updateWedding(){if(!this.weddingToEdit)return;const e=this.weddings.findIndex(e=>e.id===this.weddingToEdit.id);-1!==e&&(this.weddings[e]=this.weddingToEdit,this.activeWedding=this.weddings[e],this.saveWeddings(),this.generateCalendar(),this.closeEditModal(!0),this.addToast("Detail berhasil disimpan.", "success"))},
                 
-                addShot(){
-                    if(!this.newShot.title.trim()||!this.activeWedding)return;
-                    const wasEmpty = this.activeWedding.shots.length === 0;
-                    this.activeWedding.shots.push({id:Date.now(),...this.newShot,completed:!1});
-                    this.saveActiveWedding();
-                    this.closeShotModal(!0);
-                    this.addToast("Foto wajib ditambahkan.", "success");
-                    if (wasEmpty) { nextTick(() => this.initShotListSortable()); }
-                },
-                deleteShot(e){
-                    if(!this.activeWedding) return;
-                    this.activeWedding.shots=this.activeWedding.shots.filter(t=>t.id!==e);
-                    this.saveActiveWedding();
-                    this.addToast("Foto wajib dihapus.", "info");
-                    if(this.activeWedding.shots.length === 0) { this.destroySortableInstances(); }
-                },
-                addTimelineItem(){
-                    if(!this.newTimelineItem.title.trim()||!this.activeWedding)return;
-                    const wasEmpty = this.activeWedding.timeline.length === 0;
-                    this.activeWedding.timeline.push({id:Date.now(),...this.newTimelineItem});
-                    this.activeWedding.timeline.sort((e,t)=>e.time.localeCompare(t.time));
-                    this.saveActiveWedding();
-                    this.closeTimelineModal(!0);
-                    this.addToast("Linimasa ditambahkan.", "success");
-                    if (wasEmpty) { nextTick(() => this.initTimelineSortable()); }
-                },
-                deleteTimelineItem(e){
-                    if(!this.activeWedding) return;
-                    this.activeWedding.timeline=this.activeWedding.timeline.filter(t=>t.id!==e);
-                    this.saveActiveWedding();
-                    this.addToast("Item linimasa dihapus.", "info");
-                    if(this.activeWedding.timeline.length === 0) { this.destroySortableInstances(); }
-                },
+                addShot(){ if(!this.newShot.title.trim()||!this.activeWedding)return; const wasEmpty=this.activeWedding.shots.length===0; this.activeWedding.shots.push({id:Date.now(),...this.newShot,completed:!1}); this.saveActiveWedding(); this.closeShotModal(!0); this.addToast("Foto wajib ditambahkan.","success"); if(wasEmpty){nextTick(()=>this.initShotListSortable());}},
+                deleteShot(e){ if(!this.activeWedding)return; this.activeWedding.shots=this.activeWedding.shots.filter(t=>t.id!==e); this.saveActiveWedding(); this.addToast("Foto wajib dihapus.","info"); if(this.activeWedding.shots.length===0){this.destroySortableInstances();}},
+                addTimelineItem(){ if(!this.newTimelineItem.title.trim()||!this.activeWedding)return; const wasEmpty=this.activeWedding.timeline.length===0; this.activeWedding.timeline.push({id:Date.now(),...this.newTimelineItem}); this.activeWedding.timeline.sort((e,t)=>e.time.localeCompare(t.time)); this.saveActiveWedding(); this.closeTimelineModal(!0); this.addToast("Linimasa ditambahkan.","success"); if(wasEmpty){nextTick(()=>this.initTimelineSortable());}},
+                deleteTimelineItem(e){ if(!this.activeWedding)return; this.activeWedding.timeline=this.activeWedding.timeline.filter(t=>t.id!==e); this.saveActiveWedding(); this.addToast("Item linimasa dihapus.","info"); if(this.activeWedding.timeline.length===0){this.destroySortableInstances();}},
 
-                addTag(){if(!this.newTag.trim()||!this.weddingToEdit)return;this.weddingToEdit.tags.push({text:this.newTag,color:this.tagColors[this.weddingToEdit.tags.length%this.tagColors.length]}),this.newTag=""},removeTag(e){this.weddingToEdit&&this.weddingToEdit.tags.splice(e,1)},addPhoto(){this.activeWedding&&this.$refs.photoUploader.click()},handlePhotoUpload(e){const t=e.target.files[0];if(!t||!this.activeWedding)return;const i=new FileReader;i.onload=e=>{this.activeWedding.photos.push({url:e.target.result}),this.saveActiveWedding(),this.addToast("Foto berhasil diupload.", "success")},i.readAsDataURL(t),e.target.value=""},deletePhoto(e){this.activeWedding&&this.activeWedding.photos.splice(e,1)},getTaskProgress(e){if(!e||!e.shots||0===e.shots.length)return{percent:0,done:0,total:0};const t=e.shots.length,i=e.shots.filter(e=>e.completed).length;return{percent:Math.round(i/t*100),done:i,total:t}},goToJadwal(e){this.setActiveWedding(e),this.setView("jadwal")},generateCalendar(){const e=this.calendar.date,t=e.getFullYear(),i=e.getMonth();this.calendar.year=t,this.calendar.month=i,this.calendar.monthName=e.toLocaleString("id-ID",{month:"long"});const o=new Date(t,i,1).getDay(),n=new Date(t,i+1,0).getDate();let s=[];for(let d=0;d<o;d++)s.push({date:""});for(let d=1;d<=n;d++){const o=`${t}-${String(i+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;s.push({date:d,fullDate:o,isToday:(new Date).toDateString()===(new Date(t,i,d)).toDateString(),hasEvent:this.scheduleDates.has(o)})}this.calendar.days=s},changeMonth(e){this.calendar.date.setMonth(this.calendar.date.getMonth()+e),this.generateCalendar()},selectDate(e){e.hasEvent&&(this.selectedDate=this.selectedDate===e.fullDate?null:e.fullDate)},clearDateFilter(){this.selectedDate=null},addItem(){this.invoice.items.push({description:"",quantity:1,rate:0})},removeItem(e){this.invoice.items.splice(e,1)},formatCurrency(e){return new Intl.NumberFormat("id-ID",{style:"currency",currency:"IDR",minimumFractionDigits:0}).format(e)},generatePDF(){const e=document.getElementById("invoice-pdf-template");html2canvas(e,{scale:3}).then(e=>{const t=(new jsPDF("p","mm","a4")).internal.pageSize.getWidth();(new jsPDF("p","mm","a4")).addImage(e.toDataURL("image/png"),"PNG",0,0,t,e.height*t/e.width).save(`invoice-${this.invoice.number||"001"}.pdf`);this.addToast("Invoice PDF sedang dibuat...", "info")})},saveInvoiceTemplate(){if(!this.user)return;const e=`invoiceTemplate_${this.user.uid}`;idbKeyval.set(e,JSON.parse(JSON.stringify(this.invoice))).then(()=>this.addToast("Template invoice berhasil disimpan!", "success")).catch(e=>this.addToast("Gagal menyimpan template: "+e, "error"))},async loadInvoiceTemplate(){if(!this.user)return;const e=`invoiceTemplate_${this.user.uid}`,t=await idbKeyval.get(e);t?(this.invoice=t,this.addToast("Template invoice berhasil dimuat!", "success")):this.addToast("Tidak ada template yang tersimpan.", "error")}
+                addTag(){if(!this.newTag.trim()||!this.weddingToEdit)return;this.weddingToEdit.tags.push({text:this.newTag,color:this.tagColors[this.weddingToEdit.tags.length%this.tagColors.length]}),this.newTag=""},removeTag(e){this.weddingToEdit&&this.weddingToEdit.tags.splice(e,1)},addPhoto(){this.activeWedding&&this.$refs.photoUploader.click()},handlePhotoUpload(e){const t=e.target.files[0];if(!t||!this.activeWedding)return;const i=new FileReader;i.onload=e=>{this.activeWedding.photos.push({url:e.target.result}),this.saveActiveWedding(),this.addToast("Foto berhasil diupload.", "success")},i.readAsDataURL(t),e.target.value=""},deletePhoto(e){this.activeWedding&&this.activeWedding.photos.splice(e,1)},getTaskProgress(e){if(!e||!e.shots||0===e.shots.length)return{percent:0,done:0,total:0};const t=e.shots.length,i=e.shots.filter(e=>e.completed).length;return{percent:Math.round(i/t*100),done:i,total:t}},goToJadwal(e){this.setActiveWedding(e),this.setView("jadwal")},generateCalendar(){const e=this.calendar.date,t=e.getFullYear(),i=e.getMonth();this.calendar.year=t,this.calendar.month=i,this.calendar.monthName=e.toLocaleString("id-ID",{month:"long"});const o=new Date(t,i,1).getDay(),n=new Date(t,i+1,0).getDate();let s=[];for(let d=0;d<o;d++)s.push({date:""});for(let d=1;d<=n;d++){const o=`${t}-${String(i+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;s.push({date:d,fullDate:o,isToday:(new Date).toDateString()===(new Date(t,i,d)).toDateString(),hasEvent:this.scheduleDates.has(o)})}this.calendar.days=s},changeMonth(e){this.calendar.date.setMonth(this.calendar.date.getMonth()+e),this.generateCalendar()},selectDate(e){e.hasEvent&&(this.selectedDate=this.selectedDate===e.fullDate?null:e.fullDate)},clearDateFilter(){this.selectedDate=null},
+                
+                // Invoice Methods
+                addItem(){this.invoice.items.push({description:"",quantity:1,rate:0})},
+                removeItem(e){this.invoice.items.splice(e,1)},
+                formatCurrency(e){return new Intl.NumberFormat("id-ID",{style:"currency",currency:"IDR",minimumFractionDigits:0}).format(e)},
+                saveInvoiceTemplate(){if(!this.user)return;const e=`invoiceTemplate_${this.user.uid}`;idbKeyval.set(e,JSON.parse(JSON.stringify(this.invoice))).then(()=>this.addToast("Template invoice berhasil disimpan!", "success")).catch(e=>this.addToast("Gagal menyimpan template: "+e, "error"))},
+                async loadInvoiceTemplate(){if(!this.user)return;const e=`invoiceTemplate_${this.user.uid}`,t=await idbKeyval.get(e);t?(this.invoice=t,this.addToast("Template invoice berhasil dimuat!", "success")):this.addToast("Tidak ada template yang tersimpan.", "error")},
+                
+                // FIX: New High-Quality PDF Generation Method
+                generatePDF() {
+                    this.invoice.isGenerating = true;
+                    this.addToast("Membuat PDF...", "info");
+                    
+                    const doc = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' });
+                    
+                    // Register Inter font if needed (requires a VFS file, skipping for simplicity here but good for production)
+                    doc.setFont("helvetica", "normal"); 
+
+                    const MARGIN = 15;
+                    const PAGE_WIDTH = doc.internal.pageSize.getWidth();
+                    const PAGE_HEIGHT = doc.internal.pageSize.getHeight();
+                    const CONTENT_WIDTH = PAGE_WIDTH - (MARGIN * 2);
+                    let y = MARGIN;
+
+                    // Header
+                    doc.setFontSize(20);
+                    doc.setFont("helvetica", "bold");
+                    doc.text("INVOICE", MARGIN, y);
+                    
+                    doc.setFontSize(10);
+                    doc.setFont("helvetica", "normal");
+                    doc.text(this.invoice.invoicerName, PAGE_WIDTH - MARGIN, y, { align: 'right' });
+                    y += 5;
+                    doc.text(this.invoice.invoicerSlogan, PAGE_WIDTH - MARGIN, y, { align: 'right' });
+                    y += 15;
+
+                    // Bill To / Details
+                    doc.setLineWidth(0.5);
+                    doc.line(MARGIN, y, PAGE_WIDTH - MARGIN, y);
+                    y += 10;
+                    
+                    doc.setFont("helvetica", "bold");
+                    doc.text("Tagihan Untuk:", MARGIN, y);
+                    doc.text("Detail:", PAGE_WIDTH / 2, y);
+
+                    doc.setFont("helvetica", "normal");
+                    y += 6;
+                    doc.text(this.invoice.client.name, MARGIN, y);
+                    const clientAddress = doc.splitTextToSize(this.invoice.client.address, (PAGE_WIDTH / 2) - MARGIN - 5);
+                    doc.text(clientAddress, MARGIN, y + 5);
+                    
+                    let rightY = y;
+                    doc.text(`No. Invoice: ${this.invoice.number}`, PAGE_WIDTH / 2, rightY);
+                    rightY += 5;
+                    doc.text(`Tanggal: ${this.formatDateForDisplay(this.invoice.date)}`, PAGE_WIDTH / 2, rightY);
+                    rightY += 5;
+                    doc.text(`Jatuh Tempo: ${this.formatDateForDisplay(this.invoice.dueDate)}`, PAGE_WIDTH / 2, rightY);
+
+                    y += clientAddress.length * 5 + 10;
+                    if (y < rightY + 10) y = rightY + 10;
+
+
+                    // Table Header
+                    const drawTableHeader = () => {
+                        doc.setFillColor(230, 230, 230);
+                        doc.rect(MARGIN, y, CONTENT_WIDTH, 8, 'F');
+                        doc.setFont("helvetica", "bold");
+                        doc.setTextColor(50, 50, 50);
+                        doc.text("Deskripsi", MARGIN + 2, y + 6);
+                        doc.text("Jml", PAGE_WIDTH - MARGIN - 60, y + 6, { align: 'right' });
+                        doc.text("Harga", PAGE_WIDTH - MARGIN - 35, y + 6, { align: 'right' });
+                        doc.text("Total", PAGE_WIDTH - MARGIN - 2, y + 6, { align: 'right' });
+                        y += 12;
+                    };
+                    drawTableHeader();
+                    
+                    // Table Body
+                    this.invoice.items.forEach(item => {
+                        const itemDescription = doc.splitTextToSize(item.description, CONTENT_WIDTH - 90);
+                        const rowHeight = itemDescription.length * 5 + 4;
+
+                        if (y + rowHeight > PAGE_HEIGHT - MARGIN - 40) { // Check if space is enough for row and totals
+                            doc.addPage();
+                            y = MARGIN;
+                            drawTableHeader();
+                        }
+                        
+                        doc.setFont("helvetica", "normal");
+                        doc.setTextColor(0, 0, 0);
+                        doc.text(itemDescription, MARGIN + 2, y);
+                        doc.text(item.quantity.toString(), PAGE_WIDTH - MARGIN - 60, y, { align: 'right' });
+                        doc.text(this.formatCurrency(item.rate), PAGE_WIDTH - MARGIN - 35, y, { align: 'right' });
+                        doc.text(this.formatCurrency(item.rate * item.quantity), PAGE_WIDTH - MARGIN - 2, y, { align: 'right' });
+                        y += rowHeight;
+                        doc.setLineWidth(0.2);
+                        doc.line(MARGIN, y - 2, PAGE_WIDTH - MARGIN, y - 2);
+                    });
+
+                    // Totals
+                    y += 5;
+                    if (y > PAGE_HEIGHT - MARGIN - 40) {
+                        doc.addPage();
+                        y = MARGIN;
+                    }
+                    const totalsX = PAGE_WIDTH - MARGIN - 50;
+                    doc.text("Subtotal:", totalsX, y);
+                    doc.text(this.formatCurrency(this.invoiceSubtotal), PAGE_WIDTH - MARGIN, y, { align: 'right' });
+                    y += 6;
+                    doc.text(`Pajak (${this.invoice.taxRate}%):`, totalsX, y);
+                    doc.text(this.formatCurrency(this.invoiceSubtotal * (this.invoice.taxRate / 100)), PAGE_WIDTH - MARGIN, y, { align: 'right' });
+                    y += 2;
+                    doc.line(totalsX - 2, y, PAGE_WIDTH - MARGIN, y);
+                    y += 5;
+                    doc.setFont("helvetica", "bold");
+                    doc.text("Total:", totalsX, y);
+                    doc.text(this.formatCurrency(this.invoiceTotal), PAGE_WIDTH - MARGIN, y, { align: 'right' });
+                    
+                    // Notes
+                    y += 15;
+                     if (this.invoice.notes && y < PAGE_HEIGHT - MARGIN - 20) {
+                        doc.setFont("helvetica", "bold");
+                        doc.text("Catatan:", MARGIN, y);
+                        y += 5;
+                        doc.setFont("helvetica", "normal");
+                        const notesText = doc.splitTextToSize(this.invoice.notes, CONTENT_WIDTH);
+                        doc.text(notesText, MARGIN, y);
+                    }
+
+                    // Footer
+                    const pageCount = doc.internal.getNumberOfPages();
+                    for(let i = 1; i <= pageCount; i++) {
+                        doc.setPage(i);
+                        doc.setFontSize(8);
+                        doc.text(`Halaman ${i} dari ${pageCount}`, PAGE_WIDTH / 2, PAGE_HEIGHT - 10, { align: 'center' });
+                    }
+
+                    doc.save(`invoice-${this.invoice.number || "001"}.pdf`);
+                    this.invoice.isGenerating = false;
+                    this.addToast("PDF berhasil diekspor!", "success");
+                }
             }
         };
         createApp(App).mount('#app');
