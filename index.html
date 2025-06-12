@@ -118,7 +118,35 @@
 
         <transition name="modal"><div v-if="photoToPreview" @click="closePhotoPreview" class="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 p-4 cursor-pointer"><img :src="photoToPreview" class="max-w-full max-h-full object-contain rounded-lg shadow-2xl" @click.stop><button @click.stop="closePhotoPreview(true)" class="absolute top-4 right-4 text-white text-4xl font-light hover:opacity-75 transition-opacity">×</button></div></transition>
         <transition name="modal"><div v-if="showShotModal" class="fixed inset-0 flex items-center justify-center z-40"><div @click="closeShotModal()" class="absolute inset-0 bg-black bg-opacity-30"></div><div class="bg-white rounded-2xl p-6 w-full max-w-md relative z-10 shadow-xl m-4"><h3 class="text-xl font-bold text-slate-800 mb-4">Tambah Foto Wajib</h3><form @submit.prevent="addShot" class="space-y-4"><div><label class="block text-sm font-medium text-slate-700 mb-1">Judul Foto</label><input v-model="newShot.title" type="text" class="w-full px-4 py-3 bg-slate-100 rounded-lg border-none" required></div><div><label class="block text-sm font-medium text-slate-700 mb-1">Catatan</label><textarea v-model="newShot.description" class="w-full px-4 py-3 bg-slate-100 rounded-lg border-none" rows="3"></textarea></div><div class="flex justify-end space-x-3 pt-2"><button type="button" @click="closeShotModal()" class="px-5 py-2 bg-slate-200 rounded-lg font-semibold">Batal</button><button type="submit" class="px-5 py-2 bg-slate-800 text-white rounded-lg font-semibold">Tambah</button></div></form></div></div></transition>
-        <transition name="modal"><div v-if="showEditModal && weddingToEdit" class="fixed inset-0 flex items-center justify-center z-40"><div @click="closeEditModal()" class="absolute inset-0 bg-black bg-opacity-30"></div><div class="bg-white rounded-2xl w-full max-w-2xl relative z-10 shadow-xl m-4 max-h-[90vh] overflow-y-auto"><div class="p-6 space-y-4"><h3 class="text-xl font-bold text-slate-800 mb-4">Edit Detail Pernikahan</h3><form @submit.prevent="updateWedding" class="space-y-4 text-slate-700"><div><label class="block text-sm font-medium">Judul</label><input type="text" v-model="weddingToEdit.title" class="mt-1 w-full px-4 py-3 bg-slate-100 rounded-lg border-none" required></div><div class="flex justify-end space-x-3 pt-4"><button type="button" @click="closeEditModal()" class="px-5 py-2 bg-slate-200 rounded-lg font-semibold">Batal</button><button type="submit" class="px-5 py-2 bg-slate-800 text-white rounded-lg font-semibold">Simpan</button></div></form></div></div></div></transition>
+        <transition name="modal"><div v-if="showEditModal && weddingToEdit" class="fixed inset-0 flex items-center justify-center z-40"><div @click="closeEditModal()" class="absolute inset-0 bg-black bg-opacity-30"></div><div class="bg-white rounded-2xl w-full max-w-2xl relative z-10 shadow-xl m-4 max-h-[90vh] overflow-y-auto"><div class="p-6 space-y-4"><h3 class="text-xl font-bold text-slate-800 mb-4">Edit Detail Pernikahan</h3><form @submit.prevent="updateWedding" class="space-y-4 text-slate-700"><div><label class="block text-sm font-medium">Judul</label><input type="text" v-model="weddingToEdit.title" class="mt-1 w-full px-4 py-3 bg-slate-100 rounded-lg border-none" required></div>
+            <!-- Client Portal Section -->
+            <div class="border-t pt-4 mt-4">
+                <div class="flex justify-between items-center">
+                     <h4 class="font-bold text-lg text-slate-700">Client Portal</h4>
+                     <div class="flex items-center space-x-2">
+                        <label for="timelineToggle" class="text-sm font-medium">Tampilkan Linimasa:</label>
+                        <input type="checkbox" id="timelineToggle" v-model="weddingToEdit.showTimelineInPortal" class="h-4 w-4 rounded text-lime-600 focus:ring-lime-500">
+                     </div>
+                </div>
+                <p class="text-sm text-slate-500 mt-1">Bagikan link dan password ini kepada klien Anda.</p>
+                <div class="mt-2 space-y-2">
+                    <div class="bg-slate-100 p-3 rounded-lg">
+                        <label class="text-xs font-bold text-slate-500">Link Portal</label>
+                        <div class="flex items-center space-x-2">
+                            <input :value="getClientPortalLink(weddingToEdit.id)" type="text" readonly class="w-full bg-transparent font-mono text-sm p-1">
+                            <button type="button" @click="copyToClipboard(getClientPortalLink(weddingToEdit.id))" class="text-slate-500 hover:text-slate-800 p-1"><i class="fas fa-copy"></i></button>
+                        </div>
+                    </div>
+                    <div class="bg-slate-100 p-3 rounded-lg">
+                        <label class="text-xs font-bold text-slate-500">Password</label>
+                         <div class="flex items-center space-x-2">
+                            <input :value="weddingToEdit.portalPassword" type="text" readonly class="w-full bg-transparent font-mono text-sm p-1">
+                            <button type="button" @click="copyToClipboard(weddingToEdit.portalPassword)" class="text-slate-500 hover:text-slate-800 p-1"><i class="fas fa-copy"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <div class="flex justify-end space-x-3 pt-4"><button type="button" @click="closeEditModal()" class="px-5 py-2 bg-slate-200 rounded-lg font-semibold">Batal</button><button type="submit" class="px-5 py-2 bg-slate-800 text-white rounded-lg font-semibold">Simpan</button></div></form></div></div></div></transition>
         <transition name="modal"><div v-if="showTimelineModal" class="fixed inset-0 flex items-center justify-center z-40"><div @click="closeTimelineModal()" class="absolute inset-0 bg-black bg-opacity-30"></div><div class="bg-white rounded-2xl p-6 w-full max-w-md relative z-10 shadow-xl m-4"><h3 class="text-xl font-bold text-slate-800 mb-4">Tambah Linimasa</h3><form @submit.prevent="addTimelineItem" class="space-y-4"><input v-model="newTimelineItem.title" type="text" placeholder="Judul Acara (e.g., Upacara)" class="w-full px-4 py-3 bg-slate-100 rounded-lg border-none" required><input v-model="newTimelineItem.time" type="time" class="w-full px-4 py-3 bg-slate-100 rounded-lg border-none" required><textarea v-model="newTimelineItem.notes" placeholder="Catatan singkat..." class="w-full px-4 py-3 bg-slate-100 rounded-lg border-none" rows="3"></textarea><div class="flex justify-end space-x-3 pt-2"><button type="button" @click="closeTimelineModal()" class="px-5 py-2 bg-slate-200 rounded-lg font-semibold">Batal</button><button type="submit" class="px-5 py-2 bg-slate-800 text-white rounded-lg font-semibold">Tambah</button></div></form></div></div></transition>
         <transition name="modal"><div v-if="showForgotPasswordModal" class="fixed inset-0 flex items-center justify-center z-40"><div @click="closeForgotPasswordModal()" class="absolute inset-0 bg-black bg-opacity-30"></div><div class="bg-white rounded-2xl p-6 w-full max-w-md relative z-10 shadow-xl m-4"><h3 class="text-xl font-bold">Reset Password</h3><form @submit.prevent="sendResetEmail" class="space-y-4"><p class="text-sm text-slate-600">Masukkan email Anda untuk menerima link reset password.</p><div><input v-model="forgotPassword.email" type="email" class="w-full px-4 py-3 bg-slate-100 rounded-lg border-none" placeholder="Email terdaftar" required></div><p v-if="forgotPassword.error" class="text-red-500 text-sm text-center">{{ forgotPassword.error }}</p><p v-if="forgotPassword.success" class="text-green-600 text-sm text-center">{{ forgotPassword.success }}</p><div class="flex justify-end space-x-3 pt-2"><button type="button" @click="closeForgotPasswordModal()" class="px-5 py-2 bg-slate-200 rounded-lg font-semibold">Batal</button><button type="submit" class="px-5 py-2 bg-slate-800 text-white rounded-lg font-semibold">Kirim Link</button></div></form></div></div></transition>
         <transition name="modal"><div v-if="showChangePasswordModal" class="fixed inset-0 flex items-center justify-center z-40"><div @click="closeChangePasswordModal()" class="absolute inset-0 bg-black bg-opacity-30"></div><div class="bg-white rounded-2xl p-6 w-full max-w-md relative z-10 shadow-xl m-4"><h3 class="text-xl font-bold">Ubah Password</h3><form @submit.prevent="updateUserPassword" class="space-y-4"><div class="relative"><input v-model="changePassword.newPassword" :type="changePassword.isPasswordVisible ? 'text' : 'password'" class="w-full px-4 py-3 pr-12 bg-slate-100 rounded-lg border-none" placeholder="Masukkan password baru" required><button type="button" @click="changePassword.isPasswordVisible = !changePassword.isPasswordVisible" class="absolute inset-y-0 right-0 flex items-center px-4 text-slate-500 hover:text-slate-700"><i class="fas" :class="changePassword.isPasswordVisible ? 'fa-eye-slash' : 'fa-eye'"></i></button></div><p v-if="changePassword.error" class="text-red-500 text-sm text-center">{{ changePassword.error }}</p><p v-if="changePassword.success" class="text-green-600 text-sm text-center">{{ changePassword.success }}</p><div class="flex justify-end space-x-3 pt-2"><button type="button" @click="closeChangePasswordModal()" class="px-5 py-2 bg-slate-200 rounded-lg font-semibold">Batal</button><button type="submit" class="px-5 py-2 bg-slate-800 text-white rounded-lg font-semibold">Simpan</button></div></form></div></div></transition>
@@ -276,17 +304,28 @@
                     this.loadInvoiceTemplate(false);
                 },
                 addWedding() {
-                    const newWeddingData = { ownerId: this.user.uid, title:"Jadwal Baru", date:(new Date).toISOString().split("T")[0], location:"Belum ditentukan", notes:"Catatan khusus...", shots:[], timeline:[], photos:[], tags:[], contacts: {bride:"",groom:"",email:"",phone:""}, details:{guests:0,type:"TBD",package:"TBD"},
-        portalPassword: Math.random().toString(36).substring(2, 10), // Generates a random 8-char password
-        showTimelineInPortal: false 
-    };
-    db.collection('weddings').add(newWeddingData)
-        .then(docRef => {
-            this.setActiveWedding({ id: docRef.id, ...newWeddingData });
-            this.addToast("Jadwal baru ditambahkan", "success");
-        })
-        .catch(error => { console.error("Error adding wedding: ", error); this.addToast("Gagal menambahkan jadwal.", "error"); });
-},
+                    const newWeddingData = { 
+                        ownerId: this.user.uid, 
+                        title:"Jadwal Baru", 
+                        date:(new Date).toISOString().split("T")[0], 
+                        location:"Belum ditentukan", 
+                        notes:"Catatan khusus...", 
+                        shots:[], 
+                        timeline:[], 
+                        photos:[], 
+                        tags:[], 
+                        contacts: {bride:"",groom:"",email:"",phone:""}, 
+                        details:{guests:0,type:"TBD",package:"TBD"},
+                        portalPassword: Math.random().toString(36).substring(2, 10),
+                        showTimelineInPortal: false 
+                    };
+                    db.collection('weddings').add(newWeddingData)
+                        .then(docRef => {
+                            this.setActiveWedding({ id: docRef.id, ...newWeddingData });
+                            this.addToast("Jadwal baru ditambahkan", "success");
+                        })
+                        .catch(error => { console.error("Error adding wedding: ", error); this.addToast("Gagal menambahkan jadwal.", "error"); });
+                },
                 saveActiveWedding() {
                     if (!this.activeWedding || !this.activeWedding.id) return;
                     const weddingData = JSON.parse(JSON.stringify(this.activeWedding));
@@ -353,7 +392,6 @@
                     }
 
                     this.isUploading = true;
-                    // CORRECTED: Create a valid path by removing the invalid Firestore ID.
                     const uniqueFileName = `${Date.now()}-${file.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`;
                     const filePath = `${this.user.uid}/${uniqueFileName}`;
                     
@@ -372,7 +410,6 @@
                                 if (!this.activeWedding.photos) {
                                     this.activeWedding.photos = [];
                                 }
-                                // Store an object with the URL and the full path for deletion
                                 this.activeWedding.photos.push({
                                     path: filePath,
                                     url: downloadURL
@@ -387,12 +424,8 @@
                 },
                 deletePhoto(index, photo) {
                     if (!this.activeWedding || !this.user || !photo || !photo.path) return;
-                    
                     if (!confirm("Apakah Anda yakin ingin menghapus foto ini?")) return;
-                    
-                    // CORRECTED: Use the saved photo.path to create the reference
                     const photoRef = storage.ref(photo.path);
-
                     photoRef.delete().then(() => {
                         this.activeWedding.photos.splice(index, 1);
                         this.saveActiveWedding();
@@ -404,6 +437,16 @@
                             this.saveActiveWedding();
                         }
                         this.addToast("Gagal menghapus foto.", "error");
+                    });
+                },
+                getClientPortalLink(id) {
+                    const url = new URL('portal.html', window.location.href);
+                    url.searchParams.set('id', id);
+                    return url.href;
+                },
+                copyToClipboard(text) {
+                    navigator.clipboard.writeText(text).then(() => {
+                        this.addToast('Disalin ke clipboard!', 'info');
                     });
                 },
 
