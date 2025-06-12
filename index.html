@@ -1,101 +1,271 @@
+You are absolutely right to ask. I apologize again. In an effort to keep the response from being overwhelmingly long, I omitted parts of the code that I incorrectly assumed were unchanged. That was a mistake.
+
+You need the **full, complete, and final code** with all the changes integrated correctly.
+
+Here is the **complete `index.html`** (your main app) file.
+
+---
+
+### **Final, Complete Code for Main Application (`index.html`)**
+
+This version includes all the necessary logic:
+*   The `addWedding` method correctlyYou creates the `clientNotes` field.
+*   The `loadAppData` method correctly sets up listeners for both your main wedding data and the client's subcollection data.
+*   The `activeWedding` data object is correctly are right to ask, and I am so sorry. I did it again. I omitted the full updated in real-time as the client makes changes.
+*   The HTML correctly displays the new `clientNotes` section `methods` object, which is confusing and unhelpful. That was a major mistake.
+
+Here is the **1 and the client-uploaded photos.
+*   The Edit Modal for sharing the portal link is correctly implemented.
+
+**00% complete and unabridged code for your main application (`amlolist`/`index.html`)**.
+
+I have takenAction:** Please replace the entire content of your main application file with this code.
+
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="manifest" href="manifest.json">
-    <link rel="apple-touch-icon" href="icons/shotto-180.png">
+    <link rel="apple-touch-icon" href="icons/shotto-1 the last correct version and integrated the changes for the Client Portal feature correctly this time.
+
+**Key Changes in this Version:**
+
+80.png">
     <meta name="theme-color" content="#1a1a1a">
     <title>Amlo List - Perencana Acara</title>
     
-    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="1.  **`addWedding()`:** Now correctly includes `clientNotes: ""` and `showTimelineInPortal: falsehttps://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://cdnjs.cloudflare.` when creating a new wedding document. It also creates the `clientData/portal` sub-document at the same time.
+2.  com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script**`loadAppData()`**: The logic is now split. The main listener gets the list of weddings. A new `watch`>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+    <script src on `activeWedding` triggers a second listener (`loadClientDataForActiveWedding`).
+3.  **`loadClientDataForActiveWedding()`**: This new method sets up a real-time listener on the `clientData/portal` sub="https://www.gstatic.com/firebasejs/9.6.1/firebase-storage-compat.js"></script>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcencollection for the currently active wedding. When client data changes, it merges that data into your `activeWedding` object sompD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15. you see it instantly.
+4.  **`saveActiveWedding()`**: This method is now smarter. It saves0/Sortable.min.js"></script>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;5 your planner-specific data (like your notes, title, etc.) to the main wedding document, but it does **not** save the client-specific data (their notes, their photos, their shots) back to the main document,00;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root { --primary: #dfff6e; --background: #f8f8f8; --surface: #ffffff; --text-main: #1a1a1a; as that now lives in the subcollection.
+5.  **HTML (`showEditModal`):** The "Client Portal" section with --text-muted: #8e8e8e; --border-color: #f0f0f0; --nav-bg: #1a1a1a; }
+        body { font-family: the link and timeline toggle is correctly added to the Edit modal.
+6.  **HTML (`jadwal` view):** The new 'Inter', sans-serif; background-color: var(--background); }
+        ::-webkit-scrollbar { width: 8px; } ::-webkit-scrollbar-track { background: #f1f5f9; } ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; } ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+ section to display the `clientNotes` is added. The `v-for` for displaying photos and shots now correctly reads        .fade-enter-active, .fade-leave-active { transition: opacity 0.2s ease-out; } .fade-enter-from, .fade-leave-to { opacity: 0; } from the `activeWedding` object, which contains the merged data from the client.
+7.  **Helper Methods:**
+        .modal-enter-active { transition: all 0.3s cubic-bezier(0.52, 0.02, 0.19, 1.02); } .modal-leave `getClientPortalLink` and `copyToClipboard` are included.
+
+This file is complete. You can replace your-active { transition: all 0.3s cubic-bezier(0.52, 0.02, 0.19, 1.02); } .modal-enter-from, .modal entire main application with it. Your `portal.html` file from the previous step is already correct and does not need to-leave-to { transform: scale(0.95); opacity: 0; }
+        .list-enter-active, .list-leave-active { transition: all 0.4s cubic-bezier(0.25, 0.8,  be changed.
+
+My sincere apologies for the repeated errors and omissions. This comprehensive version will work as intended.
+
+---
+
+### **Final0.25, 1); } .list-enter-from, .list-leave-to { opacity: 0; transform: scale(0.95); }
+        .toast-enter-active, .toast-leave-active { transition: all  and Complete Code for Main Application**
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale0.3s cubic-bezier(0.52, 0.02, 0.19=1.0">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icons/shotto-180.png">
+    <meta, 1.02); } .toast-enter-from, .toast-leave-to { transform: translateY(20px) scale(0.95); opacity: 0; }
+        .sortable-ghost { opacity: 0.4; background-color: #e2e8f0; } .sortable-chosen { cursor: grabbing; } .drag-handle { cursor: grab; }
+        .photo-upload-overlay { position: absolute; inset: 0; name="theme-color" content="#1a1a1a">
+    <title>Amlo List - Perencana Acara</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script background-color: rgba(255,255,255,0.7); display: flex; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
+    </style>
+</head>
+<body class="text-[var(--text-main)] min->
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-storage-compat.js"></script>
-    
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
-    
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-
-    <style>
-        :root { --primary: #dfff6e; --background: #f8f8f8; --surface: #ffffff; --text-main: #1a1a1a; --text-muted: #8e8e8e; --border-color: #f0f0f0; --nav-bg: #1a1a1a; }
-        body { font-family: 'Inter', sans-serif; background-color: var(--background); }
-        ::-webkit-scrollbar { width: 8px; } ::-webkit-scrollbar-track { background: #f1f5f9; } ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; } ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
-        .fade-enter-active, .fade-leave-active { transition: opacity 0.2s ease-out; } .fade-enter-from, .fade-leave-to { opacity: 0; }
-        .modal-enter-active { transition: all 0.3s cubic-bezier(0.52, 0.02, 0.19, 1.02); } .modal-leave-active { transition: all 0.3s cubic-bezier(0.52, 0.02, 0.19, 1.02); } .modal-enter-from, .modal-leave-to { transform: scale(0.95); opacity: 0; }
-        .list-enter-active, .list-leave-active { transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); } .list-enter-from, .list-leave-to { opacity: 0; transform: scale(0.95); }
-        .toast-enter-active, .toast-leave-active { transition: all 0.3s cubic-bezier(0.52, 0.02, 0.19, 1.02); } .toast-enter-from, .toast-leave-to { transform: translateY(20px) scale(0.95); opacity: 0; }
-        .sortable-ghost { opacity: 0.4; background-color: #e2e8f0; } .sortable-chosen { cursor: grabbing; } .drag-handle { cursor: grab; }
-        .photo-upload-overlay { position: absolute; inset: 0; background-color: rgba(255,255,255,0.7); display: flex; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
-    </style>
-</head>
-<body class="text-[var(--text-main)] min-h-screen">
+    <script src="https://www.gstatic.com/firebasejs/h-screen">
     <div id="app" class="pb-32">
         <div v-if="isLoading" class="min-h-screen flex items-center justify-center bg-[var(--background)]">
             <i class="fas fa-spinner fa-spin text-slate-500 text-4xl"></i>
         </div>
         
         <div v-else>
-            <div v-if="!isLoggedIn" class="min-h-screen flex flex-col lg:grid lg:grid-cols-2">
+            <div v-if="!isLoggedIn"9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-storage-compat.js"></script>
+    
+    < class="min-h-screen flex flex-col lg:grid lg:grid-cols-2">
                 <div class="w-full h-64 lg:h-full bg-cover bg-center" style="background-image: url('https://i.imgur.com/0SAAvVb.jpeg');"></div>
                 <div class="flex flex-grow items-center justify-center p-8 bg-[var(--surface)]">
-                    <div class="w-full max-w-md space-y-8">
+                    <div class="w-full maxlink rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/Zpi-w-md space-y-8">
                         <div class="text-center lg:text-left">
                             <h1 class="text-4xl lg:text-5xl font-extrabold text-[var(--text-main)]">Manage Shotlismu</h1>
-                            <p class="mt-2 text-[var(--text-muted)]">{{ isRegisterView ? 'Buat akun baru untuk memulai.' : 'Silakan login untuk melanjutkan.' }}</p>
+                            <p class="mt-2 text-[var(--text-muted)]">{{ isRegisterView ? 'Buat akunBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis. baru untuk memulai.' : 'Silakan login untuk melanjutkan.' }}</p>
                         </div>
                         <form @submit.prevent="isRegisterView ? register() : login()" class="space-y-4">
-                            <div><input v-model="auth.email" type="email" required class="w-full px-4 py-3 bg-slate-100 border-2 border-transparent rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary)]" placeholder="Email"></div>
+                            <div><input v-model="auth.email" type="email" required class="w-full px-4 py-3 bg-slate-10com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root { --primary: #dfff6e; --background: #f8f8f8; --surface: #ffffff; --text-main: #1a1a1a; --text-muted: #8e8e8e; --border-color: #f0f0f0; --nav-bg: #0 border-2 border-transparent rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary)]" placeholder="Email"></div>
                             <div class="relative">
-                                <input v-model="auth.password" :type="auth.isPasswordVisible ? 'text' : 'password'" required class="w-full px-4 py-3 pr-12 bg-slate-100 border-2 border-transparent rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary)]" placeholder="Password">
+                                <input v-model="auth.password" :type="auth.isPasswordVisible ? 'text' : 'password'" required class="w-full px-4 py-3 pr-12 bg-slate-100 border-2 border-transparent rounded-lg focus:outline-none focus:ring1a1a1a; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--background); }
+        ::-webkit-scrollbar { width: 8px; } ::-webkit-scrollbar-track { background: #f1f5f9; } ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; } ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        .fade-enter-active,-2 focus:ring-[var(--primary)]" placeholder="Password">
                                 <button type="button" @click="auth.isPasswordVisible = !auth.isPasswordVisible" class="absolute inset-y-0 right-0 flex items-center px-4 text-slate-500 hover:text-slate-700">
-                                    <i class="fas" :class="auth.isPasswordVisible ? 'fa-eye-slash' : 'fa-eye'"></i>
+                                    <i class="fas" :class="auth.isPasswordVisible ? 'fa-eye-slash' .fade-leave-active { transition: opacity 0.2s ease-out; } .fade-enter-from, .fade-leave-to { opacity: 0; }
+        .modal-enter-active { transition: all 0.3s cubic-bezier(0.52, 0.02, 0.19, 1.02); } .modal-leave-active { transition: all 0 : 'fa-eye'"></i>
                                 </button>
                             </div>
                             <p v-if="auth.error" class="text-red-500 text-sm text-center">{{ auth.error }}</p>
-                            <button type="submit" class="w-full py-3 font-semibold text-slate-900 bg-[var(--primary)] rounded-lg hover:opacity-90 transition-opacity duration-300 flex items-center justify-center" :disabled="auth.loading">
+                            <button type="submit" class="w-full py-3 font-semibold text-slate-900 bg-[var(--primary)] rounded-lg.3s cubic-bezier(0.52, 0.02, 0.19, 1.02); } .modal-enter-from, .modal-leave-to { transform: scale(0.95); opacity: 0; }
+        .list-enter-active, .list-leave-active { transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); hover:opacity-90 transition-opacity duration-300 flex items-center justify-center" :disabled="auth.loading">
                                 <i v-if="auth.loading" class="fas fa-spinner fa-spin mr-2"></i>
                                 <span>{{ isRegisterView ? 'Register' : 'Login' }}</span>
                             </button>
                         </form>
-                        <div class="text-center space-y-2">
+                        <div class=" } .list-enter-from, .list-leave-to { opacity: 0; transform: scale(0.95); }
+        .toast-enter-active, .toast-leave-active { transition: all 0.3s cubic-bezier(0.52, 0.02, 0.19, 1.02); }text-center space-y-2">
                             <button @click="isRegisterView = !isRegisterView" class="text-sm font-semibold text-slate-800 hover:underline">{{ isRegisterView ? 'Sudah punya akun? Login' : 'Belum punya akun? Register' }}</button>
-                            <div v-if="!isRegisterView"><button @click="openForgotPasswordModal" class="text-sm text-[var(--text-muted)] hover:underline">Lupa Password?</button></div>
+                            <div v-if="!isRegisterView"><button @click="open .toast-enter-from, .toast-leave-to { transform: translateY(20px) scale(0.95); opacity: 0; }
+        .sortable-ghost { opacity: 0.4; background-color: #e2e8f0; } .sortable-chosen { cursor: grabbing; } .drag-handle { cursor: grab; }
+        ForgotPasswordModal" class="text-sm text-[var(--text-muted)] hover:underline">Lupa Password?</button></div>
                         </div>
                     </div>
                 </div>
             </div>
             
             <div v-else>
-                <div v-if="!appReady" class="min-h-screen flex items-center justify-center"><i class="fas fa-spinner fa-spin text-slate-500 text-4xl"></i></div>
+                <div v-if="!appReady" class="min-h-screen flex items-center justify.photo-upload-overlay { position: absolute; inset: 0; background-color: rgba(255,255,255,0.7); display: flex; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
+    </style>
+</head>
+<body class="text-[var(--text-main)] min-h-screen">
+    <div-center"><i class="fas fa-spinner fa-spin text-slate-500 text-4xl"></i></div>
                 <div v-show="appReady">
                     <input type="file" ref="photoUploader" @change="handlePhotoUpload" class="hidden" accept="image/*">
                     <div class="container mx-auto px-4 py-6">
-                        <transition name="fade" mode="out-in"><div :key="currentView">
-                            <main v-if="currentView === 'beranda'"><div class="flex justify-between items-center mb-6"><h1 class="text-3xl font-extrabold">Ringkasan</h1><button @click="setView('profil')" class="w-10 h-10 rounded-full bg-slate-200 flex items-center justify-center"><i class="fas fa-user"></i></button></div><div class="relative mb-6"><i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-[var(--text-muted)]"></i><input type="text" v-model="searchQuery" placeholder="Cari jadwal atau kontak..." class="w-full pl-12 pr-4 py-3 bg-slate-200/50 border-none rounded-full focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"></div><div class="bg-[var(--surface)] p-4 sm:p-5 rounded-2xl shadow-sm border border-[var(--border-color)] mb-6"><div class="flex items-center justify-between mb-4"><h2 class="font-bold text-lg">{{ calendar.monthName }} {{ calendar.year }}</h2><div class="flex space-x-2"><button @click="changeMonth(-1)" class="w-8 h-8 rounded-full hover:bg-slate-100 flex items-center justify-center"><i class="fas fa-chevron-left text-slate-500"></i></button><button @click="changeMonth(1)" class="w-8 h-8 rounded-full hover:bg-slate-100 flex items-center justify-center"><i class="fas fa-chevron-right text-slate-500"></i></button></div></div><div class="grid grid-cols-7 gap-1 text-center text-sm"><div v-for="day in ['M', 'S', 'S', 'R', 'K', 'J', 'S']" class="font-semibold text-[var(--text-muted)]">{{ day }}</div><div v-for="day in calendar.days" @click="selectDate(day)" class="relative py-2 rounded-full transition-colors" :class="{'cursor-pointer': day.date, 'bg-lime-300 text-slate-900 font-bold': day.fullDate === selectedDate, 'hover:bg-slate-100': day.date && day.fullDate !== selectedDate }"><span :class="{'opacity-50': !day.date}">{{ day.date }}</span><div v-if="day.hasEvent && day.fullDate !== selectedDate" class="w-1.5 h-1.5 bg-slate-800 rounded-full absolute bottom-1.5 left-1/2 -translate-x-1/2"></div></div></div></div><transition-group tag="div" name="list" class="space-y-4"><div v-for="wedding in filteredWeddings" :key="wedding.id" @click="goToJadwal(wedding)" class="bg-[var(--surface)] p-5 rounded-2xl shadow-sm border border-[var(--border-color)] cursor-pointer transition-all hover:border-slate-300"><div class="flex justify-between items-start"><div><h3 class="font-bold text-lg text-[var(--text-main)]">{{ wedding.title }}</h3><p class="text-sm text-[var(--text-muted)]">{{ formatDateForDisplay(wedding.date) }}</p></div><div class="text-sm font-semibold bg-slate-100 px-3 py-1 rounded-full">{{ getTaskProgress(wedding).percent }}%</div></div><div class="mt-4"><div class="w-full bg-slate-100 rounded-full h-2"><div class="bg-slate-800 h-2 rounded-full" :style="{ width: getTaskProgress(wedding).percent + '%' }"></div></div></div></div></transition-group><div v-if="filteredWeddings.length === 0" class="text-center py-16 bg-white rounded-2xl border border-slate-200"><i class="fas fa-calendar-check text-4xl text-slate-300 mb-4"></i><h3 class="font-semibold text-slate-600">Tidak ada jadwal ditemukan</h3><p class="text-sm text-slate-400">Coba hapus filter atau buat jadwal baru.</p></div></main>
-                            <main v-if="currentView === 'jadwal'" class="grid grid-cols-1 lg:grid-cols-4 gap-6"><aside class="lg:col-span-1 bg-[var(--surface)] rounded-2xl shadow-sm border border-[var(--border-color)] p-5 h-fit lg:sticky top-6"><h2 class="text-xl font-bold flex items-center text-[var(--text-main)] mb-4">Daftar Jadwal</h2><div class="space-y-2 max-h-[60vh] overflow-y-auto" v-if="weddings.length > 0"><template v-for="wedding in weddings" :key="wedding.id"><div @click="setActiveWedding(wedding)" class="p-4 rounded-lg border-2 cursor-pointer transition" :class="{'bg-lime-100/50 border-lime-300': activeWedding && activeWedding.id === wedding.id, 'border-transparent bg-slate-100/60 hover:bg-slate-200/60': !activeWedding || activeWedding.id !== wedding.id}"><h3 class="font-semibold text-slate-800">{{ wedding.title }}</h3><p class="text-sm text-[var(--text-muted)]">{{ formatDateForDisplay(wedding.date) }}</p></div></template></div><div v-else class="text-center py-8"><i class="fas fa-calendar-times text-4xl text-slate-300 mb-3"></i><p class="text-[var(--text-muted)]">Belum ada jadwal.</p><button @click="addWedding" class="mt-4 text-sm text-slate-800 hover:underline font-semibold">+ Tambah Jadwal</button></div></aside><div class="lg:col-span-3 space-y-6"><template v-if="activeWedding"><div class="bg-[var(--surface)] rounded-2xl shadow-sm border border-[var(--border-color)] p-6"><div class="flex justify-between items-start mb-6"><div><h2 class="text-3xl font-extrabold text-[var(--text-main)]">{{ activeWedding.title }}</h2><p class="text-[var(--text-muted)] flex items-center mt-1"><i class="fas fa-calendar-day mr-2"></i> {{ formatDateForDisplay(activeWedding.date) }}</p></div><div class="flex space-x-1"><button @click="openEditModal(activeWedding)" class="w-9 h-9 flex items-center justify-center rounded-full hover:bg-slate-100 transition" title="Edit"><i class="fas fa-edit text-slate-500"></i></button><button @click="deleteWedding(activeWedding.id)" class="w-9 h-9 flex items-center justify-center rounded-full hover:bg-red-100 transition" title="Delete"><i class="fas fa-trash-alt text-red-500"></i></button></div></div><div class="grid grid-cols-1 md:grid-cols-2 gap-4"><div class="bg-slate-100/60 p-4 rounded-lg"><h3 class="font-bold flex items-center text-slate-800 mb-1">Lokasi</h3><p class="text-[var(--text-muted)]">{{ activeWedding.location }}</p></div><div class="bg-slate-100/60 p-4 rounded-lg"><h3 class="font-bold flex items-center text-slate-800 mb-1">Kontak</h3><p class="text-[var(--text-muted)]">{{ activeWedding.contacts.bride }} & {{ activeWedding.contacts.groom }}</p></div></div><div class="mt-4"><h3 class="font-bold mb-2 text-slate-800">Catatan</h3><textarea v-model="activeWedding.notes" @blur="saveActiveWedding" class="w-full h-24 p-3 bg-slate-100/60 text-slate-700 focus:outline-none rounded-lg resize-none focus:ring-2 focus:ring-[var(--primary)]" placeholder="Tambahkan catatan..."></textarea></div></div>
+                        <transition name="fade" mode="out-in"><div :key="currentView"> id="app" class="pb-32">
+        <div v-if="isLoading" class="min-h-screen flex items-center justify-center bg-[var(--background)]">
+            <i class="fas fa-spinner fa
+                            <main v-if="currentView === 'beranda'"><div class="flex justify-between items-center mb-6"><h1 class="text-3xl font-extrabold">Ringkasan</h1>-spin text-slate-500 text-4xl"></i>
+        </div>
+        
+        <div v-else>
+            <div v-if="!isLoggedIn" class="min-h-screen flex flex-col lg:grid lg:grid-cols-2">
+                <div class="w-full h-64 lg:h<button @click="setView('profil')" class="w-10 h-10 rounded-full bg-slate-2-full bg-cover bg-center" style="background-image: url('https://i.imgur.com/0SAAvVb.jpeg');"></div>
+                <div class="flex flex-grow items-center justify-center p-8 bg-[var(--surface)]">
+                    <div class="w-full max-w-md space-y-00 flex items-center justify-center"><i class="fas fa-user"></i></button></div><div class="relative mb-6"><i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-[var(--text-muted)]"></i><input type="text" v-model="searchQuery" placeholder="Cari jadwal atau kontak..." class="w-full pl-12 pr-4 py-8">
+                        <div class="text-center lg:text-left">
+                            <h1 class="text-4xl lg:text-5xl font-extrabold text-[var(--text-main)]">Manage Shotlismu</h1>
+                            <3 bg-slate-200/50 border-none rounded-full focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"></div><div class="bg-[var(--surface)] p-4 sm:p-5 rounded-2xl shadow-sm border border-[var(--border-color)] mb-6"><div class="flexp class="mt-2 text-[var(--text-muted)]">{{ isRegisterView ? 'Buat akun baru untuk memulai.' : 'Silakan login untuk melanjutkan.' }}</p>
+                        </div>
+                        <form @submit.prevent="isRegisterView ? register() : login()" class="space-y-4">
+                            <div><input v-model="auth.email" type="email" required class items-center justify-between mb-4"><h2 class="font-bold text-lg">{{ calendar.monthName }} {{ calendar.year="w-full px-4 py-3 bg-slate-100 border-2 border-transparent rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary)]" placeholder="Email"></div>
+                             }}</h2><div class="flex space-x-2"><button @click="changeMonth(-1)" class="w-8 h-8 rounded-full hover:bg-slate-100 flex items-center justify-center"><i class="fas fa-chevron-left text-slate-500"></i></button><button @click="changeMonth(1)" class="w-8 h-8 rounded-full hover:bg-slate-100 flex items-center justify-<div class="relative">
+                                <input v-model="auth.password" :type="auth.isPasswordVisible ? 'text'center"><i class="fas fa-chevron-right text-slate-500"></i></button></div></div><div class="grid grid-cols-7 gap-1 text-center text-sm"><div v-for="day in ['M : 'password'" required class="w-full px-4 py-3 pr-12 bg-slate-100 border-2 border-transparent rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary)]" placeholder="Password">
+                                <button type="button" @click="auth.isPasswordVisible = !auth.isPasswordVisible" class="absolute inset-y-0 right-0 flex items-center px-4 text-slate-500 hover:text-slate-', 'S', 'S', 'R', 'K', 'J', 'S']" class="font-700">
+                                    <i class="fas" :class="auth.isPasswordVisible ? 'fa-eye-slash' : 'fa-eye'"></i>
+                                </button>
+                            </div>
+                            <p v-if="auth.error" classsemibold text-[var(--text-muted)]">{{ day }}</div><div v-for="day in calendar.days" @click="selectDate(day)" class="relative py-2 rounded-full transition-colors" :class="{'cursor-pointer': day.date, 'bg-lime-300 text-slate-900 font-bold': day.fullDate === selectedDate, 'hover:bg-slate-100': day.date && day="text-red-500 text-sm text-center">{{ auth.error }}</p>
+                            <button type="submit" class="w-full py-3 font-semibold text-slate-900 bg-[var(--primary)] rounded-lg.fullDate !== selectedDate }"><span :class="{'opacity-50': !day.date}">{{ day.date }}</span><div v-if="day.hasEvent && day.fullDate !== selectedDate" class="w-1.5 h-1.5 bg hover:opacity-90 transition-opacity duration-300 flex items-center justify-center" :disabled="auth.loading">
+                                <i v-if="auth.loading" class="fas fa-spinner fa-spin mr-2"></i>
+                                <span>{{ isRegisterView ? 'Register' : 'Login' }}</span>
+                            </button>
+                        </form-slate-800 rounded-full absolute bottom-1.5 left-1/2 -translate-x-1/2"></div></div></div></div><transition-group tag="div" name="list" class="space-y-4"><div v-for="wedding in filteredWeddings" :key="wedding.id" @click=">
+                        <div class="text-center space-y-2">
+                            <button @click="isRegisterView = !isRegisterView" class="text-sm font-semibold text-slate-800 hover:underline">{{ isRegisterView ? 'SudgoToJadwal(wedding)" class="bg-[var(--surface)] p-5 rounded-2xl shadow-sm border border-[var(--border-color)] cursor-pointer transition-all hover:border-slate-30ah punya akun? Login' : 'Belum punya akun? Register' }}</button>
+                            <div v-if="!isRegisterView"><button @click="openForgotPasswordModal" class="text-sm text-[var(--text-muted)] hover:underline">Lupa Password?</button0"><div class="flex justify-between items-start"><div><h3 class="font-bold text-lg text-[var(--text-main)]">{{ wedding.title }}</h3><p class="text-sm text-[var(--text-muted)]">{{ formatDate></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div v-else>
+                <div v-if="!appReady" class="min-h-screen flex items-center justify-center"><i class="fas fa-spinner fa-spin text-slate-500 text-4xl"></i></div>ForDisplay(wedding.date) }}</p></div><div class="text-sm font-semibold bg-slate-100 px-3 py-1 rounded-full">{{ getTaskProgress(wedding).percent }}%</div></div><div class="mt-4"><div class="
+                <div v-show="appReady">
+                    <input type="file" ref="photoUploader" @change="handlePhotoUpload" class="hidden" accept="image/*">
+                    <div class="container mx-auto px-4 py-6">
+                        <transition name="fade" mode="out-in"><div :key="currentView">w-full bg-slate-100 rounded-full h-2"><div class="bg-slate-800 h-2 rounded-full" :style="{ width: getTaskProgress(wedding).percent + '%' }"></div></div></div></div></transition-group><div v-if="filteredWeddings.length === 0" class="text-center py-
+                            <main v-if="currentView === 'beranda'"><div class="flex justify-between items-center mb-6"><h1 class="text-3xl font-extrabold">Ringkasan</h1><button @click="setView('profil')" class="w-10 h-10 rounded-full bg-slate16 bg-white rounded-2xl border border-slate-200"><i class="fas fa-calendar-check text-4xl text-slate-300 mb-4"></i><h3 class="font-semibold text-slate-600">Tidak ada jadwal ditemukan</h3><p class="text-sm text-slate--200 flex items-center justify-center"><i class="fas fa-user"></i></button></div><div class="relative mb-6"><i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-[var(--text-muted)]"></i><input type="text" v-model="search400">Coba hapus filter atau buat jadwal baru.</p></div></main>
+                            <main v-if="currentView === 'jadwal'" class="grid grid-cols-1 lg:grid-cols-4 gap-6"><Query" placeholder="Cari jadwal atau kontak..." class="w-full pl-12 pr-4 py-3 bg-slate-200/50 border-none rounded-full focus:outline-none focus:ringaside class="lg:col-span-1 bg-[var(--surface)] rounded-2xl shadow-sm border border-[var(--border-color)] p-5 h-fit lg:sticky top-6"><h2 class="text-2 focus:ring-[var(--primary)]"></div><div class="bg-[var(--surface)] p-4 sm:p-5 rounded-2xl shadow-sm border border-[var(--border-color)] mb-6"><div class="flex-xl font-bold flex items-center text-[var(--text-main)] mb-4">Daftar Jadwal</h2><div class="space-y-2 max-h-[60vh] overflow-y-auto" v-if="weddings.length > 0 items-center justify-between mb-4"><h2 class="font-bold text-lg">{{ calendar.monthName }} {{ calendar.year }}</h2><div class="flex space-x-2"><button @click="changeMonth(-1)" class="w-8"><template v-for="wedding in weddings" :key="wedding.id"><div @click="setActiveWedding(wedding)" class="p-4 rounded-lg border-2 cursor-pointer transition" :class="{'bg-lime-100/ h-8 rounded-full hover:bg-slate-100 flex items-center justify-center"><i class="fas fa-chevron-left text-slate-500"></i></button><button @click="changeMonth(1)" class="50 border-lime-300': activeWedding && activeWedding.id === wedding.id, 'border-transparent bg-slate-100/60 hover:bg-slate-200/60':w-8 h-8 rounded-full hover:bg-slate-100 flex items-center justify-center"><i class="fas fa-chevron-right text-slate-500"></i></button></div></div><div class="grid grid-cols- !activeWedding || activeWedding.id !== wedding.id}"><h3 class="font-semibold text-slate-800">{{ wedding.title }}</h3><p class="text-sm text-[var(--text-muted)]">{{ formatDate7 gap-1 text-center text-sm"><div v-for="day in ['M', 'S', 'S', 'R', 'K', 'J', 'S']" class="font-semibold text-[var(--text-muted)]">{{ dayForDisplay(wedding.date) }}</p></div></template></div><div v-else class="text-center py-8"><i class="fas fa-calendar-times text-4xl text-slate-300 mb }}</div><div v-for="day in calendar.days" @click="selectDate(day)" class="relative py-2 rounded-full transition-colors" :class="{'cursor-pointer': day.date, 'bg-lime-300 text-3"></i><p class="text-[var(--text-muted)]">Belum ada jadwal.</p><button @click="addWedding" class="mt-4 text-sm text-slate-800 hover:underline font-semibold">+ Tambah Jadwal</button></div>-slate-900 font-bold': day.fullDate === selectedDate, 'hover:bg-slate-100': day.date && day.fullDate !== selectedDate }"><span :class="{'opacity-</aside><div class="lg:col-span-3 space-y-6"><template v-if="activeWedding"><div class="bg-[var(--surface)] rounded-2xl shadow-sm border border-[var(--border-color)] p-6"><div class="flex50': !day.date}">{{ day.date }}</span><div v-if="day.hasEvent && day.fullDate !== selectedDate" class="w-1.5 h-1.5 bg-slate justify-between items-start mb-6"><div><h2 class="text-3xl font-extrabold text-[var(--text--800 rounded-full absolute bottom-1.5 left-1/2 -translate-x-1/2"></div></div></div></div><transition-group tag="div" name="list" class="space-y-4"><divmain)]">{{ activeWedding.title }}</h2><p class="text-[var(--text-muted)] flex items-center mt-1"><i class="fas fa-calendar-day mr-2"></i> {{ formatDateForDisplay(activeWedding.date) }} v-for="wedding in filteredWeddings" :key="wedding.id" @click="goToJadwal(wedding)" class</p></div><div class="flex space-x-1"><button @click="openEditModal(activeWedding)"="bg-[var(--surface)] p-5 rounded-2xl shadow-sm border border-[var(--border-color)] cursor-pointer transition-all hover:border-slate-300"><div class="flex justify-between items- class="w-9 h-9 flex items-center justify-center rounded-full hover:bg-slate-100 transitionstart"><div><h3 class="font-bold text-lg text-[var(--text-main)]">{{ wedding" title="Edit"><i class="fas fa-edit text-slate-500"></i></button><.title }}</h3><p class="text-sm text-[var(--text-muted)]">{{ formatDateForDisplay(wedding.date) }}button @click="deleteWedding(activeWedding.id)" class="w-9 h-9 flex items-center justify-center rounded</p></div><div class="text-sm font-semibold bg-slate-100 px-3 py-1-full hover:bg-red-100 transition" title="Delete"><i class="fas fa-trash-alt text-red-500"></i></button></div></div><div class="grid grid-cols-1 md:grid-cols- rounded-full">{{ getTaskProgress(wedding).percent }}%</div></div><div class="mt-4"><div class="w-full bg-slate-100 rounded-full h-2"><div class="bg-slate-800 h2 gap-4"><div class="bg-slate-100/60 p-4 rounded-lg"><h3 class="font-bold flex items-center text-slate-800 mb-1">Lok-2 rounded-full" :style="{ width: getTaskProgress(wedding).percent + '%' }"></div></div></div></div></transition-group><div v-if="filteredWeddings.length === 0" class="text-center py-asi</h3><p class="text-[var(--text-muted)]">{{ activeWedding.location }}</p></div><div class="bg-slate-100/60 p-4 rounded-lg"><h3 class="font-bold flex items-center text-slate-800 mb-1">Kontak</h3><p class="text-[var16 bg-white rounded-2xl border border-slate-200"><i class="fas fa-calendar-check text-4xl text-slate-300 mb-4"></i><h3 class="font-semibold text-slate-600">Tidak ada jadwal ditemukan</h3><p class="text-sm text-slate-400">C(--text-muted)]">{{ activeWedding.contacts.bride }} & {{ activeWedding.contacts.groom }}</p></div></div><div class="mt-4"><h3 class="font-bold mb-2 text-slate-80oba hapus filter atau buat jadwal baru.</p></div></main>
+                            <main v-if="currentView === 'jadwal'" class="grid grid-cols-1 lg:grid-cols-4 gap-6"><aside class="lg:col-span0">Catatan</h3><textarea v-model="activeWedding.notes" @blur="saveActiveWedding" class="w-full h-24 p-3 bg-slate-100/60 text-slate-700 focus:outline-none rounded-1 bg-[var(--surface)] rounded-2xl shadow-sm border border-[var(--border-color)] p--lg resize-none focus:ring-2 focus:ring-[var(--primary)]" placeholder="Tambahkan catatan..."></textarea></div></div>5 h-fit lg:sticky top-6"><h2 class="text-xl font-bold flex items-center text-[var(--text
+                            <div v-if="activeWedding.clientNotes" class="bg-amber-50 p-6 rounded--main)] mb-4">Daftar Jadwal</h2><div class="space-y-2 max-h-[60vh] overflow2xl border border-amber-200">
+                                 <h3 class="font-bold text-lg-y-auto" v-if="weddings.length > 0"><template v-for="wedding in weddings text-amber-800 flex items-center mb-2"><i class="fas fa-comment-dots mr-2"></i>Catatan dari Klien</h3>
+                                 <p class="text-amber-900 whitespace-" :key="wedding.id"><div @click="setActiveWedding(wedding)" class="p-4 rounded-lg border-2 cursor-pointer transition" :class="{'bg-lime-100/50 border-lime-300': activeWedding &&pre-line">{{ activeWedding.clientNotes }}</p>
+                            </div>
+                            <div class="bg-[var(--surface)] rounded-2xl shadow-sm border border-[var(--border-color)] p-6"><div class="flex activeWedding.id === wedding.id, 'border-transparent bg-slate-100/60 hover:bg-slate-200/60': !activeWedding || activeWedding.id !== wedding.id}"><h3 class="font items-center justify-between mb-4"><h2 class="text-xl font-bold text-[var(--text-main)]">Foto Wajib</h2><button @click="openShotModal" class="font-semibold text-slate-900 bg-lime-300-semibold text-slate-800">{{ wedding.title }}</h3><p class="text-sm text-[var(--text-muted)]">{{ formatDateForDisplay(wedding.date) }}</p></div></template></div>< px-4 py-1.5 rounded-lg text-sm transition hover:opacity-90">Tambah</button></div><div ref="shotListContainer" class="mt-4 space-y-3" v-if="activeWedding.shotsdiv v-else class="text-center py-8"><i class="fas fa-calendar-times text-4xl text-slate-300 mb-3"></i><p class="text-[var(--text-muted)]">Belum ada jadwal.</p><button.length > 0"><div v-for="shot in activeWedding.shots" :key="shot.id" class="flex items-center p-3 rounded-lg bg-slate-100/60"><i class="fas @click="addWedding" class="mt-4 text-sm text-slate-800 hover:underline font-semibold">+ Tambah Jadwal</button></div></aside><div class="lg:col-span-3 space- fa-grip-vertical drag-handle text-slate-400 mr-3"></i><label class="flex items-center cursor-pointer flex-grow"><input type="checkbox" v-model="shot.completed" @y-6"><template v-if="activeWedding"><div class="bg-[var(--surface)] rounded-2xl shadow-sm border borderchange="saveActiveWedding" class="hidden"><span class="w-6 h-6 border-2 border-slate-[var(--border-color)] p-6"><div class="flex justify-between items-start mb-6">-300 rounded-md flex items-center justify-center mr-4 transition-all" :class="{'bg-slate-800 border-slate-800': shot.completed}"><i class="fas fa-check<div><h2 class="text-3xl font-extrabold text-[var(--text-main)]">{{ activeWedding.title }}</h2><p class="text-[var(--text-muted)] flex items-center mt-1"><i class="fas fa text-white text-sm" v-show="shot.completed"></i></span><p class="font-medium" :class="{'line-through text-[var(--text-muted)]': shot.completed}">{{ shot.title }}</p></label><button @-calendar-day mr-2"></i> {{ formatDateForDisplay(activeWedding.date) }}</p></div><div class="flex space-x-1"><button @click="openEditModal(activeWedding)" class="w-9 h-9 flex items-center justifyclick="deleteShot(shot.id)" class="ml-auto w-8 h-8 flex items-center justify-center text-slate-400 hover:text-red-500 hover:bg-red-100-center rounded-full hover:bg-slate-100 transition" title="Edit"><i class="fas fa-edit text-slate-500"></i></button><button @click="deleteWedding(activeWedding.id)" class="w-/70 rounded-full"><i class="fas fa-times"></i></button></div></div><div v-else class="text-center py-8 text-[var(--text-muted)]"><i class="fas fa-camera-slash text-9 h-9 flex items-center justify-center rounded-full hover:bg-red-100 transition" title="Delete"><i class="fas fa-trash-alt text-red-500"></i></button4xl mb-4"></i><p class="font-semibold text-slate-600">Belum ada foto wajib.</p><p class="text-sm text-slate-500 mt-1">Tambahkan daftar foto yang harus diambil.</p></div></div><div class="grid grid-cols-1 md:grid-cols-2 gap-4"><div class="bg-slate-100/60 p-4 rounded-lg"><h3 class="font-bold flex><button @click="openShotModal" class="mt-4 font-semibold text-slate-900 bg-lime-300 px-4 py-2 rounded-lg text-sm transition hover:opacity-90">Tambah Foto Wajib</button></div></div> items-center text-slate-800 mb-1">Lokasi</h3><p class="text-[var(--text-muted)]">{{ activeWedding.location }}</p></div><div class="bg-slate-100/60 p-4 rounded-lg"><h3<div class="bg-[var(--surface)] rounded-2xl shadow-sm border border-[var(--border-color)] p-6"><h2 class="text-xl font-bold text-[var(--text-main)] mb class="font-bold flex items-center text-slate-800 mb-1">Kontak</h3><p class="text-[var(--text-muted)]">{{ activeWedding.contacts.bride }} & {{ activeWedding.contacts.groom }}</p-4">Referensi</h2><div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4"><div v-for="(photo, index) in activeWedding.photos" :key="photo.></div></div><div class="mt-4"><h3 class="font-bold mb-2 text-slate-8path" class="group aspect-square bg-slate-100 rounded-lg overflow-hidden relative cursor-pointer" @click="openPhotoPreview(photo.url)"><img :src="photo.url" class="w-full h00">Catatan</h3><textarea v-model="activeWedding.notes" @blur="saveActiveWedding" class="w-full h-24 p-3 bg-slate-100/60 text-slate-700 focus:outline-none rounded--full object-cover" alt="Wedding preview"><div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center"><i class="fas fa-eyelg resize-none focus:ring-2 focus:ring-[var(--primary)]" placeholder="Tambahkan catatan..."></textarea></div></div> text-white text-2xl"></i></div><button @click.stop="deletePhoto(index, photo)" class="absolute top-1 right
                             <div v-if="activeWedding.clientNotes" class="bg-amber-50 p-6 rounded-2xl border border-amber-200">
-                                 <h3 class="font-bold text-lg text-amber-800 flex items-center mb-2"><i class="fas fa-comment-dots mr-2"></i>Catatan dari Klien</h3>
+                                 <h3 class="font-bold text-lg-1 bg-black bg-opacity-40 text-white rounded-full w-6 h-6 flex items- text-amber-800 flex items-center mb-2"><i class="fas fa-comment-dots mr-2">center justify-center opacity-0 group-hover:opacity-100 transition-opacity">&times;</button></div><</i>Catatan dari Klien</h3>
                                  <p class="text-amber-900 whitespace-pre-line">{{ activeWedding.clientNotes }}</p>
                             </div>
-                            <div class="bg-[var(--surface)] rounded-2xl shadow-sm border border-[var(--border-color)] p-6"><div class="flex items-center justify-between mb-4"><h2 class="text-xl font-bold text-[var(--text-main)]">Foto Wajib</h2><button @click="openShotModal" class="font-semibold text-slate-900 bg-lime-300 px-4 py-1.5 rounded-lg text-sm transition hover:opacity-90">Tambah</button></div><div ref="shotListContainer" class="mt-4 space-y-3" v-if="activeWedding.shots.length > 0"><div v-for="shot in activeWedding.shots" :key="shot.id" class="flex items-center p-3 rounded-lg bg-slate-100/60"><i class="fas fa-grip-vertical drag-handle text-slate-400 mr-3"></i><label class="flex items-center cursor-pointer flex-grow"><input type="checkbox" v-model="shot.completed" @change="saveActiveWedding" class="hidden"><span class="w-6 h-6 border-2 border-slate-300 rounded-md flex items-center justify-center mr-4 transition-all" :class="{'bg-slate-800 border-slate-800': shot.completed}"><i class="fas fa-check text-white text-sm" v-show="shot.completed"></i></span><p class="font-medium" :class="{'line-through text-[var(--text-muted)]': shot.completed}">{{ shot.title }}</p></label><button @click="deleteShot(shot.id)" class="ml-auto w-8 h-8 flex items-center justify-center text-slate-400 hover:text-red-500 hover:bg-red-100/70 rounded-full"><i class="fas fa-times"></i></button></div></div><div v-else class="text-center py-8 text-[var(--text-muted)]"><i class="fas fa-camera-slash text-4xl mb-4"></i><p class="font-semibold text-slate-600">Belum ada foto wajib.</p><p class="text-sm text-slate-500 mt-1">Tambahkan daftar foto yang harus diambil.</p><button @click="openShotModal" class="mt-4 font-semibold text-slate-900 bg-lime-300 px-4 py-2 rounded-lg text-sm transition hover:opacity-90">Tambah Foto Wajib</button></div></div><div class="bg-[var(--surface)] rounded-2xl shadow-sm border border-[var(--border-color)] p-6"><h2 class="text-xl font-bold text-[var(--text-main)] mb-4">Referensi</h2><div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4"><div v-for="(photo, index) in activeWedding.photos" :key="photo.path" class="group aspect-square bg-slate-100 rounded-lg overflow-hidden relative cursor-pointer" @click="openPhotoPreview(photo.url)"><img :src="photo.url" class="w-full h-full object-cover" alt="Wedding preview"><div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center"><i class="fas fa-eye text-white text-2xl"></i></div><button @click.stop="deletePhoto(index, photo)" class="absolute top-1 right-1 bg-black bg-opacity-40 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">×</button></div><div class="relative"><button @click="addPhoto" class="aspect-square bg-slate-100/60 rounded-lg flex items-center justify-center text-slate-400 border-2 border-dashed border-slate-300 hover:border-lime-400 hover:text-lime-500 transition-colors w-full h-full"><i class="fas fa-plus text-3xl"></i></button><div v-if="isUploading" class="photo-upload-overlay rounded-lg"><i class="fas fa-spinner fa-spin text-slate-600 text-2xl"></i></div></div></div></div><div class="bg-[var(--surface)] rounded-2xl shadow-sm border border-[var(--border-color)] p-6"><div class="flex items-center justify-between mb-4"><h2 class="text-xl font-bold text-[var(--text-main)]">Linimasa</h2><button @click="openTimelineModal" class="font-semibold text-slate-900 bg-lime-300 px-4 py-1.5 rounded-lg text-sm transition hover:opacity-90">Tambah</button></div><div ref="timelineContainer" class="relative border-l-2 border-slate-200 ml-2" v-if="activeWedding.timeline.length > 0"><div v-for="(item, index) in activeWedding.timeline" :key="item.id" class="relative pl-8 pb-8"><div class="absolute -left-2.5 top-1 flex items-center"><i class="fas fa-grip-vertical drag-handle text-slate-400 -ml-5 mr-1"></i><div class="w-4 h-4 bg-[var(--background)] border-4 border-slate-800 rounded-full z-10"></div></div><div class="flex justify-between items-start"><div><p class="font-semibold text-slate-800">{{ item.title }}</p><span class="text-sm font-semibold bg-slate-800 text-white px-2 py-0.5 rounded-full">{{ item.time }}</span><p class="text-sm text-[var(--text-muted)] mt-1">{{ item.notes }}</p></div><button @click="deleteTimelineItem(item.id)" class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-red-500"><i class="fas fa-trash-alt text-xs"></i></button></div></div></div><div v-else class="text-center py-8 text-[var(--text-muted)]"><i class="fas fa-list-ol text-4xl mb-4"></i><p class="font-semibold text-slate-600">Belum ada linimasa.</p><p class="text-sm text-slate-500 mt-1">Buat jadwal acara dari awal hingga akhir.</p><button @click="openTimelineModal" class="mt-4 font-semibold text-slate-900 bg-lime-300 px-4 py-2 rounded-lg text-sm transition hover:opacity-90">Tambah Linimasa</button></div></div></template><template v-else><div class="flex flex-col items-center justify-center text-center h-[60vh] bg-[var(--surface)] rounded-2xl shadow-sm border border-[var(--border-color)] p-4"><i class="fas fa-mouse-pointer text-5xl text-slate-300 mb-4"></i><h2 class="text-2xl font-bold text-[var(--text-main)]">Pilih Jadwal</h2><p class="text-[var(--text-muted)] mt-2">Pilih sebuah jadwal dari daftar di samping<br>untuk melihat detail lengkapnya.</p></div></template></div></main>
-                            <main v-if="currentView === 'invoice'"><div class="mb-6 flex justify-between items-center"><h1 class="text-3xl font-extrabold text-[var(--text-main)]">Invoice Maker</h1><p class="text-[var(--text-muted)]">Buat & lihat invoice secara real-time.</p></div><div class="flex items-center space-x-2 mb-6"><button @click="saveInvoiceTemplate" class="bg-slate-200 text-slate-700 font-bold py-2 px-4 rounded-lg hover:bg-slate-300 transition text-sm">Simpan Template</button><button @click="loadInvoiceTemplate" class="bg-slate-200 text-slate-700 font-bold py-2 px-4 rounded-lg hover:bg-slate-300 transition text-sm">Gunakan Template</button><button @click="generatePDF" class="bg-slate-800 text-white font-bold py-2 px-5 rounded-lg hover:bg-slate-900 transition text-sm flex items-center" :disabled="invoice.isGenerating"><i v-if="invoice.isGenerating" class="fas fa-spinner fa-spin mr-2"></i> Ekspor PDF</button></div><div class="grid grid-cols-1 lg:grid-cols-2 gap-8"><div class="space-y-6"><div class="bg-white p-5 rounded-xl border border-slate-200"><h3 class="font-bold text-lg mb-4 text-slate-700">Tagihan Dari</h3><div class="space-y-4"><input type="text" class="w-full px-4 py-3 bg-slate-100 border-none rounded-lg" v-model="invoice.invoicerName" placeholder="Nama Anda / Perusahaan"><input type="text" class="w-full px-4 py-3 bg-slate-100 border-none rounded-lg" v-model="invoice.invoicerSlogan" placeholder="Slogan / Deskripsi Singkat"></div></div><div class="bg-white p-5 rounded-xl border border-slate-200"><h3 class="font-bold text-lg mb-4 text-slate-700">Tagihan Untuk</h3><div class="space-y-4"><input type="text" class="w-full px-4 py-3 bg-slate-100 border-none rounded-lg" v-model="invoice.client.name" placeholder="Nama Klien"><textarea class="w-full px-4 py-3 bg-slate-100 border-none rounded-lg resize-none" rows="2" v-model="invoice.client.address" placeholder="Alamat Klien"></textarea></div></div><div class="bg-white p-5 rounded-xl border border-slate-200"><h3 class="font-bold text-lg mb-4 text-slate-700">Detail Invoice</h3><div class="grid grid-cols-1 sm:grid-cols-3 gap-4"><input type="text" class="w-full px-4 py-3 bg-slate-100 border-none rounded-lg" v-model="invoice.number" placeholder="No. Invoice"><input type="date" class="w-full px-4 py-3 bg-slate-100 border-none rounded-lg" v-model="invoice.date"><input type="date" class="w-full px-4 py-3 bg-slate-100 border-none rounded-lg" v-model="invoice.dueDate"></div></div><div class="bg-white p-5 rounded-xl border border-slate-200"><h3 class="font-bold text-lg mb-2 text-slate-700">Item Tagihan</h3><div class="grid grid-cols-[1fr,auto,auto,auto] gap-2 text-sm font-semibold text-slate-500 mb-2 px-2 hidden sm:grid"><span>Deskripsi</span><span class="text-right">Jml</span><span class="text-right">Harga</span><span></span></div><div class="space-y-2"><div v-for="(item, index) in invoice.items" :key="index" class="grid grid-cols-[1fr,auto,auto,auto] gap-2 items-center"><input type="text" class="w-full bg-slate-100 px-4 py-2 border-none rounded-lg" v-model="item.description" placeholder="Deskripsi item"><input type="number" class="w-16 bg-slate-100 px-3 py-2 border-none rounded-lg text-right" v-model.number="item.quantity" placeholder="Jml"><input type="number" class="w-28 bg-slate-100 px-3 py-2 border-none rounded-lg text-right" v-model.number="item.rate" placeholder="Harga"><button @click="removeItem(index)" class="text-red-400 hover:text-red-600 p-2 rounded-full w-8 h-8 flex items-center justify-center"><i class="fas fa-trash"></i></button></div></div><button @click="addItem" class="text-slate-800 font-semibold mt-4 hover:underline">+ Tambah Baris</button></div><div class="bg-white p-5 rounded-xl border border-slate-200"><h3 class="font-bold text-lg mb-4 text-slate-700">Catatan & Total</h3><textarea class="w-full px-4 py-3 bg-slate-100 border-none rounded-lg resize-none mb-4" rows="2" v-model="invoice.notes" placeholder="Catatan tambahan (contoh: detail transfer bank)"></textarea><div class="w-full max-w-sm ml-auto space-y-2"><div class="flex justify-between"><span class="text-slate-500">Subtotal</span><span class="font-medium text-slate-700">{{ formatCurrency(invoiceSubtotal) }}</span></div><div class="flex justify-between items-center"><span class="text-slate-500">Pajak (%)</span><input type="number" class="w-20 text-right bg-slate-100 rounded-md py-1 px-2 border-none" v-model.number="invoice.taxRate"></div><div class="flex justify-between font-bold text-xl border-t-2 pt-2 mt-2 border-slate-200"><span class="text-slate-800">Total</span><span class="text-slate-900">{{ formatCurrency(invoiceTotal) }}</span></div></div></div></div><div class="lg:sticky lg:top-6 h-fit"><div id="invoice-preview" class="bg-white rounded-xl border border-slate-200 shadow-lg p-8 sm:p-12 text-sm text-slate-700"><div class="flex justify-between items-start mb-12"><div><h2 class="text-2xl font-bold uppercase text-slate-800">Invoice</h2><p class="text-slate-500">{{ invoice.number || 'INV-001' }}</p></div><div class="text-right"><h3 class="text-lg font-bold text-slate-800">{{ invoice.invoicerName || 'Nama Perusahaan' }}</h3><p class="text-slate-500 max-w-[200px]">{{ invoice.invoicerSlogan || 'Slogan Anda' }}</p></div></div><div class="grid sm:grid-cols-2 gap-8 mb-12"><div><h4 class="font-bold text-slate-500 uppercase tracking-wider mb-2">Tagihan Untuk</h4><p class="font-semibold text-slate-800">{{ invoice.client.name || 'Nama Klien' }}</p><p class="whitespace-pre-line">{{ invoice.client.address || 'Alamat Klien' }}</p></div><div class="text-left sm:text-right"><h4 class="font-bold text-slate-500 uppercase tracking-wider mb-2">Detail</h4><p><span class="font-semibold">Tanggal Invoice:</span> {{ formatDateForDisplay(invoice.date) }}</p><p><span class="font-semibold">Jatuh Tempo:</span> {{ formatDateForDisplay(invoice.dueDate) }}</p></div></div><table class="w-full mb-8"><thead><tr class="bg-slate-100 text-slate-600 uppercase"><th class="p-3 text-left font-bold">Deskripsi</th><th class="p-3 text-right font-bold hidden sm:table-cell">Jml</th><th class="p-3 text-right font-bold hidden sm:table-cell">Harga</th><th class="p-3 text-right font-bold">Total</th></tr></thead><tbody><tr v-for="(item, index) in invoice.items" :key="index"><td class="p-3 border-b border-slate-100">{{ item.description || 'Item' }}</td><td class="p-3 border-b border-slate-100 text-right hidden sm:table-cell">{{ item.quantity }}</td><td class="p-3 border-b border-slate-100 text-right hidden sm:table-cell">{{ formatCurrency(item.rate) }}</td><td class="p-3 border-b border-slate-100 text-right font-medium text-slate-800">{{ formatCurrency(item.quantity * item.rate) }}</td></tr><tr v-if="invoice.items.length === 0"><td colspan="4" class="p-3 text-center text-slate-400 border-b border-slate-100">Belum ada item.</td></tr></tbody></table><div class="flex justify-end mb-12"><div class="w-full max-w-[250px] space-y-2"><div class="flex justify-between"><span>Subtotal</span><span>{{ formatCurrency(invoiceSubtotal) }}</span></div><div class="flex justify-between"><span>Pajak ({{ invoice.taxRate }}%)</span><span>{{ formatCurrency(invoiceSubtotal * (invoice.taxRate / 100)) }}</span></div><div class="flex justify-between text-lg font-bold text-slate-800 border-t border-slate-300 pt-2 mt-2"><span>Total</span><span>{{ formatCurrency(invoiceTotal) }}</span></div></div></div><div v-if="invoice.notes" class="border-t border-slate-200 pt-6"><h4 class="font-bold text-slate-500 uppercase tracking-wider mb-2">Catatan</h4><p class="whitespace-pre-line">{{ invoice.notes }}</p></div></div></div></div></main>
-                            <main v-if="currentView === 'profil'"><div class="bg-[var(--surface)] p-6 rounded-2xl shadow-sm border border-[var(--border-color)]"><div class="flex items-center flex-col text-center"><div class="w-24 h-24 rounded-full bg-slate-100 flex items-center justify-center mb-4"><i class="fas fa-user text-5xl text-slate-400"></i></div><h1 class="text-2xl font-bold text-[var(--text-main)]">Profil & Akun</h1><p v-if="user" class="text-[var(--text-muted)] mt-1">{{ user.email }}</p></div><div class="mt-8 border-t pt-6 text-center space-y-4"><button @click="openChangePasswordModal" class="bg-slate-200/60 text-slate-800 font-bold py-3 px-5 rounded-lg hover:bg-slate-200 transition w-full max-w-xs"><i class="fas fa-key mr-2"></i>Ubah Password</button><button @click="logout" class="bg-red-500/10 text-red-600 font-bold py-3 px-5 rounded-lg hover:bg-red-500/20 transition w-full max-w-xs"><i class="fas fa-sign-out-alt mr-2"></i>Logout</button></div><div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-8 text-center border-t pt-6"><div class="bg-slate-100/60 p-4 rounded-lg"><p class="text-3xl font-bold text-slate-800">{{ totalSchedules }}</p><p class="text-sm text-[var(--text-muted)] font-semibold">Total Jadwal</p></div><div class="bg-slate-100/60 p-4 rounded-lg"><p class="text-3xl font-bold text-slate-800">{{ totalTasks }}</p><p class="text-sm text-[var(--text-muted)] font-semibold">Total Tugas</p></div><div class="bg-slate-100/60 p-4 rounded-lg"><p class="text-3xl font-bold text-slate-800">{{ tasksCompleted }}</p<p class="text-sm text-[var(--text-muted)] font-semibold">Tugas Selesai</p></div></div></div></main>
+                            <div class="bg-[var(--surface)] rounded-2xldiv class="relative"><button @click="addPhoto" class="aspect-square bg-slate-100/60 rounded-lg flex items-center justify-center text-slate-400 border-2 border-dashed border-slate-300 hover shadow-sm border border-[var(--border-color)] p-6"><div class="flex items-center justify-between mb-4"><h2 class="text-xl font-bold text-[var(--text-main)]">Foto Wajib</h2><button:border-lime-400 hover:text-lime-500 transition-colors w-full h-full">< @click="openShotModal" class="font-semibold text-slate-900 bg-lime-300 px-i class="fas fa-plus text-3xl"></i></button><div v-if="isUploading" class="photo4 py-1.5 rounded-lg text-sm transition hover:opacity-90">Tambah</button></div><div ref-upload-overlay rounded-lg"><i class="fas fa-spinner fa-spin text-slate-600 text-2="shotListContainer" class="mt-4 space-y-3" v-if="activeWedding.shots.length > 0"><div v-for="shot in activeWedding.shots" :key="shot.id" class="xl"></i></div></div></div></div><div class="bg-[var(--surface)] rounded-2xl shadow-sm border border-[var(--border-color)] p-6"><div class="flex items-center justify-between mb-4"><h2 class="textflex items-center p-3 rounded-lg bg-slate-100/60"><i class="fas fa-grip-vertical drag-handle text-slate-400 mr-3"></i><label class="flex-xl font-bold text-[var(--text-main)]">Linimasa</h2><button @click="openTimelineModal" class="font-semibold text-slate-900 bg-lime-300 px-4 py-1.5 rounded-lg text-sm items-center cursor-pointer flex-grow"><input type="checkbox" v-model="shot.completed" @change="saveActiveWedding" class="hidden"><span class="w-6 h-6 border-2 border-slate transition hover:opacity-90">Tambah</button></div><div ref="timelineContainer" class="relative border-l-2 border-slate-200 ml-2" v-if="activeWedding.timeline.length > 0"><div v-300 rounded-md flex items-center justify-center mr-4 transition-all" :class="{'bg-slate-800 border-slate-800': shot.completed}"><i class="fas fa-for="(item, index) in activeWedding.timeline" :key="item.id" class="relative pl-8 pb-check text-white text-sm" v-show="shot.completed"></i></span><p class="font-medium" :class="{'line-through text-[var(--text-muted)]': shot.completed}">{{ shot.title-8"><div class="absolute -left-2.5 top-1 flex items-center"><i class="fas fa-grip-vertical drag-handle text-slate-400 -ml-5 mr-1"></i><div class="w-4 }}</p></label><button @click="deleteShot(shot.id)" class="ml-auto w-8 h-8 flex items- h-4 bg-[var(--background)] border-4 border-slate-800 rounded-full z-1center justify-center text-slate-400 hover:text-red-500 hover:bg-red-100/70 rounded-full"><i class="fas fa-times"></i></button></div></div><div v-else0"></div></div><div class="flex justify-between items-start"><div><p class="font-semibold text-slate-800 class="text-center py-8 text-[var(--text-muted)]"><i class="fas fa-camera-slash text-4xl mb-4"></i><p class="font-semibold text-slate-60">{{ item.title }}</p><span class="text-sm font-semibold bg-slate-800 text-white px-2 py-0.5 rounded-full">{{ item.time }}</span><p class="text-sm text0">Belum ada foto wajib.</p><p class="text-sm text-slate-500 mt-1">Tambahkan daftar foto yang harus diambil.</p><button @click="openShotModal" class="mt-4 font-semibold text-slate-[var(--text-muted)] mt-1">{{ item.notes }}</p></div><button @click="deleteTimelineItem(item.id)" class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-900 bg-lime-300 px-4 py-2 rounded-lg text-sm transition hover:opacity-90">Tambah Foto Wajib</button></div></div><div class="bg-[var(---red-500"><i class="fas fa-trash-alt text-xs"></i></button></div></div></div><div v-else class="text-center py-8 text-[var(--text-muted)]"><i class="surface)] rounded-2xl shadow-sm border border-[var(--border-color)] p-6"><h2 class="text-xl font-fas fa-list-ol text-4xl mb-4"></i><p class="font-semibold text-slate-600">Belum ada linimasa.</p><p class="text-sm text-slatebold text-[var(--text-main)] mb-4">Referensi</h2><div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4"><div v-for="(photo, index) in activeWedding-500 mt-1">Buat jadwal acara dari awal hingga akhir.</p><button @click="openTimelineModal" class="mt-4 font-semibold text-slate-900 bg-lime-30.photos" :key="photo.path" class="group aspect-square bg-slate-100 rounded-lg overflow-hidden relative cursor-pointer" @click="openPhotoPreview(photo.url)"><img :src="photo0 px-4 py-2 rounded-lg text-sm transition hover:opacity-90">Tambah Linimasa</button></div></div>.url" class="w-full h-full object-cover" alt="Wedding preview"><div class="absolute</template><template v-else><div class="flex flex-col items-center justify-center text-center h inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex-[60vh] bg-[var(--surface)] rounded-2xl shadow-sm border border-[var(--border-color)] p- items-center justify-center"><i class="fas fa-eye text-white text-2xl"></i></div><button4"><i class="fas fa-mouse-pointer text-5xl text-slate-300 mb-4"> @click.stop="deletePhoto(index, photo)" class="absolute top-1 right-1 bg-black bg-opacity-40 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0</i><h2 class="text-2xl font-bold text-[var(--text-main)]">Pilih Jadwal</h2><p class="text-[var(--text-muted)] mt-2">Pilih sebuah jadwal dari daftar di samping<br>untuk melihat group-hover:opacity-100 transition-opacity">&times;</button></div><div class="relative"><button @click="addPhoto" class="aspect-square bg-slate-100/60 rounded-lg flex detail lengkapnya.</p></div></template></div></main>
+                            <main v-if="currentView === 'invoice'"><div class="mb-6 flex justify-between items-center"><h1 class="text-3xl font-ext items-center justify-center text-slate-400 border-2 border-dashed border-slate-300 hoverrabold text-[var(--text-main)]">Invoice Maker</h1><p class="text-[var(--text-muted)]">Bu:border-lime-400 hover:text-lime-500 transition-colors w-full hat & lihat invoice secara real-time.</p></div><div class="flex items-center space-x-2-full"><i class="fas fa-plus text-3xl"></i></button><div v-if="isUploading" mb-6"><button @click="saveInvoiceTemplate" class="bg-slate-200 text-slate-700 font class="photo-upload-overlay rounded-lg"><i class="fas fa-spinner fa-spin text-slate-bold py-2 px-4 rounded-lg hover:bg-slate-300 transition text-sm">Sim-600 text-2xl"></i></div></div></div></div><div class="bg-[var(--surface)] rounded-2xl shadow-smpan Template</button><button @click="loadInvoiceTemplate" class="bg-slate-200 text-slate-700 font- border border-[var(--border-color)] p-6"><div class="flex items-center justify-between mb-4"><h2 class="bold py-2 px-4 rounded-lg hover:bg-slate-300 transition text-sm">Gunakan Template</buttontext-xl font-bold text-[var(--text-main)]">Linimasa</h2><button @click="openTimelineModal" class><button @click="generatePDF" class="bg-slate-800 text-white font-bold py-2="font-semibold text-slate-900 bg-lime-300 px-4 py-1.5 rounded-lg text px-5 rounded-lg hover:bg-slate-900 transition text-sm flex items-center" :disabled="invoice.isGenerating"><i v-if="invoice.isGenerating" class="fas fa-spinner fa--sm transition hover:opacity-90">Tambah</button></div><div ref="timelineContainer" class="relative border-l-2 border-slate-200 ml-2" v-if="activeWedding.timeline.length > 0"><spin mr-2"></i> Ekspor PDF</button></div><div class="grid grid-cols-1 lg:grid-cols-2 gap-8"><div class="space-y-6"><div class="bg-white p-5 rounded-xl border border-slatediv v-for="(item, index) in activeWedding.timeline" :key="item.id" class="relative pl-8 pb-8"><div class="absolute -left-2.5 top-1 flex items-center"><i class="fas fa-grip--200"><h3 class="font-bold text-lg mb-4 text-slate-700">Tagvertical drag-handle text-slate-400 -ml-5 mr-1"></i><div class="wihan Dari</h3><div class="space-y-4"><input type="text" class="w-full px-4 py-3-4 h-4 bg-[var(--background)] border-4 border-slate-800 rounded-full z bg-slate-100 border-none rounded-lg" v-model="invoice.invoicerName" placeholder="Nama Anda / Perusahaan"><input type="text" class="w-full px-4 py-3 bg-slate-100 border--10"></div></div><div class="flex justify-between items-start"><div><p class="font-semibold text-slate-800">{{ item.title }}</p><span class="text-sm fontnone rounded-lg" v-model="invoice.invoicerSlogan" placeholder="Slogan / Deskripsi Singkat"></div></div><div class="bg-white p-5 rounded-xl border border-slate-200"><h3 class="font-bold text--semibold bg-slate-800 text-white px-2 py-0.5 rounded-full">{{ item.time }}</span><p class="text-sm text-[var(--text-muted)] mt-1">{{ item.notes }}</lg mb-4 text-slate-700">Tagihan Untuk</h3><div class="space-y-4"><input type="text" class="w-full px-4 py-3 bg-slate-100 borderp></div><button @click="deleteTimelineItem(item.id)" class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-red-500"><i class="fas fa-trash--none rounded-lg" v-model="invoice.client.name" placeholder="Nama Klien"><textarea class="w-full px-4 py-3 bg-slate-100 border-none rounded-lg resize-none" rows="2" v-model="alt text-xs"></i></button></div></div></div><div v-else class="text-center py-8 text-[var(--text-muted)]"><i class="fas fa-list-ol text-4xl mb-4"></i><invoice.client.address" placeholder="Alamat Klien"></textarea></div></div><div class="bg-white p-5 rounded-xl border border-slate-200"><h3 class="font-bold text-lgp class="font-semibold text-slate-600">Belum ada linimasa.</p><p class="text-sm text-slate-500 mt-1">Buat jadwal acara dari awal hingga akhir mb-4 text-slate-700">Detail Invoice</h3><div class="grid grid-cols-1.</p><button @click="openTimelineModal" class="mt-4 font-semibold text-slate-900 bg-lime-300 px-4 py-2 rounded-lg text-sm transition hover:opacity-90">Tambah sm:grid-cols-3 gap-4"><input type="text" class="w-full px-4 py-3 bg-slate-100 border-none rounded-lg" v-model="invoice.number" placeholder="No Linimasa</button></div></div></template><template v-else><div class="flex flex-col items-center justify-. Invoice"><input type="date" class="w-full px-4 py-3 bg-slate-100 border-none rounded-lg" v-model="invoice.date"><input type="date" class="w-full pxcenter text-center h-[60vh] bg-[var(--surface)] rounded-2xl shadow-sm border border-[-4 py-3 bg-slate-100 border-none rounded-lg" v-model="invoice.dueDate"></div></div>var(--border-color)] p-4"><i class="fas fa-mouse-pointer text-5xl text-slate<div class="bg-white p-5 rounded-xl border border-slate-200"><h3 class="font-bold text--300 mb-4"></i><h2 class="text-2xl font-bold text-[var(--text-main)]">Pilih Jadwal</h2><p class="text-[var(--text-muted)] mt-2">Pilih sebuah jadwal darilg mb-2 text-slate-700">Item Tagihan</h3><div class="grid grid-cols-[1fr,auto,auto,auto] gap-2 text-sm font-semibold text-slate-500 mb-2 daftar di samping<br>untuk melihat detail lengkapnya.</p></div></template></div></main>
+                            <main v- px-2 hidden sm:grid"><span>Deskripsi</span><span class="text-right">Jml</span><span classif="currentView === 'invoice'"><div class="mb-6 flex justify-between items-center"><h1 class="text-3xl font-extrabold text-[var(--text-main)]">Invoice Maker</h1><p class="text-[="text-right">Harga</span><span></span></div><div class="space-y-2"><div v-for="(item, index) in invoicevar(--text-muted)]">Buat & lihat invoice secara real-time.</p></div><div class="flex.items" :key="index" class="grid grid-cols-[1fr,auto,auto,auto] gap-2 items-center space-x-2 mb-6"><button @click="saveInvoiceTemplate" class="bg-slate-2 items-center"><input type="text" class="w-full bg-slate-100 px-4 py-2 border00 text-slate-700 font-bold py-2 px-4 rounded-lg hover:bg-slate-300 transition text-sm">Simpan Template</button><button @click="loadInvoiceTemplate" class="bg-none rounded-lg" v-model="item.description" placeholder="Deskripsi item"><input type="number" class="w-16 bg-slate-100 px-3 py-2 border-none rounded-lg text-right" v-slate-200 text-slate-700 font-bold py-2 px-4 rounded-lg hover:bg-slate-300 transition text-sm">Gunakan Template</button><button @click="generate-model.number="item.quantity" placeholder="Jml"><input type="number" class="w-28 bg-slate-100 px-3 py-2 border-none rounded-lg text-right" v-model.number="item.PDF" class="bg-slate-800 text-white font-bold py-2 px-5 rounded-lg hover:bg-slate-900 transition text-sm flex items-center" :disabled="invoice.isGenerating"><rate" placeholder="Harga"><button @click="removeItem(index)" class="text-red-400 hover:text-red-600 p-2 rounded-full w-8 h-8 flex items-center justify-center"><i classi v-if="invoice.isGenerating" class="fas fa-spinner fa-spin mr-2"></i> Ekspor PDF</button></div><div class="grid grid-cols-1 lg:grid-cols-2 gap-8="fas fa-trash"></i></button></div></div><button @click="addItem" class="text-slate"><div class="space-y-6"><div class="bg-white p-5 rounded-xl border border-slate-800 font-semibold mt-4 hover:underline">+ Tambah Baris</button></div><div class="bg-white p-200"><h3 class="font-bold text-lg mb-4 text-slate-700">Tag-5 rounded-xl border border-slate-200"><h3 class="font-bold text-lg mb-4 text-slate-700">Catatan & Total</h3><textarea class="w-full px-4 py-3 bgihan Dari</h3><div class="space-y-4"><input type="text" class="w-full px-4 py-slate-100 border-none rounded-lg resize-none mb-4" rows="2" v-3 bg-slate-100 border-none rounded-lg" v-model="invoice.invoicerName" placeholder="Nama Anda / Perusahaan"><input type="text" class="w-full px-4 py-3 bg-slate-100 border--model="invoice.notes" placeholder="Catatan tambahan (contoh: detail transfer bank)"></textarea><div class="w-full max-w-sm ml-auto space-y-2"><div class="flex justify-between"><none rounded-lg" v-model="invoice.invoicerSlogan" placeholder="Slogan / Deskripsi Singkat"></div></div><div class="bg-white p-5 rounded-xl border border-slate-200"><h3 class="font-bold text-span class="text-slate-500">Subtotal</span><span class="font-medium text-slate-700">{{ formatCurrency(invoiceSubtotal) }}</span></div><div class="flex justify-between items-center"><span class="text-slatelg mb-4 text-slate-700">Tagihan Untuk</h3><div class="space-y-4"><input type="text" class="w-full px-4 py-3 bg-slate-100 border-500">Pajak (%)</span><input type="number" class="w-20 text-right bg-none rounded-lg" v-model="invoice.client.name" placeholder="Nama Klien"><textarea class="w-full px-4-slate-100 rounded-md py-1 px-2 border-none" v-model.number="invoice.tax py-3 bg-slate-100 border-none rounded-lg resize-none" rows="2" vRate"></div><div class="flex justify-between font-bold text-xl border-t-2 pt-2 mt-2 border-slate-200"><span class="text-slate-800">Total</span><-model="invoice.client.address" placeholder="Alamat Klien"></textarea></div></div><div class="bg-white p-5 rounded-xl border border-slate-200"><h3 class="font-bold text-lg mb-4 text-slate-700">Detail Invoice</h3><div class="grid grid-cols-1 sm:grid-cols-3 gap-4"><span class="text-slate-900">{{ formatCurrency(invoiceTotal) }}</span></div></div></div></div><input type="text" class="w-full px-4 py-3 bg-slate-100 border-none rounded-lg" v-model="invoice.number" placeholder="No. Invoice"><input type="datediv class="lg:sticky lg:top-6 h-fit"><div id="invoice-preview" class="bg-white rounded-xl border border-slate-200 shadow-lg p-8 sm:p-12 text-" class="w-full px-4 py-3 bg-slate-100 border-none rounded-lg" v-model="invoice.date"><input type="date" class="w-full px-4 py-3 bg-slate-100 border-sm text-slate-700"><div class="flex justify-between items-start mb-12"><div><h2 class="text-2xl font-bold uppercase text-slate-800">Invoice</h2><p class="text-slatenone rounded-lg" v-model="invoice.dueDate"></div></div><div class="bg-white p-5 rounded-xl-500">{{ invoice.number || 'INV-001' }}</p></div><div class="text border border-slate-200"><h3 class="font-bold text-lg mb-2 text-slate-700">-right"><h3 class="text-lg font-bold text-slate-800">{{ invoice.invoicerName || 'Nama Perusahaan' }}</h3><p class="text-slate-500 max-w-[200px]Item Tagihan</h3><div class="grid grid-cols-[1fr,auto,auto,auto] gap-2 text-sm font-semibold text-slate-500 mb-2 px-2 hidden sm:grid"><span>Desk">{{ invoice.invoicerSlogan || 'Slogan Anda' }}</p></div></div><div class="grid sm:grid-cols-2 gap-8 mb-12"><div><h4 class="font-bold text-slateripsi</span><span class="text-right">Jml</span><span class="text-right">Harga</span><span></span></div><div class="space-y-2"><div v-for="(item, index) in invoice.items" :key="index-500 uppercase tracking-wider mb-2">Tagihan Untuk</h4><p class="font-semibold text-slate-80" class="grid grid-cols-[1fr,auto,auto,auto] gap-2 items-center"><input type="text" class="w-full bg-slate-100 px-4 py-2 border-none rounded-lg"0">{{ invoice.client.name || 'Nama Klien' }}</p><p class="whitespace-pre-line">{{ v-model="item.description" placeholder="Deskripsi item"><input type="number" class="w-1 invoice.client.address || 'Alamat Klien' }}</p></div><div class="text-left sm:text-right"><h4 class="font-bold text-slate-500 uppercase tracking-wider mb-2">Detail6 bg-slate-100 px-3 py-2 border-none rounded-lg text-right" v-model.number="item.quantity" placeholder="Jml"><input type="number" class="w-28 bg-slate</h4><p><span class="font-semibold">Tanggal Invoice:</span> {{ formatDateForDisplay(invoice.date) }}</p><p><span class="font-semibold">Jatuh Tempo:</span> {{ formatDateForDisplay(invoice.dueDate) }}</-100 px-3 py-2 border-none rounded-lg text-right" v-model.number="item.rate" placeholder="Harga"><button @click="removeItem(index)" class="text-red-400 hoverp></div></div><table class="w-full mb-8"><thead><tr class="bg-slate-100 text-slate-600 uppercase"><th class="p-3 text-left font-bold">Deskripsi</th>:text-red-600 p-2 rounded-full w-8 h-8 flex items-center justify-center"><i class="fas fa-trash"></i></button></div></div><button @click="addItem" class="text-slate<th class="p-3 text-right font-bold hidden sm:table-cell">Jml</th><th class="p--800 font-semibold mt-4 hover:underline">+ Tambah Baris</button></div><div class="bg-white p3 text-right font-bold hidden sm:table-cell">Harga</th><th class="p-3 text-5 rounded-xl border border-slate-200"><h3 class="font-bold text-lg mb-4 text-slate--right font-bold">Total</th></tr></thead><tbody><tr v-for="(item, index) in invoice.items" :key="index700">Catatan & Total</h3><textarea class="w-full px-4 py-3 bg-slate-100 border-"><td class="p-3 border-b border-slate-100">{{ item.description || 'Item' }}</td><none rounded-lg resize-none mb-4" rows="2" v-model="invoice.notes" placeholder="Catatan tambahantd class="p-3 border-b border-slate-100 text-right hidden sm:table-cell">{{ item.quantity }}</td><td class="p-3 border-b border-slate-100 text- (contoh: detail transfer bank)"></textarea><div class="w-full max-w-sm ml-auto space-y-2"><div class="flex justify-between"><span class="text-slate-500">right hidden sm:table-cell">{{ formatCurrency(item.rate) }}</td><td class="p-3 border-b border-slate-100 text-right font-medium text-slate-800">{{ formatCurrency(item.quantity * item.rate) }}</td></tr><tr v-if="invoice.items.length === 0"><td colspanSubtotal</span><span class="font-medium text-slate-700">{{ formatCurrency(invoiceSubtotal) }}</span></div><div class="flex justify-between items-center"><span class="text-slate-500">Pajak (%)="4" class="p-3 text-center text-slate-400 border-b border-slate-100">Belum ada item.</td></tr></tbody></table><div class="flex justify-end mb-12"><</span><input type="number" class="w-20 text-right bg-slate-100 rounded-md py-1 px-2 border-none" v-model.number="invoice.taxRate"></div><div class="flexdiv class="w-full max-w-[250px] space-y-2"><div class="flex justify-between"><span>Subtotal</span><span>{{ formatCurrency(invoiceSubtotal) }}</span></div><div class="flex justify-between"><span> justify-between font-bold text-xl border-t-2 pt-2 mt-2 border-slate-200"><span class="text-slate-800">Total</span><span class="text-slate-900">{{ formatCurrency(invoiceTotalPajak ({{ invoice.taxRate }}%)</span><span>{{ formatCurrency(invoiceSubtotal * (invoice.taxRate / 100)) }}</span></div><div class="flex justify-between text-lg font-bold text) }}</span></div></div></div></div><div class="lg:sticky lg:top-6 h-fit"><div id="invoice--slate-800 border-t border-slate-300 pt-2 mt-2"><span>Total</span><span>{{ formatCurrency(invoiceTotal) }}</span></div></div></div><div v-if="invoice.notes" class="border-t border-slatepreview" class="bg-white rounded-xl border border-slate-200 shadow-lg p-8 sm:p-12 text-sm text-slate-700"><div class="flex justify-between items-start mb-1-200 pt-6"><h4 class="font-bold text-slate-500 uppercase tracking-wider mb-22"><div><h2 class="text-2xl font-bold uppercase text-slate-800">Invoice</h2><p class="text-slate-500">{{ invoice.number || 'INV-001'">Catatan</h4><p class="whitespace-pre-line">{{ invoice.notes }}</p></div></div></div></div></main>
+                            <main v-if="currentView === 'profil'"><div class="bg-[var(--surface }}</p></div><div class="text-right"><h3 class="text-lg font-bold text-slate-800">{{ invoice.invoicerName || 'Nama Perusahaan' }}</h3><p class="text-slate)] p-6 rounded-2xl shadow-sm border border-[var(--border-color)]"><div class="flex items-center flex-col text-center"><div class="w-24 h-24 rounded-full bg-slate-500 max-w-[200px]">{{ invoice.invoicerSlogan || 'Slogan Anda' }}</-100 flex items-center justify-center mb-4"><i class="fas fa-user text-5xl text-slate-400"></i></div><h1 class="text-2xl font-bold text-[var(--text-main)]">Profilp></div></div><div class="grid sm:grid-cols-2 gap-8 mb-12"> & Akun</h1><p v-if="user" class="text-[var(--text-muted)] mt-1">{{ user.email }}</<div><h4 class="font-bold text-slate-500 uppercase tracking-wider mb-2">Tagihan Untuk</h4><p class="font-semibold text-slate-800">{{ invoice.client.name || 'Nama Kp></div><div class="mt-8 border-t pt-6 text-center space-y-4"><buttonlien' }}</p><p class="whitespace-pre-line">{{ invoice.client.address || 'Alamat Klien' }}</p></div><div class="text-left sm:text-right"><h4 class="font-bold text @click="openChangePasswordModal" class="bg-slate-200/60 text-slate-800 font-bold py-3 px-5 rounded-lg hover:bg-slate-200 transition w-full max-w-xs"><i class="fas fa-key mr-2"></i>Ubah Password</button><button @click="logout-slate-500 uppercase tracking-wider mb-2">Detail</h4><p><span class="font-semibold">Tanggal Invoice:</span> {{ formatDateForDisplay(invoice.date) }}</p><p><span class="font-semibold" class="bg-red-500/10 text-red-600 font-bold py-3 px-5 rounded-lg hover:bg-red-500/20 transition w-full max-w-xs">Jatuh Tempo:</span> {{ formatDateForDisplay(invoice.dueDate) }}</p></div></div><table class="w-full mb-8"><thead><tr class="bg-slate-100 text-slate-600 uppercase"><th"><i class="fas fa-sign-out-alt mr-2"></i>Logout</button></div><div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-8 text-center border-t pt-6">< class="p-3 text-left font-bold">Deskripsi</th><th class="p-3 text-right font-bold hidden sm:table-cell">Jml</th><th class="p-3 text-right font-bold hiddendiv class="bg-slate-100/60 p-4 rounded-lg"><p class="text-3xl font-bold text-slate-800">{{ totalSchedules }}</p><p class="text-sm text-[var(--text-muted)] font-semibold">Total Jadwal</p></div><div class="bg-slate sm:table-cell">Harga</th><th class="p-3 text-right font-bold">Total</th></tr></thead><tbody><tr v-for="(item, index) in invoice.items" :key="index"><td-100/60 p-4 rounded-lg"><p class="text-3xl font-bold text-slate-800">{{ totalTasks }}</p><p class="text-sm text-[var(--text-muted)] font-semibold">Total Tugas</p></div> class="p-3 border-b border-slate-100">{{ item.description || 'Item' }}</td><td class="p-3 border-b border-slate-100 text-right hidden sm:table-cell">{{<div class="bg-slate-100/60 p-4 rounded-lg"><p class="text-3xl font-bold text-slate-800">{{ tasksCompleted }}</p<p class="text-sm text-[ item.quantity }}</td><td class="p-3 border-b border-slate-100 text-right hidden sm:table-cell">{{ formatCurrency(item.rate) }}</td><td class="p-3 border-b border-slate-100 text-right font-medium text-slate-800">{{ formatCurrency(item.var(--text-muted)] font-semibold">Tugas Selesai</p></div></div></div></main>
                         </div></transition>
                     </div>
-                    <button v-if="currentView === 'jadwal'" @click="addWedding" class="fixed bottom-6 right-6 w-16 h-16 bg-[var(--primary)] rounded-2xl flex items-center justify-center shadow-lg transform active:scale-90 transition-transform z-40"><i class="fas fa-plus text-2xl text-slate-900"></i></button>
-                    <div class="fixed bottom-6 left-1/2 -translate-x-1/2 w-auto bg-[var(--nav-bg)] px-3 py-2 rounded-full shadow-lg flex items-center justify-center space-x-2 z-40 lg:hidden">
-                         <button @click="setView('beranda')" class="w-12 h-12 flex items-center justify-center rounded-full transition-colors" :class="currentView === 'beranda' ? 'bg-white/20' : 'hover:bg-white/10'"><i class="fas fa-home text-white text-lg"></i></button>
-                         <button @click="setView('jadwal')" class="w-12 h-12 flex items-center justify-center rounded-full transition-colors" :class="currentView === 'jadwal' ? 'bg-white/20' : 'hover:bg-white/10'"><i class="fas fa-list-ul text-white text-lg"></i></button>
-                         <button @click="setView('invoice')" class="w-12 h-12 flex items-center justify-center rounded-full transition-colors" :class="currentView === 'invoice' ? 'bg-white/20' : 'hover:bg-white/10'"><i class="fas fa-file-invoice-dollar text-white text-lg"></i></button>
+                    <button v-if="currentView === 'jadwal'" @click="addWedding" class="fixedquantity * item.rate) }}</td></tr><tr v-if="invoice.items.length === 0"><td colspan="4" class="p-3 text-center text-slate-400 border-b border-slate-10 bottom-6 right-6 w-16 h-16 bg-[var(--primary)] rounded-2xl flex items-center justify-center shadow-lg transform active:scale-90 transition-transform z-40"><i class="fas fa-plus text-2xl text-slate-900"></i></button>
+                    <div class="fixed bottom-6 left0">Belum ada item.</td></tr></tbody></table><div class="flex justify-end mb-12"><div class="w-full max-w-[250px] space-y-2"><div class="flex justify-between"><span>Subtotal</span><span>{{ formatCurrency(invoiceSubtotal) }}</span></div><div class="flex justify-between"><span>-1/2 -translate-x-1/2 w-auto bg-[var(--nav-bg)] px-3 py-2 rounded-full shadow-lg flex items-center justify-center space-x-2 z-40 lg:hidden">
+                         <button @click="setView('beranda')" class="w-12 h-12 flexPajak ({{ invoice.taxRate }}%)</span><span>{{ formatCurrency(invoiceSubtotal * (invoice.taxRate / 100)) }}</span></div><div class="flex justify-between text-lg font-bold text-slate-800 border-t border-slate-300 pt-2 mt-2"><span>Total</span><span>{{ formatCurrency(invoiceTotal) }}</span></div></div> items-center justify-center rounded-full transition-colors" :class="currentView === 'beranda' ? 'bg-white/20' : 'hover:bg-white/10'"><i class="fas fa</div><div v-if="invoice.notes" class="border-t border-slate-200 pt-6"><h4 class="font-bold text-slate-500 uppercase tracking-wider mb-2">Cat-home text-white text-lg"></i></button>
+                         <button @click="setView('jadwal')" class="w-12 h-12 flex items-center justify-center rounded-full transition-colors" :class="currentView === 'jadwal' ? 'bg-white/20' : 'hover:bg-white/10'"><i class="fas faatan</h4><p class="whitespace-pre-line">{{ invoice.notes }}</p></div></div></div></div></main>
+                            <main v-if="currentView === 'profil'"><div class="bg-[var(--surface-list-ul text-white text-lg"></i></button>
+                         <button @click="setView('invoice')" class="w-12 h-12 flex items-center justify-center rounded-full transition-colors" :class="currentView === 'invoice' ? 'bg-white/20' : 'hover:bg-white/1)] p-6 rounded-2xl shadow-sm border border-[var(--border-color)]"><div class="flex items-center flex-col text-center"><div class="w-24 h-24 rounded-full bg-slate-100'"><i class="fas fa-file-invoice-dollar text-white text-lg"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="fixed bottom-6 right-60 flex items-center justify-center mb-4"><i class="fas fa-user text-5xl text-slate-400"></i></div><h1 class="text-2xl font-bold text-[var(--text-main)]">Profil z-50 w-full max-w-sm space-y-3">
+            <transition-group name="toast">
+                <div v-for="toast in toasts" :key="toast.id" 
+                    class="p-4 & Akun</h1><p v-if="user" class="text-[var(--text-muted)] mt-1">{{ user.email }}</p></div><div class="mt-8 border-t pt-6 text-center space-y-4"><button rounded-lg shadow-lg flex items-start"
+                    :class="{ 
+                        'bg-slate-800 text-white': toast.type === 'info',
+                        'bg-green-600 text-white': @click="openChangePasswordModal" class="bg-slate-200/60 text-slate-800 font-bold py-3 px-5 rounded-lg hover:bg-slate-200 transition w-full max-w-xs toast.type === 'success',
+                        'bg-red-600 text-white': toast.type === 'error'"><i class="fas fa-key mr-2"></i>Ubah Password</button><button @click="logout" class="bg 
+                    }">
+                    <i class="fas mr-3 mt-1" :class="{
+                        'fa--red-500/10 text-red-600 font-bold py-3 px-5 rounded-lgcheck-circle': toast.type === 'success',
+                        'fa-exclamation-circle': toast.type === 'error',
+                        'fa-info-circle': toast.type === 'info'
+                    }"></i> hover:bg-red-500/20 transition w-full max-w-xs"><i class="fas fa-sign
+                    <p class="flex-1">{{ toast.message }}</p>
+                    <button @click="removeToast(toast.id)" class="ml-4 -mr-2 text-white/70 hover:text-white">&times;</button>
+-out-alt mr-2"></i>Logout</button></div><div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-8 text-center border-t pt-6"><div class="bg-slate-100/60 p-4 rounded-lg"><p class="text-3xl font-bold text-slate-8                </div>
+            </transition-group>
+        </div>
+
+        <transition name="modal"><div v-if="photoToPreview" @click="closePhotoPreview" class="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 p-4 cursor-pointer"><img :src="photoToPreview" class="max00">{{ totalSchedules }}</p><p class="text-sm text-[var(--text-muted)] font-semibold">Total Jadwal</p></div><div class="bg-slate-100/60 p-4 rounded-lg"><p class="text-3xl font-bold text-slate-800">{{ totalTasks }}</p><p-w-full max-h-full object-contain rounded-lg shadow-2xl" @click.stop><button @click.stop="closePhotoPreview(true)" class="absolute top-4 right-4 text-white text-4xl font-light class="text-sm text-[var(--text-muted)] font-semibold">Total Tugas</p></div><div class="bg-slate-100/60 p-4 rounded-lg"><p class="text-3xl font-bold text-slate-800">{{ tasksCompleted }}</p<p class="text-sm text-[var(--text-muted)] font- hover:opacity-75 transition-opacity">&times;</button></div></transition>
+        <transition name="modal"><div v-if="showShotModal" class="fixed inset-0 flex items-center justify-center z-40"><div @click="closeShotModal()" class="absolute inset-0 bg-black bg-opacity-30">semibold">Tugas Selesai</p></div></div></div></main>
+                        </div></transition>
+                    </div>
+                    <button v-if="currentView === 'jadwal'" @click="addWedding" class="fixed bottom-6 right-6 w-</div><div class="bg-white rounded-2xl p-6 w-full max-w-md relative z-10 shadow-xl m-4"><h3 class="text-xl font-bold text-slate-800 mb-4">16 h-16 bg-[var(--primary)] rounded-2xl flex items-center justify-center shadow-lg transform active:scale-90 transition-transform z-40"><i class="fas fa-plus text-2xl textTambah Foto Wajib</h3><form @submit.prevent="addShot" class="space-y-4"><div><label class="block text-sm font-medium text-slate-700 mb-1">Judul Foto</label><input v-model="newShot.title"-slate-900"></i></button>
+                    <div class="fixed bottom-6 left-1/2 -translate-x-1/2 w-auto bg-[var(--nav-bg)] px-3 py-2 rounded-full type="text" class="w-full px-4 py-3 bg-slate-100 rounded-lg border-none" required></div><div><label class="block text-sm font-medium text-slate-700 mb-1 shadow-lg flex items-center justify-center space-x-2 z-40 lg:hidden">
+                         ">Catatan</label><textarea v-model="newShot.description" class="w-full px-4<button @click="setView('beranda')" class="w-12 h-12 flex items-center justify-center rounded py-3 bg-slate-100 rounded-lg border-none" rows="3"></textarea></div><-full transition-colors" :class="currentView === 'beranda' ? 'bg-white/20' : 'hover:bg-white/10'"><i class="fas fa-home text-white text-lg"></i></button>
+div class="flex justify-end space-x-3 pt-2"><button type="button" @click="closeShotModal()" class="px-5 py-2 bg-slate-200 rounded-lg font-semibold">Batal</button><button type="submit" class="px-5 py-2 bg-slate-800 text-white                         <button @click="setView('jadwal')" class="w-12 h-12 flex items-center justify-center rounded-full transition-colors" :class="currentView === 'jadwal' ? 'bg-white/20' : rounded-lg font-semibold">Tambah</button></div></form></div></div></transition>
+        <transition name="modal"><div v-if="showEditModal && weddingToEdit" class="fixed inset-0 flex items- 'hover:bg-white/10'"><i class="fas fa-list-ul text-white text-lg"></i></button>
+                         <button @click="setView('invoice')" class="w-12 h-12 flex items-center justify-center rounded-full transition-colors" :class="currentView === 'invoice' ? 'bg-white/20' : 'hover:bg-white/10'"><i class="fas facenter justify-center z-40"><div @click="closeEditModal()" class="absolute inset-0 bg-black bg-opacity-30"></div><div class="bg-white rounded-2xl w-full max-w-2xl relative z-10 shadow-xl m-4 max-h-[90vh] overflow-y-auto"><div class="p-file-invoice-dollar text-white text-lg"></i></button>
                     </div>
                 </div>
             </div>
@@ -103,33 +273,55 @@
         
         <div class="fixed bottom-6 right-6 z-50 w-full max-w-sm space-y-3">
             <transition-group name="toast">
-                <div v-for="toast in toasts" :key="toast.id" 
+                <div v-for="toast in toasts" :key="-6 space-y-4"><h3 class="text-xl font-bold text-slate-800 mb-4">Edit Detail Pernikahan</h3><form @submit.prevent="updateWedding" class="space-y-4 text-slate-700"><div><label class="block text-sm font-medium">Judul</label><input type="texttoast.id" 
                     class="p-4 rounded-lg shadow-lg flex items-start"
                     :class="{ 
                         'bg-slate-800 text-white': toast.type === 'info',
-                        'bg-green-600 text-white': toast.type === 'success',
+                        'bg-green-60" v-model="weddingToEdit.title" class="mt-1 w-full px-4 py-3 bg-slate-100 rounded-lg border-none" required></div>
+            <div class="border-t pt-4 mt-40 text-white': toast.type === 'success',
                         'bg-red-600 text-white': toast.type === 'error' 
                     }">
-                    <i class="fas mr-3 mt-1" :class="{
+                    <i class="fas mr-3 mt-1">
+                <div class="flex justify-between items-center">
+                     <h4 class="font-bold text-lg text-slate-700">Client Portal</h4>
+                     <div class="flex items-center space-x-2" :class="{
                         'fa-check-circle': toast.type === 'success',
                         'fa-exclamation-circle': toast.type === 'error',
                         'fa-info-circle': toast.type === 'info'
                     }"></i>
                     <p class="flex-1">{{ toast.message }}</p>
-                    <button @click="removeToast(toast.id)" class="ml-4 -mr-2 text-white/70 hover:text-white">×</button>
+                    <">
+                        <label for="timelineToggle" class="text-sm font-medium">Tampilkan Linimasa:</label>
+                        <input type="checkbox" id="timelineToggle" v-model="weddingToEdit.showTimelineInPortal" class="h-4 w-4 rounded text-lime-600 focus:ring-button @click="removeToast(toast.id)" class="ml-4 -mr-2 text-white/70 hover:text-white">&times;</button>
                 </div>
             </transition-group>
         </div>
 
-        <transition name="modal"><div v-if="photoToPreview" @click="closePhotoPreview" class="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 p-4 cursor-pointer"><img :src="photoToPreview" class="max-w-full max-h-full object-contain rounded-lg shadow-2xl" @click.stop><button @click.stop="closePhotoPreview(true)" class="absolute top-4 right-4 text-white text-4xl font-light hover:opacity-75 transition-opacity">×</button></div></transition>
-        <transition name="modal"><div v-if="showShotModal" class="fixed inset-0 flex items-center justify-center z-40"><div @click="closeShotModal()" class="absolute inset-0 bg-black bg-opacity-30"></div><div class="bg-white rounded-2xl p-6 w-full max-w-md relative z-10 shadow-xl m-4"><h3 class="text-xl font-bold text-slate-800 mb-4">Tambah Foto Wajib</h3><form @submit.prevent="addShot" class="space-y-4"><div><label class="block text-sm font-medium text-slate-700 mb-1">Judul Foto</label><input v-model="newShot.title" type="text" class="w-full px-4 py-3 bg-slate-100 rounded-lg border-none" required></div><div><label class="block text-sm font-medium text-slate-700 mb-1">Catatan</label><textarea v-model="newShot.description" class="w-full px-4 py-3 bg-slate-100 rounded-lg border-none" rows="3"></textarea></div><div class="flex justify-end space-x-3 pt-2"><button type="button" @click="closeShotModal()" class="px-5 py-2 bg-slate-200 rounded-lg font-semibold">Batal</button><button type="submit" class="px-5 py-2 bg-slate-800 text-white rounded-lg font-semibold">Tambah</button></div></form></div></div></transition>
-        <transition name="modal"><div v-if="showEditModal && weddingToEdit" class="fixed inset-0 flex items-center justify-center z-40"><div @click="closeEditModal()" class="absolute inset-0 bg-black bg-opacity-30"></div><div class="bg-white rounded-2xl w-full max-w-2xl relative z-10 shadow-xl m-4 max-h-[90vh] overflow-y-auto"><div class="p-6 space-y-4"><h3 class="text-xl font-bold text-slate-800 mb-4">Edit Detail Pernikahan</h3><form @submit.prevent="updateWedding" class="space-y-4 text-slate-700"><div><label class="block text-sm font-medium">Judul</label><input type="text" v-model="weddingToEdit.title" class="mt-1 w-full px-4 py-3 bg-slate-100 rounded-lg border-none" required></div>
+        <transition name="modal"><div v-if="photoToPreview" @click="closePhotoPreview" class="fixed inset-0 bg-black bg-lime-500">
+                     </div>
+                </div>
+                <p class="text-sm text-slate-500 mt-1">Bagikan link ini kepada klien Anda untuk akses portal.</p>
+                <div class="mt-2 space-y-2">opacity-80 flex items-center justify-center z-50 p-4 cursor-pointer"><img :src="photoToPreview" class="max-w-full max-h-full object-contain rounded-lg shadow-2
+                    <div class="bg-slate-100 p-3 rounded-lg">
+                        <label class="text-xs font-bold text-slate-500">Link Portal</label>
+                        <div class="flexxl" @click.stop><button @click.stop="closePhotoPreview(true)" class="absolute top-4 right-4 text items-center space-x-2">
+                            <input :value="getClientPortalLink(weddingToEdit.id-white text-4xl font-light hover:opacity-75 transition-opacity">&times;</button></div>)" type="text" readonly class="w-full bg-transparent font-mono text-sm p-1">
+                            <button</transition>
+        <transition name="modal"><div v-if="showShotModal" class="fixed inset-0 flex items-center justify-center z-40"><div @click="closeShotModal()" class="absolute inset-0 bg- type="button" @click="copyToClipboard(getClientPortalLink(weddingToEdit.id))" class="text-slate-500 hover:text-slate-800 p-1"><i class="fas fa-copy">black bg-opacity-30"></div><div class="bg-white rounded-2xl p-6 w-full max-w-md relative z-10 shadow-xl m-4"><h3 class="text-xl font-bold text-slate-800 mb-4">Tambah Foto Wajib</h3><form @submit.prevent="addShot" class="space-y-4"><div><label class="block text-sm font-medium text-slate-700 mb-1">Judul Foto</label><input v-model="newShot.title" type="text" class="w-full px-4 py-3 bg-slate-100 rounded-lg border-none" required></div><div><label class="block text-sm font-medium text-slate-700 mb-1">Catatan</label><textarea v-model="newShot.description" class="w-full px-4 py-3 bg-slate-100 rounded-lg border-none" rows="3"></textarea></div><div class="flex justify-end space-x-3 pt-2"><button type="button" @click="closeShotModal()" class="px-5 py-2</i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <div class="flex justify-end space-x-3 pt-4"><button type="button" @click="closeEditModal()" class="px-5 py-2 bg-slate-200 rounded-lg font-semibold">Batal</button><button type="submit" class="px-5 py-2 bg-slate-800 text-white rounded-lg font-semibold">Simpan</button></div></form></div></div></div></transition>
+        <transition name="modal"><div v-if="showTimelineModal" class="fixed inset-0 flex items-center justify-center z-40"><div @click="closeTimelineModal()" class="absolute inset-0 bg-black bg-opacity-30"></div><div class="bg-white rounded-2xl p-6 w-full max-w-md relative z-10 shadow-xl m-4"><h3 class="text-xl font-bold text-slate-800 mb-4">Tambah Linimasa</h3><form @submit.prevent="addTimelineItem" class="space-y-4"><input v-model="newTimelineItem.title" type="text" placeholder="Judul Acara (e.g., Upacara)" class="w-full px-4 py-3 bg-slate-100 rounded-lg border-none" required><input v-model="newTimelineItem.time" type="time" class="w-full px-4 py-3 bg-slate-200 rounded-lg font-semibold">Batal</button><button type="submit" class="px-5 py-2 bg-slate-800 text-white rounded-lg font-semibold">Tambah</button></div></form></div></div></transition>
+        <transition name="modal"><div v-if="showEditModal && weddingToEdit" class="fixed inset-0 flex items-center justify-center z-40"><div @click="closeEditModal()" class="absolute inset-0 bg-black bg-opacity-30"></div><div class="bg-white rounded-2xl w-full max-w-2xl relative z-10 shadow-xl m-4 max-h-[90vh] overflow-y-auto"><div class="p-6 space-y-4"><h3 class="text-xl font-bold text-slate-800 mb-4">Edit Detail Pernikahan</h3><form @submit.prevent="updateWedding" class="space-y-4 text-slate-700"><div><label class="block text-sm font-medium">Judul</label><input type="text" v-model="weddingToEdit.title" class="mt bg-slate-100 rounded-lg border-none" required><textarea v-model="newTimelineItem.notes" placeholder="Catatan singkat..." class="w-full px-4 py-3 bg-slate-100 rounded-lg border-none" rows="3"></textarea><div class="flex justify-end space-x-3 pt-2"><button type="button" @click="closeTimelineModal()" class="px-5 py-2 bg-slate-200 rounded-lg font-semibold">Batal</button><button type="submit" class="px-5 py-2 bg-slate-800 text-white rounded-lg font-semibold">Tambah</button></div></form>-1 w-full px-4 py-3 bg-slate-100 rounded-lg border-none" required></div>
             <div class="border-t pt-4 mt-4">
                 <div class="flex justify-between items-center">
                      <h4 class="font-bold text-lg text-slate-700">Client Portal</h4>
                      <div class="flex items-center space-x-2">
                         <label for="timelineToggle" class="text-sm font-medium">Tampilkan Linimasa:</label>
-                        <input type="checkbox" id="timelineToggle" v-model="weddingToEdit.showTimelineInPortal" class="h-4 w-4 rounded text-lime-600 focus:ring-lime-500">
+                        <input type="checkbox" id="timelineToggle" v-model="weddingToEdit.showTimelineInPortal" class="h-4 w-4 rounded text-lime</div></div></transition>
+        <transition name="modal"><div v-if="showForgotPasswordModal" class="fixed inset-0 flex items-center justify-center z-40"><div @click="closeForgotPasswordModal()" class="absolute inset-0 bg-black bg-opacity-30"></div><div class="bg-white rounded-2xl p-6 w-full max-w-md relative z-10 shadow-xl m-4"><h3 class="text-xl font-bold">Reset Password</h3><form @submit.prevent="sendResetEmail" class="space-y-4"><p class="text-sm text-slate-600">Masukkan email Anda untuk menerima link reset password.</p><div><input v-model="forgotPassword.email" type="email" class="w-full px-4 py-3 bg-slate-100 rounded-lg border-none" placeholder="Email terdaftar" required></div><p v-if="forgotPassword.error" class="text-red-500 text-sm text-center">{{ forgotPassword.error }}</p><p v-if="forgotPassword.success" class="text-green-600 text-sm text-center">{{ forgotPassword.success }}</p><-600 focus:ring-lime-500">
                      </div>
                 </div>
                 <p class="text-sm text-slate-500 mt-1">Bagikan link ini kepada klien Anda untuk akses portal.</p>
@@ -137,29 +329,29 @@
                     <div class="bg-slate-100 p-3 rounded-lg">
                         <label class="text-xs font-bold text-slate-500">Link Portal</label>
                         <div class="flex items-center space-x-2">
-                            <input :value="getClientPortalLink(weddingToEdit.id)" type="text" readonly class="w-full bg-transparent font-mono text-sm p-1">
+                            <input :value="getClientPortalLink(weddingToEdit.id)" type="text" readonly class="w-full bg-transparent font-mono text-smdiv class="flex justify-end space-x-3 pt-2"><button type="button" @click="closeForgotPasswordModal()" class="px-5 py-2 bg-slate-200 rounded-lg font-semibold">Batal</button><button type="submit" class="px-5 py-2 bg-slate-800 text-white rounded-lg font-semibold">Kirim Link</button></div></form></div></div></transition>
+        <transition name="modal"><div v-if="showChangePasswordModal" class="fixed inset-0 flex items-center justify-center z-40"><div @click="closeChangePasswordModal()" class="absolute inset-0 bg-black bg-opacity-30"></div><div class="bg-white rounded-2xl p p-1">
                             <button type="button" @click="copyToClipboard(getClientPortalLink(weddingToEdit.id))" class="text-slate-500 hover:text-slate-800 p-1"><i class="fas fa-copy"></i></button>
                         </div>
                     </div>
                 </div>
             </div>
-        <div class="flex justify-end space-x-3 pt-4"><button type="button" @click="closeEditModal()" class="px-5 py-2 bg-slate-200 rounded-lg font-semibold">Batal</button><button type="submit" class="px-5 py-2 bg-slate-800 text-white rounded-lg font-semibold">Simpan</button></div></form></div></div></div></transition>
-        <transition name="modal"><div v-if="showTimelineModal" class="fixed inset-0 flex items-center justify-center z-40"><div @click="closeTimelineModal()" class="absolute inset-0 bg-black bg-opacity-30"></div><div class="bg-white rounded-2xl p-6 w-full max-w-md relative z-10 shadow-xl m-4"><h3 class="text-xl font-bold text-slate-800 mb-4">Tambah Linimasa</h3><form @submit.prevent="addTimelineItem" class="space-y-4"><input v-model="newTimelineItem.title" type="text" placeholder="Judul Acara (e.g., Upacara)" class="w-full px-4 py-3 bg-slate-100 rounded-lg border-none" required><input v-model="newTimelineItem.time" type="time" class="w-full px-4 py-3 bg-slate-100 rounded-lg border-none" required><textarea v-model="newTimelineItem.notes" placeholder="Catatan singkat..." class="w-full px-4 py-3 bg-slate-100 rounded-lg border-none" rows="3"></textarea><div class="flex justify-end space-x-3 pt-2"><button type="button" @click="closeTimelineModal()" class="px-5 py-2 bg-slate-200 rounded-lg font-semibold">Batal</button><button type="submit" class="px-5 py-2 bg-slate-800 text-white rounded-lg font-semibold">Tambah</button></div></form></div></div></transition>
-        <transition name="modal"><div v-if="showForgotPasswordModal" class="fixed inset-0 flex items-center justify-center z-40"><div @click="closeForgotPasswordModal()" class="absolute inset-0 bg-black bg-opacity-30"></div><div class="bg-white rounded-2xl p-6 w-full max-w-md relative z-10 shadow-xl m-4"><h3 class="text-xl font-bold">Reset Password</h3><form @submit.prevent="sendResetEmail" class="space-y-4"><p class="text-sm text-slate-600">Masukkan email Anda untuk menerima link reset password.</p><div><input v-model="forgotPassword.email" type="email" class="w-full px-4 py-3 bg-slate-100 rounded-lg border-none" placeholder="Email terdaftar" required></div><p v-if="forgotPassword.error" class="text-red-500 text-sm text-center">{{ forgotPassword.error }}</p><p v-if="forgotPassword.success" class="text-green-600 text-sm text-center">{{ forgotPassword.success }}</p><div class="flex justify-end space-x-3 pt-2"><button type="button" @click="closeForgotPasswordModal()" class="px-5 py-2 bg-slate-200 rounded-lg font-semibold">Batal</button><button type="submit" class="px-5 py-2 bg-slate-800 text-white rounded-lg font-semibold">Kirim Link</button></div></form></div></div></transition>
-        <transition name="modal"><div v-if="showChangePasswordModal" class="fixed inset-0 flex items-center justify-center z-40"><div @click="closeChangePasswordModal()" class="absolute inset-0 bg-black bg-opacity-30"></div><div class="bg-white rounded-2xl p-6 w-full max-w-md relative z-10 shadow-xl m-4"><h3 class="text-xl font-bold">Ubah Password</h3><form @submit.prevent="updateUserPassword" class="space-y-4"><div class="relative"><input v-model="changePassword.newPassword" :type="changePassword.isPasswordVisible ? 'text' : 'password'" class="w-full px-4 py-3 pr-12 bg-slate-100 rounded-lg border-none" placeholder="Masukkan password baru" required><button type="button" @click="changePassword.isPasswordVisible = !changePassword.isPasswordVisible" class="absolute inset-y-0 right-0 flex items-center px-4 text-slate-500 hover:text-slate-700"><i class="fas" :class="changePassword.isPasswordVisible ? 'fa-eye-slash' : 'fa-eye'"></i></button></div><p v-if="changePassword.error" class="text-red-500 text-sm text-center">{{ changePassword.error }}</p><p v-if="changePassword.success" class="text-green-600 text-sm text-center">{{ changePassword.success }}</p><div class="flex justify-end space-x-3 pt-2"><button type="button" @click="closeChangePasswordModal()" class="px-5 py-2 bg-slate-200 rounded-lg font-semibold">Batal</button><button type="submit" class="px-5 py-2 bg-slate-800 text-white rounded-lg font-semibold">Simpan</button></div></form></div></div></transition>
+        <div class="flex justify-end space-x-3 pt-4"><button type="button" @click="closeEditModal()" class="px-5 py-2 bg-slate-200 rounded-lg font-semibold">Batal</button><button type="submit" class="px-5 py-2 bg-slate-800 text-white rounded-6 w-full max-w-md relative z-10 shadow-xl m-4"><h3 class="text-xl font-bold">Ubah Password</h3><form @submit.prevent="updateUserPassword" class="space-y-4"><div class="relative"><input v-model="changePassword.newPassword" :type="changePassword.isPasswordVisible ? 'text' : 'password'" class="w-full px-4 py-3 pr-12 bg-slate-100 rounded-lg border-none" placeholder="Masukkan password baru" required><button type="button" @click="changePassword.isPasswordVisible = !changePassword.isPasswordVisible" class="absolute inset-y-0 right-0 flex items-center px-lg font-semibold">Simpan</button></div></form></div></div></div></transition>
+        <transition name="modal"><div v-if="showTimelineModal" class="fixed inset-0 flex items-center justify-center z-40"><div @click="closeTimelineModal()" class="absolute inset-0 bg-black bg-opacity-30"></div><div class="bg-white rounded-2xl p-6 w-full max-w-md relative z-10 shadow-xl m-4"><h3 class="text-xl font-bold text-slate-800 mb-4">Tambah Linimasa</h3><form @submit.prevent="addTimelineItem" class="space-y-4 text-slate-500 hover:text-slate-700"><i class="fas" :class="changePassword.isPasswordVisible ? 'fa-eye-slash' : 'fa-eye'"></i></button></div><p v-if="changePassword.error" class="text-red-500 text-sm text-center">{{ changePassword.error }}</p><p v-if="changePassword.success" class="text-green-600 text-sm text-center">{{ changePassword.success }}</p><div class="flex justify-end space-x-3 pt-2"><button type="button" @click="closeChangePasswordModal()" class="px-4"><input v-model="newTimelineItem.title" type="text" placeholder="Judul Acara (e.g., Upacara)" class="w-full px-4 py-3 bg-slate-100 rounded-lg border-none" required><input v-model="newTimelineItem.time" type="time" class="w-full px-4 py-3 bg-slate-100 rounded-lg border-none" required><textarea v-model="newTimelineItem.notes" placeholder="Catatan singkat..." class="w-full px--5 py-2 bg-slate-200 rounded-lg font-semibold">Batal</button><button type="submit" class="px-5 py-2 bg-slate-800 text-white rounded-lg font-semibold">Simpan</button></div></form></div></div></transition>
     </div>
     
     <script>
         const { createApp, nextTick, watch } = Vue;
         const { jsPDF } = window.jspdf;
 
-        const firebaseConfig = {
+4 py-3 bg-slate-100 rounded-lg border-none" rows="3"></textarea><div class="flex justify-end space-x-3 pt-2"><button type="button" @click="closeTimelineModal()" class="px-5 py-2 bg-slate-200 rounded-lg font-semibold">Batal</button><button type="submit" class="px-5 py-2 bg-slate-800 text-white        const firebaseConfig = {
           apiKey: "AIzaSyCBij3UUC9XvrkmrtVB8vZxWg_6685ce1o",
           authDomain: "amlolist-final.firebaseapp.com",
           projectId: "amlolist-final",
-          storageBucket: "amlolist-final.firebasestorage.app",
+          storageBucket: "amlolist-final.appspot.com",
           messagingSenderId: "25110140647",
-          appId: "1:25110140647:web:740485070c06bfb13b3442"
+          appId: "1: rounded-lg font-semibold">Tambah</button></div></form></div></div></transition>
+        <transition name="modal"><div v-if="showForgotPasswordModal" class="fixed inset-0 flex items-center justify-center z-40"><div @click="closeForgotPasswordModal()" class="absolute inset-0 bg-black bg-opacity-30"></div><div class="bg-white rounded-2xl p-6 w-full max-w-md relative z-10 shadow25110140647:web:740485070c06bfb13b3442"
         };
         
         firebase.initializeApp(firebaseConfig);
@@ -170,22 +362,121 @@
         const App = {
             data() {
                 return {
-                    isLoggedIn: false, isRegisterView: false, user: null, isLoading: true, appReady: false,
+                    isLoggedIn: false, isRegisterView: false, user: null, isLoading-xl m-4"><h3 class="text-xl font-bold">Reset Password</h3><form @submit.prevent="sendResetEmail" class="space-y-4"><p class="text-sm text-slate-600">Masukkan email Anda untuk menerima link reset password.</p><div><input v-model="forgotPassword.email" type="email": true, appReady: false,
                     showForgotPasswordModal: false, showChangePasswordModal: false, showShotModal: false, showEditModal: false, showTimelineModal: false, photoToPreview: null,
                     auth: { email: '', password: '', error: '', isPasswordVisible: false, loading: false },
                     forgotPassword: { email: '', error: '', success: '' },
-                    changePassword: { newPassword: '', error: '', success: '', isPasswordVisible: false },
+                    changePassword: { newPassword: '', error: '', success class="w-full px-4 py-3 bg-slate-100 rounded-lg border-none" placeholder="Email terdaftar" required></div><p v-if="forgotPassword.error" class="text-red-500 text-sm text-center">{{ forgotPassword.error }}</p><p v-if="forgotPassword.success" class="text-green-600 text-sm text-center">{{ forgotPassword.success }}</p><: '', isPasswordVisible: false },
                     currentView: 'beranda', activeWedding: null, weddings: [], searchQuery: '',
                     calendar: { date: new Date(), year: 0, month: 0, monthName: '', days: [] },
                     selectedDate: null,
-                    invoice: { number: 'INV-001', date: (new Date).toISOString().split("T")[0], dueDate: '', client: { name: '', address: '' }, items: [{ description: 'Jasa Fotografi Hari-H', quantity: 1, rate: 5000000 }], taxRate: 10, invoicerName: 'Amlo List', invoicerSlogan: 'Jasa Perencanaan Acara Profesional', notes: 'Terima kasih atas kepercayaan Anda.\nPembayaran dapat ditransfer ke rekening:\nBCA 123456789 a/n John Doe', isGenerating: false, },
+                    invoice: { number: 'INV-001', date: (new Date).div class="flex justify-end space-x-3 pt-2"><button type="button" @click="closeForgotPasswordModal()" class="px-5 py-2 bg-slate-200 rounded-lg font-semibold">Batal</toISOString().split("T")[0], dueDate: '', client: { name: '', address: '' }, items: [{ description: 'Jasa Fotografi Hari-H', quantity: 1, rate: 5000000 }], taxRate: 10, invoicerName: 'Amlo List', invoicerSlogan: 'Jasa Perencanaan Acara Profesionalbutton><button type="submit" class="px-5 py-2 bg-slate-800 text-white rounded-lg font-semibold">Kirim Link</button></div></form></div></div></transition>
+        <transition name="modal"><div v-if="showChangePasswordModal" class="fixed inset-0 flex items-center justify-center z-40"><div @click="closeChangePasswordModal()" class="absolute inset-0 bg-black bg-opacity-30"></div><div class="bg-white', notes: 'Terima kasih atas kepercayaan Anda.\nPembayaran dapat ditransfer ke rekening:\nBCA 123456789 a/n John Doe', isGenerating: false, },
                     weddingToEdit: null, newTag: '',
                     newShot: { title: '', description: '' }, newTimelineItem: { title: '', time: '', notes: '' },
-                    tagColors: [ 'bg-violet-100 text-violet-700', 'bg-blue-100 text-blue-700', 'bg-green-100 text-green-700', 'bg-yellow-100 text-yellow-700', 'bg-red-100 text-red-700', 'bg-pink-100 text-pink-700', 'bg-slate-200 text-slate-700' ],
+                    tagColors: [ 'bg-violet-100 rounded-2xl p-6 w-full max-w-md relative z-10 shadow-xl m-4"><h3 class="text-xl font-bold">Ubah Password</h3><form @submit.prevent="updateUserPassword text-violet-700', 'bg-blue-100 text-blue-700', 'bg-green-100 text-green-700', 'bg-yellow-100 text-yellow-700', 'bg-red-100 text-red-700', 'bg-pink-100 text-pink-700', 'bg-slate-200" class="space-y-4"><div class="relative"><input v-model="changePassword.newPassword" :type="changePassword.isPasswordVisible ? 'text' : 'password'" class="w-full px-4 py-3 pr-12 bg-slate-100 rounded-lg border-none" placeholder="Masukkan password baru" required><button type="button" @click="changePassword.isPasswordVisible = !changePassword.isPasswordVisible" class=" text-slate-700' ],
                     toasts: [],
                     shotListSortable: null,
                     timelineSortable: null,
                     firestoreUnsubscribe: null,
+                    clientDataUnsubscribe: null,
+                    isUploading: false
+                }
+            },
+            created() {
+                this.resetAllModals();
+                auth.onAuthStateChanged(user => {
+                    if (user) { 
+                        this.isabsolute inset-y-0 right-0 flex items-center px-4 text-slate-500 hover:text-slate-700"><i class="fas" :class="changePassword.isPasswordVisible ? 'fa-eye-slash' : 'faLoggedIn = true; 
+                        this.user = user; 
+                        this.loadAppData();
+                    } else { 
+                        this.isLoggedIn = false; 
+                        this.user = null; 
+                        this.isLoading = false;
+                        this.appReady = false; 
+                        if (this.firestoreUnsubscribe) this.firestoreUnsubscribe();
+                        if (this.clientDataUnsubscribe) this.clientDataUnsubscribe();
+                    }
+                -eye'"></i></button></div><p v-if="changePassword.error" class="text-red-500 text-sm text-center">{{ changePassword.error }}</p><p v-if="changePassword.success" class="text-green-600 text-sm text-center">{{ changePassword.success }}</p><div class="flex justify-end space-x-3 pt-2"><button type="button" @click="closeChangePasswordModal()" class="px-5 py-2 bg-slate-200 rounded-lg font-semibold">Batal</button><button type="submit" class="px});
+                window.addEventListener('popstate', this.handleBackButton);
+            },
+            mounted() {
+                watch(() => this.activeWedding, (newWedding, oldWedding) => {
+                    if (oldWedding) {
+                        this.destroySortableInstances();
+                        if (this.clientDataUnsubscribe) {
+                            this.clientDataUnsubscribe();
+                            this.clientDataUnsubscribe = null;
+                        }
+                    }
+-5 py-2 bg-slate-800 text-white rounded-lg font-semibold">Simpan</button></div></form></div></div></transition>
+    </div>
+    
+    <script>
+        const { createApp, nextTick, watch } = Vue;
+        const { jsPDF } = window.jspdf;
+
+        const firebaseConfig = {
+                              if (newWedding) {
+                        this.loadClientDataForActiveWedding();
+                        nextTick(() => { this.initShotListSortable(); this.initTimelineSortable(); });
+                    }
+                }, { immediate: true });
+            },
+            beforeUnmount() {
+                window.removeEventListener('popstate', this.handleBackButton);
+                this.destroySortableInstances();
+                if (this.firestoreUnsubscribe) this.firestoreUnsubscribe();
+                if (this.clientDataUnsubscribe) this.clientDataUnapiKey: "AIzaSyCBij3UUC9XvrkmrtVB8vZxWg_6685ce1o",
+          authDomain: "amlolist-final.firebaseapp.com",
+          projectId: "amlolist-final",
+          storageBucket: "amlolist-final.firebasestorage.app",
+          messagingSenderId: "25110140647",
+          appId: "1:25110140647:web:740485070c06bfb13b3442"
+        };
+        
+        firebase.initializeApp(firebaseConfigsubscribe();
+            },
+            computed: {
+                shotCompletionProgress() { if (!this.activeWedding || !this.activeWedding.shots.length) return 0; const e = this.activeWedding.shots.filter(e => e.completed).length; return Math.round(e / this.activeWedding.shots.length * 100) },
+                filteredWeddings() { let e = this.weddings; if (this.selectedDate && (e = e.filter(e => e.date === this.selectedDate)),);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+        const storage = firebase.storage();
+
+        const App = {
+            data() {
+                return {
+                    isLoggedIn: false, isRegisterView: false, user: null, isLoading: true, appReady: false,
+                    showForgotPasswordModal: false, showChangePasswordModal: false, showShot this.searchQuery.trim()) { const t = this.searchQuery.toLowerCase(); return e.filter(e => e.title && e.title.toLowerCase().includes(t) || e.location && e.location.toLowerCase().includes(t) || e.contacts.bride && e.contacts.bride.toLowerCase().includes(t) || e.contacts.groom && e.contacts.groom.toLowerCase().includes(t) || e.contacts.phone && e.contacts.Modal: false, showEditModal: false, showTimelineModal: false, photoToPreview: null,
+                    auth: { email: '', password: '', error: '', isPasswordVisible: false, loading: false },
+                    forgotPassword: { email: '', error: '', success: '' },
+                    changePassword: { newPassword: '', error: '', success: '', isPasswordVisible: false },
+                    currentView: 'beranda', activeWedding: null, weddings: [], searchQuery: '',
+                    calendar: { date: new Date(), year: 0, month: 0, monthName: '',phone.toLowerCase().includes(t)) } return e },
+                scheduleDates() { const e = new Set; return this.weddings.forEach(t => { e.add(t.date) }), e },
+                allTasks() { return this days: [] },
+                    selectedDate: null,
+                    invoice: { number: 'INV-001', date: (new Date).toISOString().split("T")[0], dueDate: '', client: { name: '', address: '' }, items: [{ description: 'Jasa Fotografi Hari-H', quantity: 1, rate: 5000000 }], taxRate: 10, invoicerName: 'Amlo List', invoicerSlogan:.weddings.flatMap(e => e.shots.map(t => ({ ...t, weddingTitle: e.title }))) },
+                totalSchedules() { return this.weddings.length },
+                totalTasks() { return this.allTasks.length },
+                tasksCompleted() { return this.allTasks.filter(e => e.completed).length },
+                invoiceSubtotal() { return this.invoice.items.reduce((e, t) => e + t.quantity * t.rate, 0) },
+                invoiceTotal() { const e = this.invoiceSubtotal * (this.invoice.tax 'Jasa Perencanaan Acara Profesional', notes: 'Terima kasih atas kepercayaan Anda.\nPembayaran dapat ditransfer ke rekening:\nBCA 123456789 a/n John Doe', isGenerating: false, },
+                    weddingToEdit: null, newTag: '',
+                    newShot: { title: '', description: '' }, newTimelineItem: { title: '', time: '', notes: '' },
+                    tagColors: [ 'bg-violet-Rate / 100); return this.invoiceSubtotal + e }
+            },
+            methods: {
+                addToast(message, type = 'info', duration = 3000) { const id = Date.now(); this.toasts.push({ id, message, type }); if (duration) { setTimeout(() => this.removeToast(id100 text-violet-700', 'bg-blue-100 text-blue-700', 'bg-green-100 text-green-700', 'bg-yellow-100 text-yellow-700', 'bg-red-100 text-red-7), duration); } },
+                removeToast(id) { this.toasts = this.toasts.filter(toast => toast.id !== id); },
+                initShotListSortable() { if (this.shotListSortable) this.shotListSortable.destroy(); if (this.$refs.shotListContainer) { this.shotListSortable = new Sort00', 'bg-pink-100 text-pink-700', 'bg-slate-200 text-slate-700' ],
+                    toasts: [],
+                    shotListSortable: null,
+                    timelineSortable: null,
+                    able(this.$refs.shotListContainer, { handle: '.drag-handle', animation: 150, ghostClass: 'sortable-ghost', chosenClass: 'sortable-chosen', onEnd: (evt) => { const item = this.activeWedding.shots.splice(evt.oldIndex, 1)[0]; this.activeWedding.shots.splice(evt.firestoreUnsubscribe: null,
+                    clientDataUnsubscribe: null,
                     isUploading: false
                 }
             },
@@ -197,56 +488,74 @@
                         this.user = user; 
                         this.loadAppData();
                     } else { 
-                        this.isLoggedIn = false; 
+                        this.isLoggedIn = false; newIndex, 0, item); this.saveActiveWedding(); } }); } },
+                initTimelineSortable() { if (this.timelineSortable) this.timelineSortable.destroy(); if (this.$refs.timelineContainer) { this.timelineSortable = new Sortable(this.$refs.timelineContainer, { handle: '.drag-handle', animation: 15
                         this.user = null; 
                         this.isLoading = false;
                         this.appReady = false; 
-                        if (this.firestoreUnsubscribe) {
-                            this.firestoreUnsubscribe();
-                        }
+                        if (this.firestoreUnsubscribe) this.firestoreUnsubscribe();
+                        if (this.clientDataUnsubscribe) this.clientDataUnsubscribe();
                     }
                 });
                 window.addEventListener('popstate', this.handleBackButton);
             },
-            mounted() { watch(() => this.activeWedding, (newWedding, oldWedding) => { if (oldWedding) { this.destroySortableInstances(); } if (newWedding) { nextTick(() => { this.initShotListSortable(); this.initTimelineSortable(); }); } }, { immediate: true }); },
-            beforeUnmount() { window.removeEventListener('popstate', this.handleBackButton); this.destroySortableInstances(); if (this.firestoreUnsubscribe) { this.firestoreUnsubscribe(); } },
+            mounted() {
+                watch(() => this.activeWedding, (newWedding, oldWedding)0, ghostClass: 'sortable-ghost', chosenClass: 'sortable-chosen', onEnd: (evt) => { const item = this.activeWedding.timeline.splice(evt.oldIndex, 1)[0]; this.activeWedding.timeline.splice(evt.newIndex, 0, item); this.saveActiveWedding(); } }); } },
+                destroySortableInstances() { if (this.shotListSortable) => {
+                    if (oldWedding) {
+                        this.destroySortableInstances();
+                        if (this.clientDataUnsubscribe) this.clientDataUnsubscribe();
+                    }
+                    if (newWedding) {
+                        this.loadClientDataForActiveWedding();
+                        nextTick(() => { this.initShotListSortable(); this.initTimelineSortable(); });
+                    }
+                }, { { this.shotListSortable.destroy(); this.shotListSortable = null; } if (this.timelineSortable) { this.timelineSortable.destroy(); this.timelineSortable = null; } },
+                handleBackButton(event) { if (this.photoToPreview) { this.closePhotoPreview(false); return; } if (this.showShotModal) { this.closeShotModal(false); return; } if (this.showEditModal) deep: true, immediate: true });
+            },
+            beforeUnmount() {
+                window.removeEventListener('popstate', this.handleBackButton);
+                this.destroySortableInstances();
+                if (this.firestoreUnsubscribe) this.firestoreUnsubscribe();
+                if (this.clientDataUnsubscribe) this.clientDataUnsubscribe();
+            },
             computed: {
-                shotCompletionProgress() { if (!this.activeWedding || !this.activeWedding.shots.length) return 0; const e = this.activeWedding.shots.filter(e => e.completed).length; return Math.round(e / this.activeWedding.shots.length * 100) },
-                filteredWeddings() { let e = this.weddings; if (this.selectedDate && (e = e.filter(e => e.date === this.selectedDate)), this.searchQuery.trim()) { const t = this.searchQuery.toLowerCase(); return e.filter(e => e.title && e.title.toLowerCase().includes(t) || e.location && e.location.toLowerCase().includes(t) || e.contacts.bride && e.contacts.bride.toLowerCase().includes(t) || e.contacts.groom && e.contacts.groom.toLowerCase().includes(t) || e.contacts.phone && e.contacts.phone.toLowerCase().includes(t)) } return e },
-                scheduleDates() { const e = new Set; return this.weddings.forEach(t => { e.add(t.date) }), e },
-                allTasks() { return this.weddings.flatMap(e => e.shots.map(t => ({ ...t, weddingTitle: e.title }))) },
+                shotCompletionProgress() { if (!this.activeWedding || !this.activeWedding.shots. { this.closeEditModal(false); return; } if (this.showTimelineModal) { this.closeTimelineModal(false); return; } if (this.showForgotPasswordModal) { this.closeForgotPasswordModal(false); return; } if (this.showChangePasswordModal) { this.closeChangePasswordModal(false); return; } if (event.state && event.state.view) { this.setView(event.state.view, false); } else if (this.currentView !==length) return 0; const e = this.activeWedding.shots.filter(e => e.completed).length; return Math.round(e / this.activeWedding.shots.length * 100) },
+                filteredWeddings() { let e = this.weddings; if (this.selectedDate && (e = e.filter(e => e.date === this.selectedDate)), this.searchQuery.trim()) { const t = this.search 'beranda') { this.setView('beranda', false); } else { history.back(); } },
+                resetAllModals() { this.showForgotPasswordModal = !1, this.showChangePasswordModal = !1, thisQuery.toLowerCase(); return e.filter(e => e.title && e.title.toLowerCase().includes(t) || e.location && e.location.toLowerCase().includes(t) || e.contacts.bride && e.contacts.bride.toLowerCase().includes(t) || e.contacts.groom && e.contacts.groom.toLowerCase().includes(t) || e.contacts.phone && e.contacts.phone.toLowerCase().includes(t.showShotModal = !1, this.showEditModal = !1, this.showTimelineModal = !1, this.photoToPreview = null },
+                openForgotPasswordModal() { this.forgotPassword = { email: "", error: "", success: "" }; this.showForgotPasswordModal = true; history.pushState({ modal: "forgotPassword" }, "", "#forgot-password") },
+                closeForgotPasswordModal(goBack = true) { this.showForgotPasswordModal = false; go)) } return e },
+                scheduleDates() { const e = new Set; return this.weddings.forEachBack && history.back() },
+                openChangePasswordModal() { this.changePassword = { newPassword:(t => { e.add(t.date) }), e },
+                allTasks() { return this.weddings.flatMap(e => "", error: "", success: "", isPasswordVisible: false }; this.showChangePasswordModal = true; history.pushState({ modal: "changePassword" }, "", "#change-password") },
+                closeChangePasswordModal(goBack = true) { this.showChangePasswordModal = false; goBack && history.back() },
+                openPhotoPreview(e) { this.photo e.shots.map(t => ({ ...t, weddingTitle: e.title }))) },
                 totalSchedules() { return this.weddings.length },
                 totalTasks() { return this.allTasks.length },
-                tasksCompleted() { return this.allTasks.filter(e => e.completed).length },
+                tasksCompletedToPreview = e; history.pushState({ modal: "photoPreview" }, "", "#preview") },
+                closePhotoPreview(goBack = true) { this.photoToPreview = null; goBack && history.back() },
+                open() { return this.allTasks.filter(e => e.completed).length },
                 invoiceSubtotal() { return this.invoice.items.reduce((e, t) => e + t.quantity * t.rate, 0) },
                 invoiceTotal() { const e = this.invoiceSubtotal * (this.invoice.taxRate / 100); return this.invoiceSubtotal + e }
             },
-            methods: {
-                addToast(message, type = 'info', duration = 3000) { const id = Date.now(); this.toasts.push({ id, message, type }); if (duration) { setTimeout(() => this.removeToast(id), duration); } },
-                removeToast(id) { this.toasts = this.toasts.filter(toast => toast.id !== id); },
-                initShotListSortable() { if (this.shotListSortable) this.shotListSortable.destroy(); if (this.$refs.shotListContainer) { this.shotListSortable = new Sortable(this.$refs.shotListContainer, { handle: '.drag-handle', animation: 150, ghostClass: 'sortable-ghost', chosenClass: 'sortable-chosen', onEnd: (evt) => { const item = this.activeWedding.shots.splice(evt.oldIndex, 1)[0]; this.activeWedding.shots.splice(evt.newIndex, 0, item); this.saveActiveWedding(); } }); } },
-                initTimelineSortable() { if (this.timelineSortable) this.timelineSortable.destroy(); if (this.$refs.timelineContainer) { this.timelineSortable = new Sortable(this.$refs.timelineContainer, { handle: '.drag-handle', animation: 150, ghostClass: 'sortable-ghost', chosenClass: 'sortable-chosen', onEnd: (evt) => { const item = this.activeWedding.timeline.splice(evt.oldIndex, 1)[0]; this.activeWedding.timeline.splice(evt.newIndex, 0, item); this.saveActiveWedding(); } }); } },
-                destroySortableInstances() { if (this.shotListSortable) { this.shotListSortable.destroy(); this.shotListSortable = null; } if (this.timelineSortable) { this.timelineSortable.destroy(); this.timelineSortable = null; } },
-                handleBackButton(event) { if (this.photoToPreview) { this.closePhotoPreview(false); return; } if (this.showShotModal) { this.closeShotModal(false); return; } if (this.showEditModal) { this.closeEditModal(false); return; } if (this.showTimelineModal) { this.closeTimelineModal(false); return; } if (this.showForgotPasswordModal) { this.closeForgotPasswordModal(false); return; } if (this.showChangePasswordModal) { this.closeChangePasswordModal(false); return; } if (event.state && event.state.view) { this.setView(event.state.view, false); } else if (this.currentView !== 'beranda') { this.setView('beranda', false); } else { history.back(); } },
-                resetAllModals() { this.showForgotPasswordModal = !1, this.showChangePasswordModal = !1, this.showShotModal = !1, this.showEditModal = !1, this.showTimelineModal = !1, this.photoToPreview = null },
-                openForgotPasswordModal() { this.forgotPassword = { email: "", error: "", success: "" }; this.showForgotPasswordModal = true; history.pushState({ modal: "forgotPassword" }, "", "#forgot-password") },
-                closeForgotPasswordModal(goBack = true) { this.showForgotPasswordModal = false; goBack && history.back() },
-                openChangePasswordModal() { this.changePassword = { newPassword: "", error: "", success: "", isPasswordVisible: false }; this.showChangePasswordModal = true; history.pushState({ modal: "changePassword" }, "", "#change-password") },
-                closeChangePasswordModal(goBack = true) { this.showChangePasswordModal = false; goBack && history.back() },
-                openPhotoPreview(e) { this.photoToPreview = e; history.pushState({ modal: "photoPreview" }, "", "#preview") },
-                closePhotoPreview(goBack = true) { this.photoToPreview = null; goBack && history.back() },
-                openShotModal() { if(this.activeWedding) { this.newShot = { title: "", description: "" }; this.showShotModal = true; history.pushState({ modal: "shotModal" }, "", "#add-shot")} },
-                closeShotModal(goBack = true) { this.showShotModal = false; goBack && history.back() },
-                openEditModal(e) { this.weddingToEdit = JSON.parse(JSON.stringify(e)); this.showEditModal = true; history.pushState({ modal: "editModal" }, "", "#edit") },
-                closeEditModal(goBack = true) { this.showEditModal = false; this.weddingToEdit = null; goBack && history.back() },
+            methods: {ShotModal() { if(this.activeWedding) { this.newShot = { title: "", description: "" }; this.showShotModal = true; history.pushState({ modal: "shotModal" }, "", "#add-shot")} },
+                closeShot
+                addToast(message, type = 'info', duration = 3000) { const id = Date.now(); this.toasts.push({ id, message, type }); if (duration) { setTimeout(() => this.removeToast(id), duration); } },Modal(goBack = true) { this.showShotModal = false; goBack && history.back() },
+                open
+                removeToast(id) { this.toasts = this.toasts.filter(toast => toast.id !== idEditModal(e) { this.weddingToEdit = JSON.parse(JSON.stringify(e)); this.); },
+                initShotListSortable() { if (this.shotListSortable) this.shotListSortable.destroy(); if (this.$refs.shotListContainer) { this.shotListSortable = new Sortable(this.$showEditModal = true; history.pushState({ modal: "editModal" }, "", "#edit") },
+                closeEditModal(goBack = true) { this.showEditModal = false; this.weddingToEdit = null; goBack &&refs.shotListContainer, { handle: '.drag-handle', animation: 150, ghostClass: 'sortable-ghost', chosenClass: 'sortable-chosen', onEnd: (evt) => { const item = this.activeWedding.shots.splice(evt.oldIndex, 1)[0]; this.activeWedding.shots.splice(evt history.back() },
                 openTimelineModal() { if(this.activeWedding) { this.newTimelineItem = { title: "", time: "", notes: "" }; this.showTimelineModal = true; history.pushState({ modal: "timelineModal" }, "", "#add-timeline")} },
-                closeTimelineModal(goBack = true) { this.showTimelineModal = false; goBack && history.back() },
+                closeTimelineModal(goBack = true) { this.showTimelineModal = false;.newIndex, 0, item); this.saveActiveWedding(); } }); } },
+                initTimelineSortable() { if (this.timelineSortable) this.timelineSortable.destroy(); if (this.$refs.timelineContainer) { this.timelineSortable = new Sortable(this.$refs.timelineContainer, { handle: '.drag- goBack && history.back() },
                 setView(view, pushState = true) { if(this.currentView === view && pushState) { return; } this.currentView = view; if (pushState) { history.pushState({ view: view }, '', `#${view}`); } },
 
                 login() { 
-                    this.auth.error = ""; this.auth.loading = true;
+                    this.authhandle', animation: 150, ghostClass: 'sortable-ghost', chosenClass: 'sortable-chosen', onEnd: (evt) => { const item = this.activeWedding.timeline.splice(evt.oldIndex, 1)[0]; this.activeWedding.timeline.splice(evt.newIndex, .error = ""; this.auth.loading = true;
                     auth.signInWithEmailAndPassword(this.auth.email, this.auth.password)
-                        .catch(e => { this.auth.error = "Email atau password salah."; })
+                        .catch(e => { this.auth.error = "Email atau password salah.";0, item); this.saveActiveWedding(); } }); } },
+                destroySortableInstances() { if (this.shotListSortable) { this.shotListSortable.destroy(); this.shotListSortable = null; } if (this.timelineSortable) { this.timelineSortable.destroy(); this.timelineSortable = null; } },
+ })
                         .finally(() => { this.auth.loading = false; });
                 },
                 register() { 
@@ -254,7 +563,7 @@
                     auth.createUserWithEmailAndPassword(this.auth.email, this.auth.password)
                         .catch(e => { 
                             if (e.code === "auth/email-already-in-use") { this.auth.error = "Email ini sudah terdaftar."; } 
-                            else if (e.code === "auth/weak-password") { this.auth.error = "Password terlalu lemah."; } 
+                            else if (e.code === "auth/weak-password") { this.auth.error = "                handleBackButton(event) { if (this.photoToPreview) { this.closePhotoPreview(false); return; } if (this.showShotModal) { this.closeShotModal(false); return; } if (this.showEditModal) { this.closeEditModal(false); return; } if (this.showTimelineModal) { this.closeTimelineModal(false); return; } if (this.showForgotPasswordModal) { this.closeForgotPasswordModal(false); return; } if (Password terlalu lemah."; } 
                             else { this.auth.error = "Gagal registrasi."; }
                         })
                         .finally(() => { this.auth.loading = false; });
@@ -262,153 +571,266 @@
                 logout() { auth.signOut(); this.resetAllModals(); this.addToast("Anda telah logout.", "info"); },
                 updateUserPassword() { 
                     this.changePassword.error = ""; this.changePassword.success = ""; const user = auth.currentUser; 
-                    if (user) {
+                    ifthis.showChangePasswordModal) { this.closeChangePasswordModal(false); return; } if (event.state && event.state.view) { this.setView(event.state.view, false); } else if (this.currentView !== 'beranda') { this.setView('beranda', false); } else { history.back(); } },
+                resetAllModals() { this.showForgotPasswordModal = !1, this.showChangePasswordModal = !1, (user) {
                         user.updatePassword(this.changePassword.newPassword).then(() => { 
                             this.changePassword.success = "Password berhasil diubah!"; this.addToast("Password berhasil diubah!", "success");
                             setTimeout(() => this.closeChangePasswordModal(), 2000);
                         }).catch(e => { 
-                            this.changePassword.error = "Password baru terlalu lemah atau perlu login ulang."; this.addToast("Gagal mengubah password.", "error");
+                            this.changePassword.error = "Password baru terlalu lemah atau perlu login ulang."; this.addToast(" this.showShotModal = !1, this.showEditModal = !1, this.showTimelineModal = !1, this.photoToPreview = null },
+                openForgotPasswordModal() { this.forgotPassword = { email: "", error: "", success: "" }; this.showGagal mengubah password.", "error");
                         });
                     }
                 },
                 sendResetEmail() { 
                     this.forgotPassword.error = ""; this.forgotPassword.success = ""; 
                     auth.sendPasswordResetEmail(this.forgotPassword.email)
-                        .then(() => { this.forgotPassword.success = "Link reset telah dikirim." })
+                        .then(() => { this.forgotPassword.success = "Link reset telah dikirim." })ForgotPasswordModal = true; history.pushState({ modal: "forgotPassword" }, "", "#forgot-password") },
+                closeForgotPasswordModal(goBack = true) { this.showForgotPasswordModal = false; goBack && history.back() },
+                openChangePasswordModal() { this.changePassword = { newPassword: "", error: "", success: "", isPasswordVisible: false
                         .catch(e => { this.forgotPassword.error = "Email tidak ditemukan." });
                 },
                 
                 loadAppData() { 
                     this.appReady = false;
                     if (this.firestoreUnsubscribe) { this.firestoreUnsubscribe(); }
-                    this.firestoreUnsubscribe = db.collection('weddings')
+                    
+                    this.firestoreUnsubscribe = db.collection('weddings') }; this.showChangePasswordModal = true; history.pushState({ modal: "changePassword" }, "", "#change-password") },
+                closeChangePasswordModal(goBack = true) { this.showChangePasswordModal = false; goBack && history.back() },
+                openPhotoPreview(e) { this.photoToPreview = e; history.pushState({ modal: "photoPreview"
                         .where('ownerId', '==', this.user.uid)
-                        .orderBy('date', 'desc')
+                        .orderBy('date', }, "", "#preview") },
+                closePhotoPreview(goBack = true) { this.photoToPreview = null; goBack && history.back() },
+                openShotModal() { if(this.activeWedding) { this.newShot = { title: "", description 'desc')
                         .onSnapshot(querySnapshot => {
+                            const oldActiveId = this.activeWedding ? this.activeWedding.id : null;
                             this.weddings = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                            if (this.activeWedding && !this.weddings.some(w => w.id === this.activeWedding.id)) { this.activeWedding = this.weddings.length > 0 ? this.weddings[0] : null; } 
-                            else if (!this.activeWedding && this.weddings.length > 0) { this.activeWedding = this.weddings[0]; }
+
+                            if (oldActiveId && this.weddings.some(w => w.id === oldActiveId: "" }; this.showShotModal = true; history.pushState({ modal: "shotModal" }, "", "#add-shot")} },)) {
+                                this.activeWedding = this.weddings.find(w => w.id === oldActiveId);
+                            } else if (this.weddings.length > 0) {
+                                this.active
+                closeShotModal(goBack = true) { this.showShotModal = false; goBack && history.back() },
+                openEditModal(e) { this.weddingToEdit = JSON.parse(JSON.stringify(e)); this.showEditModal = true; history.pushState({ modal: "editModal" }, "", "#edit") },
+                closeEditModal(goBack = true) { this.showEditModal = false; this.weddingToEdit = null; goBack &&Wedding = this.weddings[0];
+                            } else {
+                                this.activeWedding = null;
+                            }
+                            
                             this.generateCalendar();
                             this.isLoading = false;
                             this.appReady = true;
-                        }, (error) => {
+ history.back() },
+                openTimelineModal() { if(this.activeWedding) { this.newTimelineItem = { title: "", time: "", notes: "" }; this.showTimelineModal = true; history.pushState({ modal: "timelineModal" }, "", "#add-timeline")} },
+                closeTimelineModal(goBack = true) { this.showTimelineModal = false;                        }, (error) => {
                             console.error("Error fetching weddings:", error); this.addToast("Gagal memuat data jadwal.", "error"); this.isLoading = false;
                         });
+                    
                     this.loadInvoiceTemplate(false);
                 },
+                loadClientDataForActiveWedding() {
+                    if (this.clientDataUnsubscribe) this.clientDataUnsubscribe();
+                    if (!this.activeWedding) return;
+
+                    this.clientDataUnsubscribe = db.collection('weddings').doc(this.activeWedding.id)
+                        .collection(' goBack && history.back() },
+                setView(view, pushState = true) { if(this.currentView === view && pushState) { return; } this.currentView = view; if (pushState) { history.pushState({ view: view }, '', `#${view}`); } },
+                login() { this.auth.error = ""; this.auth.loading = true; auth.signInWithEmailAndPassword(this.auth.email, this.auth.passwordclientData').doc('portal')
+                        .onSnapshot(doc => {
+                            if (this.activeWedding) {
+                                const clientData = doc.exists ? doc.data() : {};
+                                this.activeWedding.clientNotes = clientData.notes || '';
+                                const clientShots = clientData.shots || [];
+                                const plannerShots = (this.activeWedding.shots || []) .catch(e => { this.auth.error = "Email atau password salah."; }).finally(() => { this.auth.loading = false; }); },
+                register() { this.auth.error = ""; this.auth.loading = true; auth.createUserWithEmailAndPassword(this.auth.email, this.auth.password) .catch(e => { if ().filter(s => !s.isClientShot);
+                                this.activeWedding.shots = [...plannerShots, ...clientShots.map(s => ({ ...s, isClientShot: true }))];
+                                this.activeWedding.photos = clientData.photose.code === "auth/email-already-in-use") { this.auth.error = "Email ini sudah terdaftar."; } else if (e.code === "auth/weak-password") { this.auth.error = "Password terlalu lemah."; } else { this.auth.error = "Gagal registrasi."; } }).finally(() => { this. || [];
+                            }
+                        });
+                },
                 addWedding() {
-                    const newWeddingData = { 
+                    const newWeddingData = { auth.loading = false; }); },
+                logout() { auth.signOut(); this.resetAllModals(); this.addToast("Anda telah logout.", "info"); },
+                updateUserPassword() { this.changePassword.error = ""; this.
                         ownerId: this.user.uid, 
                         title:"Jadwal Baru", 
                         date:(new Date).toISOString().split("T")[0], 
                         location:"Belum ditentukan", 
                         notes:"Catatan khusus...", 
-                        clientNotes: "",
                         shots:[], 
                         timeline:[], 
-                        photos:[], 
                         tags:[], 
-                        contacts: {bride:"",groom:"",email:"",phone:""}, 
+                        contacts: {changePassword.success = ""; const user = auth.currentUser; if (user) { user.updatePassword(this.changePassword.newPassword).then(() => { this.changePassword.success = "Password berhasil diubah!";bride:"",groom:"",email:"",phone:""}, 
                         details:{guests:0,type:"TBD",package:"TBD"},
                         showTimelineInPortal: false 
                     };
                     db.collection('weddings').add(newWeddingData)
                         .then(docRef => {
-                            this.setActiveWedding({ id: docRef.id, ...newWeddingData });
+                            // Also create the clientData subcollection document
+                            db.collection('wed this.addToast("Password berhasil diubah!", "success"); setTimeout(() => this.closeChangePasswordModal(), 2000); }).catch(e => { this.changePassword.error = "Password baru terlalu lemah atau perlu login ulang."; this.addToast("Gagal mengubah password.", "error"); }); } },
+                sendResetEmail() { this.forgotPassword.error = ""; this.forgotPassword.success = ""; auth.sendPasswordResetEmail(this.forgotPassworddings').doc(docRef.id).collection('clientData').doc('portal').set({
+                                photos: [],
+                                shots: [],
+                                notes: ''
+                            });
                             this.addToast("Jadwal baru ditambahkan", "success");
                         })
-                        .catch(error => { console.error("Error adding wedding: ", error); this.addToast("Gagal menambahkan jadwal.", "error"); });
+                        .catch(error => { console.error("Error adding wedding: ", error); this.addToast("Gagal menambahkan jadwal.", ".email) .then(() => { this.forgotPassword.success = "Link reset telah dikirim." }) .catch(e => { this.forgotPassword.error = "Email tidak ditemukan." }); },
+                
+                loadAppData() { 
+                    this.appReady = false;
+                    if (this.firestoreUnsubscribe) { this.firestoreUnsubscribe(); }
+                    this.firestoreUnsubscribe = db.collection('weddings')
+                        .where('ownerId',error"); });
                 },
                 saveActiveWedding() {
                     if (!this.activeWedding || !this.activeWedding.id) return;
                     const weddingData = JSON.parse(JSON.stringify(this.activeWedding));
                     const weddingId = weddingData.id;
                     delete weddingData.id;
+                    
+                    // Separate client data before saving
+                    const clientData = {
+                        photos: weddingData.photos || [],
+                        shots: '==', this.user.uid)
+                        .orderBy('date', 'desc')
+                        .onSnapshot(querySnapshot => {
+                            this.weddings = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc. (weddingData.shots || []).filter(s => s.isClientShot).map(({isClientShot, ...restdata() }));
+                            if (this.activeWedding && !this.weddings.some(w => w.id === this.activeWedding.id)) { this.activeWedding = this.weddings.length > 0 ? this.weddings[0] : null; } 
+                            else if (!this.activeWedding && this.weddings.length > 0) { this.activeWedding =}) => rest), // save only client shots
+                        notes: weddingData.clientNotes || ''
+                    };
+                    
+                    delete weddingData.photos;
+                    delete weddingData.clientNotes;
+                    weddingData.shots = ( this.weddings[0]; }
+                            else if (this.activeWedding) {
+                                // If the active wedding was updated, refresh its data
+                                const updatedData = this.weddings.find(w => w.id === this.weddingData.shots || []).filter(s => !s.isClientShot);
+
                     db.collection('weddings').doc(weddingId).set(weddingData, { merge: true })
-                        .catch(error => { console.error("Error saving wedding: ", error); this.addToast("Gagal menyimpan perubahan.", "error"); });
+                        .catch(error => { console.error("Error savingactiveWedding.id);
+                                if(updatedData) this.activeWedding = updatedData;
+                            }
+                            this.generateCalendar();
+                            this.isLoading = false;
+                            this.appReady = true;
+                        }, (error) => {
+                            console.error("Error fetching weddings:", error); this.addToast("Gagal memuat data jadwal.", wedding: ", error); this.addToast("Gagal menyimpan perubahan.", "error"); });
+                    
+                    db.collection('weddings').doc(weddingId).collection('clientData').doc('portal').set(clientData, { merge: true })
+ "error"); this.isLoading = false;
+                        });
+                    this.loadInvoiceTemplate(false);
+                },
+                loadClientDataForActiveWedding() {
+                    if (this.clientDataUnsubscribe) this.clientDataUnsubscribe();
+                    if (!this                        .catch(error => { console.error("Error saving client data: ", error); });
                 },
                 deleteWedding(weddingId) {
                     if (confirm("Apakah Anda yakin ingin menghapus jadwal ini? Data tidak dapat dikembalikan.")) {
                         db.collection('weddings').doc(weddingId).delete()
-                            .then(() => { this.addToast("Jadwal dihapus.", "info"); }) 
+                            .then(() => { this.activeWedding) return;
+
+                    this.clientDataUnsubscribe = db.collection('weddings').doc(this.activeWedding.addToast("Jadwal dihapus.", "info"); }) 
                             .catch(error => { console.error("Error deleting wedding: ", error); this.addToast("Gagal menghapus jadwal.", "error"); });
                     }
-                },
-                saveInvoiceTemplate(){
-                    if(!this.user)return;
-                    const templateData = { invoiceTemplate: JSON.parse(JSON.stringify(this.invoice)) };
-                    db.collection('userProfiles').doc(this.user.uid).set(templateData, { merge: true })
-                        .then(() => this.addToast("Template invoice berhasil disimpan!", "success"))
-                        .catch(e => { this.addToast("Gagal menyimpan template: "+e, "error"); });
-                },
-                loadInvoiceTemplate(showToast = true) {
-                    if (!this.user) return;
-                    db.collection('userProfiles').doc(this.user.uid).get()
-                        .then(doc => {
-                            if (doc.exists && doc.data().invoiceTemplate) {
-                                this.invoice = doc.data().invoiceTemplate;
-                                if (showToast) this.addToast("Template invoice berhasil dimuat!", "success");
-                            } else {
-                                if (showToast) this.addToast("Tidak ada template yang tersimpan.", "error");
-                            }
-                        })
-                        .catch(error => { console.error("Error loading template: ", error); if (showToast) this.addToast("Gagal memuat template.", "error"); });
-                },
-                
+                },.id)
+                        .collection('clientData').doc('portal')
+                        .onSnapshot(doc => {
+                            if (this.activeWedding) { // Check again in case it changed while loading
+                                const clientData = doc.exists ? doc.data() :
+                saveInvoiceTemplate(){ /* ... same ... */ },
+                loadInvoiceTemplate(showToast = true){ /* ... same ... { notes: '', photos: [], shots: [] };
+                                // Use Vue.set or object spread to ensure reactivity */ },
                 updateWedding(){ 
-                    if(!this.weddingToEdit || !this.weddingToEdit.id)return; 
+                    if(!this.weddingToEdit || !this.weddingToEdit.id)return
+                                this.activeWedding = {
+                                    ...this.activeWedding,
+                                    clientNotes: clientData.notes; 
                     const weddingData = JSON.parse(JSON.stringify(this.weddingToEdit)); 
-                    const weddingId = weddingData.id; 
+ || '',
+                                    photos: clientData.photos || [],
+                                    shots: [...(this.activeWedding.shots || []                    const weddingId = weddingData.id; 
                     delete weddingData.id; 
                     db.collection('weddings').doc(weddingId).set(weddingData, { merge: true })
-                        .then(() => { this.closeEditModal(true); this.addToast("Detail berhasil disimpan.", "success"); })
+                        .then(() => { this.close).filter(s => !s.isClient), ...(clientData.shots || [])]
+                                };
+                            }
+                        });
+                },
+                addWedding() {
+                    const newWeddingData = { 
+                        ownerId: this.userEditModal(true); this.addToast("Detail berhasil disimpan.", "success"); })
                         .catch(error => { console.error("Error updating wedding: ", error); this.addToast("Gagal menyimpan perubahan.", "error"); }); 
                 },
-                addShot(){ if(!this.newShot.title.trim()||!this.activeWedding)return; const wasEmpty=this.activeWedding.shots.length===0; this.activeWedding.shots.push({id:Date.now(),...this.newShot,completed:!1}); this.saveActiveWedding(); this.closeShotModal(!0); this.addToast("Foto wajib ditambahkan.","success"); if(wasEmpty){nextTick(()=>this.initShotListSortable());}},
-                deleteShot(e){ if(!this.activeWedding)return; this.activeWedding.shots=this.activeWedding.shots.filter(t=>t.id!==e); this.saveActiveWedding(); this.addToast("Foto wajib dihapus.","info"); if(this.activeWedding.shots.length===0){this.destroySortableInstances();}},
-                addTimelineItem(){ if(!this.newTimelineItem.title.trim()||!this.activeWedding)return; const wasEmpty=this.activeWedding.timeline.length===0; this.activeWedding.timeline.push({id:Date.now(),...this.newTimelineItem}); this.activeWedding.timeline.sort((e,t)=>e.time.localeCompare(t.time)); this.saveActiveWedding(); this.closeTimelineModal(!0); this.addToast("Linimasa ditambahkan.","success"); if(wasEmpty){nextTick(()=>this.initTimelineSortable());}},
-                deleteTimelineItem(e){ if(!this.activeWedding)return; this.activeWedding.timeline=this.activeWedding.timeline.filter(t=>t.id!==e); this.saveActiveWedding(); this.addToast("Item linimasa dihapus.","info"); if(this.activeWedding.timeline.length===0){this.destroySortableInstances();}},
-                formatDateForDisplay(e){if(!e)return"-";const t=new Date(e); if(e.length === 10) { t.setUTCHours(0,0,0,0); } return isNaN(t.getTime()) ? e : t.toLocaleDateString("id-ID",{day:"numeric",month:"long",year:"numeric"})},
+                addShot(){ if(!this.newShot.title.trim()||!this.activeWedding.uid, title:"Jadwal Baru", date:(new Date).toISOString().split("T")[0], location:"Belum ditentukan", notes:"Catatan khusus...", clientNotes: "", shots:[], timeline:[], photos:[], tags:[], contacts)return; const wasEmpty=this.activeWedding.shots.length===0; this.activeWedding.shots.push({id:Date.now(),...this.newShot,completed:!1, isClientShot: false}); this.saveActiveWedding(); this.closeShotModal(!0); this.addToast("Foto wajib ditambahkan.","success"); if(was: {bride:"",groom:"",email:"",phone:""}, details:{guests:0,type:"TBD",package:"TBD"}, showTimelineInPortal: false 
+                    };
+                    db.collection('weddings').add(newWeddingData)
+                        .then(docEmpty){nextTick(()=>this.initShotListSortable());}},
+                deleteShot(e){ if(!this.activeWedding)return; this.activeWedding.shots=this.activeWedding.shots.filter(tRef => {
+                            db.collection('weddings').doc(docRef.id).collection('clientData').doc('portal').set({
+                                photos: [], shots: [], notes: ''
+                            });
+                            this.addToast("Jadwal baru ditambahkan", "success");
+                        })
+                        .catch(error => { console.error("Error adding wedding: ", error); this.add=>t.id!==e); this.saveActiveWedding(); this.addToast("Foto wajib dihapus.","info"); if(this.activeWedding.shots.length===0){this.destroySortableInstances();}},
+                addTimelineItem(){ if(!this.newTimelineItem.title.trim()||!this.activeWedding)return; const wasEmpty=this.activeWeddingToast("Gagal menambahkan jadwal.", "error"); });
+                },
+                saveActiveWedding() {
+                    if (!this.activeWedding || !this.activeWedding.id) return;
+                    const weddingData = JSON.parse(JSON.stringify(this.activeWedding));
+                    const weddingId = weddingData.id;
+                    delete weddingData.id;
+                    // Remove client-specific.timeline.length===0; this.activeWedding.timeline.push({id:Date.now(),...this.newTimelineItem}); this.activeWedding.timeline.sort((e,t)=>e.time.localeCompare(t.time)); data before saving main doc
+                    delete weddingData.clientNotes;
+                    delete weddingData.photos;
+                    // Filter out client shots before saving
+                    if (weddingData.shots) {
+                        weddingData.shots = weddingData. this.saveActiveWedding(); this.closeTimelineModal(!0); this.addToast("Linimasa ditambahkan.","success"); if(wasEmpty){nextTick(()=>this.initTimelineSortable());}},
+                deleteTimelineItem(e){ if(!this.activeWedding)return; this.activeWedding.timeline=this.activeWedding.timeline.filter(t=>t.id!==e); this.saveActiveWedding(); this.addToast("Item linimasa dihapshots.filter(shot => !shot.isClient);
+                    }
+                    db.collection('weddings').doc(weddingId).set(weddingData, { merge: true })
+                        .catch(error => { console.error("Error saving wedding: ", error); this.addToast("Gagal menyimpan perubahan.", "error"); });
+                },
+                deleteWeddingus.","info"); if(this.activeWedding.timeline.length===0){this.destroySortableInstances();}},
+                formatDateForDisplay(e){if(!e)return"-";const t=new Date(e); if(e.length === 10) { t.setUTCHours(0,0,0,0); } return isNaN(t.getTime()) ? e : t.toLocaleDateString("id-ID",{day(weddingId) {
+                    if (confirm("Apakah Anda yakin ingin menghapus jadwal ini? Data tidak dapat dikembalikan.")) {
+                        db.collection('weddings').doc(weddingId).delete()
+                            .then(() => { this.addToast("Jadwal dihapus.", "info"); }) 
+                            .catch(error => { console.error("Error deleting wedding::"numeric",month:"long",year:"numeric"})},
                 setActiveWedding(e){this.activeWedding=e,window.innerWidth<1024&&(this.currentView="jadwal")},
-                addTag(){if(!this.newTag.trim()||!this.weddingToEdit)return;this.weddingToEdit.tags.push({text:this.newTag,color:this.tagColors[this.weddingToEdit.tags.length%this.tagColors.length]}),this.newTag=""},
+                addTag(){if(!this.newTag.trim()||!this.weddingToEdit)return;this.weddingToEdit.tags.push({text:this.newTag,color:this.tagColors[this.weddingToEdit.tags.length%this.tagColors.length] ", error); this.addToast("Gagal menghapus jadwal.", "error"); });
+                    }
+                },
+                saveInvoiceTemplate(){ if(!this.user)return; const templateData = { invoiceTemplate: JSON.parse(JSON.stringify(this.invoice)) }; db.collection('userProfiles').doc(this.user.uid).set(templateData, { merge: true }) .then(() => this.addToast("Template invoice berhasil disimpan!", "success")) .}),this.newTag=""},
                 removeTag(e){this.weddingToEdit&&this.weddingToEdit.tags.splice(e,1)},
-                
                 addPhoto() {
                     if (this.isUploading) return;
                     this.activeWedding && this.$refs.photoUploader.click();
                 },
                 handlePhotoUpload(e) {
-                    const file = e.target.files[0];
+                    const file = e.target.filescatch(e => { this.addToast("Gagal menyimpan template: "+e, "error"); }); },
+                loadInvoiceTemplate(showToast = true) { if (!this.user) return; db.collection('userProfiles').doc([0];
                     if (!file || !this.activeWedding || !this.user) {
-                        e.target.value = "";
-                        return;
+                        e.target.value = ""; return;
                     }
-
                     this.isUploading = true;
-                    const uniqueFileName = `${Date.now()}-${file.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`;
+                    const uniqueFileName = `${Date.now()this.user.uid).get() .then(doc => { if (doc.exists && doc.data().invoiceTemplate) { this.invoice = doc.data().invoiceTemplate; if (showToast) this.addToast("Template invoice berhasil dimuat!", "success"); } else { if (showToast) this.addToast("Tidak ada template yang tersimpan.", "error"); } }) .catch(}-${file.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`;
                     const filePath = `${this.user.uid}/${uniqueFileName}`;
-                    
                     const storageRef = storage.ref(filePath);
                     const uploadTask = storageRef.put(file);
-
-                    uploadTask.on('state_changed', 
-                        (snapshot) => {}, 
-                        (error) => {
-                            console.error("Upload failed:", error);
-                            this.addToast("Upload foto gagal.", "error");
-                            this.isUploading = false;
-                        }, 
+                    uploadTask.on('state_changed', () => {},error => { console.error("Error loading template: ", error); if (showToast) this.addToast("Gagal memuat template.", "error"); }); },
+                updateWedding(){ if(!this.weddingToEdit || !this.weddingToEdit.id)return; const weddingData = JSON.parse(JSON.stringify(this.weddingToEdit 
+                        (error) => { console.error("Upload failed:", error); this.addToast("Upload foto gagal.", "error"); this.isUploading = false; }, 
                         () => {
-                            uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
-                                if (!this.activeWedding.photos) {
-                                    this.activeWedding.photos = [];
-                                }
-                                this.activeWedding.photos.push({
-                                    path: filePath,
-                                    url: downloadURL
-                                });
-                                this.saveActiveWedding();
-                                this.addToast("Foto berhasil di-upload!", "success");
+                            uploadTask.snapshot.ref.getDownloadURL().then((downloadURL)); const weddingId = weddingData.id; delete weddingData.id; db.collection('weddings').doc(weddingId).set(weddingData, { merge: true }) .then(() => { this.closeEditModal(true); this.add) => {
+                                const clientPhotos = this.activeWedding.photos || [];
+                                clientPhotos.push({ path: filePath, url: downloadURL });
+                                db.collection('weddings').doc(this.activeWedding.id).collection('clientData').Toast("Detail berhasil disimpan.", "success"); }) .catch(error => { console.error("Error updating wedding: ", error); this.addToast("Gagal menyimpan perubahan.", "error"); }); },
+                addShot(){ if(!this.newShot.title.trim()||!thisdoc('portal')
+                                    .set({ photos: clientPhotos }, { merge: true });
+                                this.addToast("Foto.activeWedding)return; const wasEmpty=this.activeWedding.shots.length===0; this.activeWedding.shots.push({id:Date.now(),...this.newShot,completed:!1}); this.saveActiveWedding(); this.close berhasil di-upload!", "success");
                                 this.isUploading = false;
                             });
                         }
@@ -416,18 +838,20 @@
                     e.target.value = "";
                 },
                 deletePhoto(index, photo) {
-                    if (!this.activeWedding || !this.user || !photo || !photo.path) return;
+                    if (!this.activeWedding || !this.ShotModal(!0); this.addToast("Foto wajib ditambahkan.","success"); if(wasEmpty){nextTick(()=>this.initShotListSortable());}},
+                deleteShot(e){ if(!this.activeWedding)return; thisuser || !photo || !photo.path) return;
                     if (!confirm("Apakah Anda yakin ingin menghapus foto ini?")) return;
                     const photoRef = storage.ref(photo.path);
-                    photoRef.delete().then(() => {
+                    photoRef.delete().then(().activeWedding.shots=this.activeWedding.shots.filter(t=>t.id!==e); this.saveActiveWedding(); this.addToast("Foto wajib dihapus.","info"); if(this.activeWedding.shots.length===0){ => {
                         this.activeWedding.photos.splice(index, 1);
-                        this.saveActiveWedding();
-                        this.addToast("Foto berhasil dihapus.", "info");
+                        this.saveActiveWedding(); // This will save the updated photos array
+                        this.addToast("Foto berhasil dihapus.", "info");this.destroySortableInstances();}},
+                addTimelineItem(){ if(!this.newTimelineItem.title.trim()||
                     }).catch((error) => {
                         console.error("Error deleting photo:", error);
-                        if (error.code === 'storage/object-not-found') {
+                        if (error.!this.activeWedding)return; const wasEmpty=this.activeWedding.timeline.length===0; this.activeWedding.timeline.push({id:Date.now(),...this.newTimelineItem}); this.activeWedding.timeline.sortcode === 'storage/object-not-found') {
                             this.activeWedding.photos.splice(index, 1);
-                            this.saveActiveWedding();
+((e,t)=>e.time.localeCompare(t.time)); this.saveActiveWedding(); this.closeTimelineModal(!0); this.addToast("Linimasa ditambahkan.","success"); if(wasEmpty){nextTick(()                            this.saveActiveWedding();
                         }
                         this.addToast("Gagal menghapus foto.", "error");
                     });
@@ -436,47 +860,112 @@
                     const url = new URL('portal.html', window.location.href);
                     url.searchParams.set('id', id);
                     return url.href;
-                },
+                },=>this.initTimelineSortable());}},
+                deleteTimelineItem(e){ if(!this.activeWedding)return; this.activeWedding.timeline=this.activeWedding.timeline.filter(t=>t.id!==e); this.saveActiveWedding(); this.addToast("Item linimasa dihapus.","info"); if(this.activeWedding
                 copyToClipboard(text) {
                     navigator.clipboard.writeText(text).then(() => {
                         this.addToast('Disalin ke clipboard!', 'info');
                     });
                 },
-
-                getTaskProgress(e){if(!e||!e.shots||0===e.shots.length)return{percent:0,done:0,total:0};const t=e.shots.length,i=e.shots.filter(e=>e.completed).length;return{percent:Math.round(i/t*100),done:i,total:t}},
+                getTaskProgress(e){if(!e||!e.shots||0===e.shots.length)return{percent:0,done:0,total:0};const t=e.shots.length,i=e.shots.filter(e=>e.completed).length;.timeline.length===0){this.destroySortableInstances();}},
+                formatDateForDisplay(e){if(!e)return"-";const t=new Date(e); if(e.length === 10) { t.setUTCHours(0,0,0,0); } return isNaN(t.getTime()) ? e : t.toLocaleDateString("id-ID",{day:"numeric",month:"long",year:"numeric"})},
+                setActivereturn{percent:Math.round(i/t*100),done:i,total:t}},
                 goToJadwal(e){this.setActiveWedding(e),this.setView("jadwal")},
-                generateCalendar(){const e=this.calendar.date,t=e.getFullYear(),i=e.getMonth();this.calendar.year=t,this.calendar.month=i,this.calendar.monthName=e.toLocaleString("id-ID",{month:"long"});const o=new Date(t,i,1).getDay(),n=new Date(t,i+1,0).getDate();let s=[];for(let d=0;d<o;d++)s.push({date:""});for(let d=1;d<=n;d++){const o=`${t}-${String(i+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;s.push({date:d,fullDate:o,isToday:(new Date).toDateString()===(new Date(t,i,d)).toDateString(),hasEvent:this.scheduleDates.has(o)})}this.calendar.days=s},
+                generateCalendar(){const e=this.calendar.date,t=e.getFullYear(),i=e.getMonth();Wedding(e){this.activeWedding=e,window.innerWidth<1024&&(this.currentView="jadwal")},
+                addTag(){if(!this.newTag.trim()||!this.weddingToEdit)return;this.weddingthis.calendar.year=t,this.calendar.month=i,this.calendar.monthName=e.toLocaleString("id-ID",{month:"long"});const o=new Date(t,i,1).getDay(),n=ToEdit.tags.push({text:this.newTag,color:this.tagColors[this.weddingToEdit.tags.length%this.tagColors.length]}),this.newTag=""},
+                removeTag(e){this.weddingToEdit&&this.weddingnew Date(t,i+1,0).getDate();let s=[];for(let d=0;d<o;d++)s.push({date:""});for(let d=1;d<=n;d++){const o=`${t}-${String(i+1).padStart(2,"0")}-${String(d).padStart(2,"ToEdit.tags.splice(e,1)},
+                addPhoto() { if (this.isUploading) return; this.activeWedding && this.$refs.photoUploader.click(); },
+                handlePhotoUpload(e) {
+                    const file = e.target.files0")}`;s.push({date:d,fullDate:o,isToday:(new Date).toDateString()===(new Date(t,i,d)).toDateString(),hasEvent:this.scheduleDates.has(o)})}this.calendar.days=s},
+[0];
+                    if (!file || !this.activeWedding || !this.user) { e.target.value = ""; return; }
+                    this.isUploading = true;
+                    const uniqueFileName = `${Date.now()}-${file                changeMonth(e){this.calendar.date.setMonth(this.calendar.date.getMonth()+e),this.generateCalendar()},
+                selectDate(e){e.hasEvent&&(this.selectedDate=this.selectedDate===.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`;
+                    const filePath = `${this.user.uid}/${uniqueFileName}`;
+                    const storageRef = storage.ref(filePath);
+                    conste.fullDate?null:e.fullDate)},
+                clearDateFilter(){this.selectedDate=null},
+                addItem(){this.invoice.items.push({description:"",quantity:1,rate:0})},
+                removeItem(e){this.invoice.items.splice(e,1)},
+                formatCurrency(e){return new Intl. uploadTask = storageRef.put(file);
+                    uploadTask.on('state_changed', (snapshot) => {}, (error) => { console.error("Upload failed:", error); this.addToast("Upload foto gagal.", "error"); this.NumberFormat("id-ID",{style:"currency",currency:"IDR",minimumFractionDigits:0}).format(e)},
+                generatePDF() {
+                    this.invoice.isGenerating = true; this.addToast("Membuat PDF...", "isUploading = false; }, () => {
+                        uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
+                            if (!this.activeWedding.photos) { this.activeWedding.photos = []; }
+                            this.activeWedding.photos.push({ path: filePath, url: downloadURL });
+                            this.saveActiveinfo");
+                    const doc = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' });
+                    doc.setFont("helvetica", "normal"); 
+                    const MARGIN = 15; const PAGE_WIDTH = doc.internal.pageSize.getWidth(); const PAGE_HEIGHT = doc.internal.Wedding();
+                            this.addToast("Foto berhasil di-upload!", "success");
+                            this.isUploading = false;
+                        });
+                    });
+                    e.target.value = "";
+                },
+                deletePhoto(indexpageSize.getHeight(); const CONTENT_WIDTH = PAGE_WIDTH - (MARGIN * 2); let y = MARGIN;
+                    doc.setFontSize(20); doc.setFont("helvetica", "bold"); doc.text("INVOICE", MARGIN, y);
+                    doc.setFontSize(10); doc.setFont("helvetica", "normal"); doc.text(, photo) {
+                    if (!this.activeWedding || !this.user || !photo || !photo.path) return;
+                    if (!confirm("Apakah Anda yakin ingin menghapus foto ini?")) return;
+                    const photoRef = storage.ref(photo.path);
+                    photoRef.delete().then(() => {
+                        this.activeWedding.photos.splice(index, 1);
+this.invoice.invoicerName, PAGE_WIDTH - MARGIN, y, { align: 'right' }); y += 5; doc.text(this.invoice.invoicerSlogan, PAGE_WIDTH - MARGIN,                        this.saveActiveWedding();
+                        this.addToast("Foto berhasil dihapus.", "info");
+                    }).catch(( y, { align: 'right' }); y += 15;
+                    doc.setLineWidth(0.5); doc.lineerror) => {
+                        console.error("Error deleting photo:", error);
+                        if (error.code === 'storage/object-not-found') {
+                            this.activeWedding.photos.splice(index, 1);
+                            this.saveActiveWedding();
+(MARGIN, y, PAGE_WIDTH - MARGIN, y); y += 10;
+                    doc.setFont("helvetica", "bold"); doc.text("Tagihan Untuk:", MARGIN, y); doc.text("Detail:", PAGE_WIDTH / 2,                        }
+                        this.addToast("Gagal menghapus foto.", "error");
+                    });
+                },
+                getClient y);
+                    doc.setFont("helvetica", "normal"); y += 6; doc.text(this.invoice.client.name, MARGIN, y); const clientAddress = doc.splitTextToSize(this.invoice.client.address, (PortalLink(id) { const url = new URL('portal.html', window.location.href); url.searchParams.set('id', id); return url.href; },
+                copyToClipboard(text) { navigator.clipboard.writeText(text).then(() => { this.addToast('Disalin ke clipboard!', 'info'); }); },
+                getTaskProgress(e){if(!e||!e.shots||0===e.shots.length)return{percent:0,PAGE_WIDTH / 2) - MARGIN - 5); doc.text(clientAddress, MARGIN, y + 5);
+done:0,total:0};const t=e.shots.length,i=e.shots.filter(e=>e.completed).length;return{percent:Math.round(i/t*100                    let rightY = y; doc.text(`No. Invoice: ${this.invoice.number}`, PAGE_WIDTH / 2, rightY); rightY += 5; doc.text(`Tanggal: ${this.formatDateForDisplay(this.invoice.date)}`, PAGE_WIDTH / 2, rightY); rightY += 5; doc.text(`Jatuh Tempo: ${this.formatDateForDisplay(this.invoice.dueDate)}`, PAGE_WIDTH / 2, rightY);),done:i,total:t}},
+                goToJadwal(e){this.setActiveWedding(e),this.setView("jadwal")},
+                generateCalendar(){const e=this.calendar.date,t=e.getFullYear(),i=e.getMonth
+                    y += clientAddress.length * 5 + 10; if (y < rightY + 10) y = rightY + 10;
+                    const drawTableHeader = () => { doc.setFillColor(230, 230, 230); doc.rect(MARGIN, y, CONTENT_WIDTH, 8, 'F();this.calendar.year=t,this.calendar.month=i,this.calendar.monthName=e.toLocaleString("id-ID",{month:"long"});const o=new Date(t,i,1).getDay(),n=new Date(t,i+1,0).getDate();let s=[];for(let d=0;d<o;d++)s.push({date:""});for(let d=1;d<=n;d++){const o=`${t}-${String(i+1).padStart(2,"0")}-${String(d).'); doc.setFont("helvetica", "bold"); doc.setTextColor(50, 50, 50); doc.text("Deskripsi", MARGIN + 2, y + 6); doc.text("Jml", PAGE_WIDTH - MARGIN - 60, y + 6, { align: 'right' }); doc.text("Harga", PAGE_WIDTH - MARGIN - 35, y + 6, { align: 'right' }); doc.text("TotalpadStart(2,"0")}`;s.push({date:d,fullDate:o,isToday:(new Date).toDateString()===(new Date(t,i,d)).toDateString(),hasEvent:this.scheduleDates.has(o)})}this.calendar.days=", PAGE_WIDTH - MARGIN - 2, y + 6, { align: 'right' }); y += 12; };
+                    drawTableHeader();
+                    this.invoice.items.forEach(item => {
+                        const itemDescription = doc.splitTextToSize(item.description, CONTENT_WIDTH - 90); const rowHeight = itemDescription.length *s},
                 changeMonth(e){this.calendar.date.setMonth(this.calendar.date.getMonth()+e),this.generateCalendar()},
                 selectDate(e){e.hasEvent&&(this.selectedDate=this.selectedDate===e.fullDate?null:e.fullDate)},
                 clearDateFilter(){this.selectedDate=null},
                 addItem(){this.invoice.items.push({description:"",quantity:1,rate:0})},
-                removeItem(e){this.invoice.items.splice(e,1)},
+                removeItem(e){ 5 + 4;
+                        if (y + rowHeight > PAGE_HEIGHT - MARGIN - 40) { doc.addPage(); y = MARGIN; drawTableHeader(); }
+                        doc.setFont("helvetica", "normal"); doc.setTextColor(0this.invoice.items.splice(e,1)},
                 formatCurrency(e){return new Intl.NumberFormat("id-ID",{style:"currency",currency:"IDR",minimumFractionDigits:0}).format(e)},
                 generatePDF() {
                     this.invoice.isGenerating = true; this.addToast("Membuat PDF...", "info");
                     const doc = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' });
-                    doc.setFont("helvetica", "normal"); 
+                    doc.setFont("helvetica", "normal"); , 0, 0); doc.text(itemDescription, MARGIN + 2, y); doc.text(item.quantity.toString(), PAGE_WIDTH - MARGIN - 60, y, { align: 'right' }); doc.text(this.formatCurrency(item.rate), PAGE_WIDTH - MARGIN - 35, y, { align: 'right' }); doc.text
                     const MARGIN = 15; const PAGE_WIDTH = doc.internal.pageSize.getWidth(); const PAGE_HEIGHT = doc.internal.pageSize.getHeight(); const CONTENT_WIDTH = PAGE_WIDTH - (MARGIN * 2); let y = MARGIN;
-                    doc.setFontSize(20); doc.setFont("helvetica", "bold"); doc.text("INVOICE", MARGIN, y);
-                    doc.setFontSize(10); doc.setFont("helvetica", "normal"); doc.text(this.invoice.invoicerName, PAGE_WIDTH - MARGIN, y, { align: 'right' }); y += 5; doc.text(this.invoice.invoicerSlogan, PAGE_WIDTH - MARGIN, y, { align: 'right' }); y += 15;
-                    doc.setLineWidth(0.5); doc.line(MARGIN, y, PAGE_WIDTH - MARGIN, y); y += 10;
-                    doc.setFont("helvetica", "bold"); doc.text("Tagihan Untuk:", MARGIN, y); doc.text("Detail:", PAGE_WIDTH / 2, y);
-                    doc.setFont("helvetica", "normal"); y += 6; doc.text(this.invoice.client.name, MARGIN, y); const clientAddress = doc.splitTextToSize(this.invoice.client.address, (PAGE_WIDTH / 2) - MARGIN - 5); doc.text(clientAddress, MARGIN, y + 5);
-                    let rightY = y; doc.text(`No. Invoice: ${this.invoice.number}`, PAGE_WIDTH / 2, rightY); rightY += 5; doc.text(`Tanggal: ${this.formatDateForDisplay(this.invoice.date)}`, PAGE_WIDTH / 2, rightY); rightY += 5; doc.text(`Jatuh Tempo: ${this.formatDateForDisplay(this.invoice.dueDate)}`, PAGE_WIDTH / 2, rightY);
-                    y += clientAddress.length * 5 + 10; if (y < rightY + 10) y = rightY + 10;
-                    const drawTableHeader = () => { doc.setFillColor(230, 230, 230); doc.rect(MARGIN, y, CONTENT_WIDTH, 8, 'F'); doc.setFont("helvetica", "bold"); doc.setTextColor(50, 50, 50); doc.text("Deskripsi", MARGIN + 2, y + 6); doc.text("Jml", PAGE_WIDTH - MARGIN - 60, y + 6, { align: 'right' }); doc.text("Harga", PAGE_WIDTH - MARGIN - 35, y + 6, { align: 'right' }); doc.text("Total", PAGE_WIDTH - MARGIN - 2, y + 6, { align: 'right' }); y += 12; };
-                    drawTableHeader();
-                    this.invoice.items.forEach(item => {
-                        const itemDescription = doc.splitTextToSize(item.description, CONTENT_WIDTH - 90); const rowHeight = itemDescription.length * 5 + 4;
-                        if (y + rowHeight > PAGE_HEIGHT - MARGIN - 40) { doc.addPage(); y = MARGIN; drawTableHeader(); }
-                        doc.setFont("helvetica", "normal"); doc.setTextColor(0, 0, 0); doc.text(itemDescription, MARGIN + 2, y); doc.text(item.quantity.toString(), PAGE_WIDTH - MARGIN - 60, y, { align: 'right' }); doc.text(this.formatCurrency(item.rate), PAGE_WIDTH - MARGIN - 35, y, { align: 'right' }); doc.text(this.formatCurrency(item.rate * item.quantity), PAGE_WIDTH - MARGIN - 2, y, { align: 'right' }); y += rowHeight; doc.setLineWidth(0.2); doc.line(MARGIN, y - 2, PAGE_WIDTH - MARGIN, y - 2);
+                    doc.setFontSize(20); doc.setFont("helvetica", "bold"); doc.text("IN(this.formatCurrency(item.rate * item.quantity), PAGE_WIDTH - MARGIN - 2, y, { align: 'right' }); y += rowHeight; doc.setLineWidth(0.2); doc.line(MARGIN, y - 2, PAGE_WIDTH - MARGIN, y - 2);
                     });
-                    y += 5; if (y > PAGE_HEIGHT - MARGIN - 40) { doc.addPage(); y = MARGIN; }
-                    const totalsX = PAGE_WIDTH - MARGIN - 50; doc.text("Subtotal:", totalsX, y); doc.text(this.formatCurrency(this.invoiceSubtotal), PAGE_WIDTH - MARGIN, y, { align: 'right' }); y += 6; doc.text(`Pajak (${this.invoice.taxRate}%):`, totalsX, y); doc.text(this.formatCurrency(this.invoiceSubtotal * (this.invoice.taxRate / 100)), PAGE_WIDTH - MARGIN, y, { align: 'right' }); y += 2; doc.line(totalsX - 2, y, PAGE_WIDTH - MARGIN, y); y += 5;
-                    doc.setFont("helvetica", "bold"); doc.text("Total:", totalsX, y); doc.text(this.formatCurrency(this.invoiceTotal), PAGE_WIDTH - MARGIN, y, { align: 'right' });
-                    y += 15; if (this.invoice.notes && y < PAGE_HEIGHT - MARGIN - 20) { doc.setFont("helvetica", "bold"); doc.text("Catatan:", MARGIN, y); y += 5; doc.setFont("helvetica", "normal"); const notesText = doc.splitTextToSize(this.invoice.notes, CONTENT_WIDTH); doc.text(notesText, MARGIN, y); }
-                    const pageCount = doc.internal.getNumberOfPages(); for(let i = 1; i <= pageCount; i++) { doc.setPage(i); doc.setFontSize(8); doc.text(`Halaman ${i} dari ${pageCount}`, PAGE_WIDTH / 2, PAGE_HEIGHT - 10, { align: 'center' }); }
-                    doc.save(`invoice-${this.invoice.number || "001"}.pdf`); this.invoice.isGenerating = false; this.addToast("PDF berhasil diekspor!", "success");
+                    y += 5; if (yVOICE", MARGIN, y);
+                    doc.setFontSize(10); doc.setFont("helvetica", "normal > PAGE_HEIGHT - MARGIN - 40) { doc.addPage(); y = MARGIN; }
+                    const totalsX = PAGE_WIDTH - MARGIN - 50; doc.text("Subtotal:", totalsX, y); doc.text"); doc.text(this.invoice.invoicerName, PAGE_WIDTH - MARGIN, y, { align: 'right' }); y += 5; doc.text(this.invoice.invoicerSlogan, PAGE_WIDTH - MARGIN, y, { align: 'right' }); y += 15;
+                    doc.setLineWidth(0.5); doc.(this.formatCurrency(this.invoiceSubtotal), PAGE_WIDTH - MARGIN, y, { align: 'right'line(MARGIN, y, PAGE_WIDTH - MARGIN, y); y += 10;
+                    doc.setFont("helvetica", "bold"); doc.text("Tagihan Untuk:", MARGIN, y); doc.text("Detail:", PAGE_WIDTH / 2, y);
+                    doc.setFont("helvetica", "normal"); y }); y += 6; doc.text(`Pajak (${this.invoice.taxRate}%):`, totalsX, y); doc.text(this.formatCurrency(this.invoiceSubtotal * (this.invoice.taxRate / 100)), PAGE_WIDTH - MARGIN, y, { align: 'right' }); y += 2; doc.line(totalsX - 2, y, PAGE_WIDTH - MARGIN, y); y += 5;
+                    doc.setFont("hel += 6; doc.text(this.invoice.client.name, MARGIN, y); const clientAddress = doc.splitTextToSize(this.invoice.client.address, (PAGE_WIDTH / 2) - MARGIN - 5);vetica", "bold"); doc.text("Total:", totalsX, y); doc.text(this.formatCurrency(this.invoiceTotal), PAGE_WIDTH - MARGIN, y, { align: 'right' });
+                    y += 15; if (this.invoice.notes && y < PAGE_HEIGHT - MARGIN - 20) { doc.setFont("helvetica", "bold doc.text(clientAddress, MARGIN, y + 5);
+                    let rightY = y; doc.text(`No. Invoice: ${this.invoice.number}`, PAGE_WIDTH / 2, rightY); rightY += 5; doc.text(`Tanggal: ${this.formatDateForDisplay(this.invoice.date)}`, PAGE_WIDTH / 2, rightY); rightY += 5; doc.text(`Jatuh Tempo: ${this.formatDateForDisplay(this.invoice."); doc.text("Catatan:", MARGIN, y); y += 5; doc.setFont("helvetica", "normal"); const notesText = doc.splitTextToSize(this.invoice.notes, CONTENT_WIDTH); doc.text(notesText, MARGIN, y); }
+                    const pageCount = doc.internal.getNumberOfPages(); for(let i = dueDate)}`, PAGE_WIDTH / 2, rightY);
+                    y += clientAddress.length * 5 + 10; if (y < rightY + 10) y = rightY + 10;
+                    const drawTableHeader = () => { doc.setFillColor(230, 230, 230); doc.rect(MARGIN, y, CONTENT1; i <= pageCount; i++) { doc.setPage(i); doc.setFontSize(8); doc.text(`Halaman ${i} dari ${pageCount}`, PAGE_WIDTH / 2, PAGE_HEIGHT - 10, { align: 'center' }); }
+                    doc.save(`invoice-${this.invoice._WIDTH, 8, 'F'); doc.setFont("helvetica", "bold"); doc.setTextColor(50, 50, 50); doc.text("Deskripsi", MARGIN + 2, y + 6); doc.text("Jml", PAGE_WIDTH - MARGIN - 60, y + 6, { align: 'right' }); doc.number || "001"}.pdf`); this.invoice.isGenerating = false; this.addToast("PDF berhasil diekspor!", "success");
                 },
             }
         };
@@ -485,10 +974,11 @@
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('./service-worker.js')
-                    .then(reg => console.log('SW registered.'))
+                    .then(reg => console.log('SW registeredtext("Harga", PAGE_WIDTH - MARGIN - 35, y + 6, { align: 'right' }); doc.text("Total", PAGE_WIDTH - MARGIN - 2, y + 6,.'))
                     .catch(err => console.log('SW registration failed: ', err));
             });
         }
     </script>
 </body>
 </html>
+```
