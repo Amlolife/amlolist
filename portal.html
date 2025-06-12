@@ -24,9 +24,7 @@
 </head>
 <body class="text-slate-800">
     <div id="app">
-        <div v-if="isLoading" class="min-h-screen flex items-center justify-center">
-            <i class="fas fa-spinner fa-spin text-slate-500 text-4xl"></i>
-        </div>
+        <div v-if="isLoading" class="min-h-screen flex items-center justify-center"><i class="fas fa-spinner fa-spin text-slate-500 text-4xl"></i></div>
 
         <div v-else-if="errorMessage" class="min-h-screen bg-slate-100 flex items-center justify-center p-4">
              <div class="w-full max-w-sm bg-white p-8 rounded-2xl shadow-lg text-center">
@@ -43,7 +41,6 @@
 
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 <div class="space-y-8">
-                    <!-- Referensi Foto -->
                     <section class="bg-white p-6 rounded-2xl shadow-md">
                         <h2 class="text-2xl font-bold mb-4">Referensi Foto</h2>
                         <p class="text-slate-500 mb-4 text-sm">Upload foto referensi (gaya, pose, suasana) untuk inspirasi kami.</p>
@@ -53,16 +50,13 @@
                                 <button @click.stop="deletePhoto(index, photo)" class="absolute top-1 right-1 bg-black bg-opacity-40 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">×</button>
                             </div>
                             <div class="relative">
-                                <button @click="$refs.photoUploader.click()" class="aspect-square bg-slate-100/60 rounded-lg flex items-center justify-center text-slate-400 border-2 border-dashed border-slate-300 hover:border-slate-400 hover:text-slate-500 transition-colors w-full h-full">
-                                    <i class="fas fa-plus text-3xl"></i>
-                                </button>
+                                <button @click="$refs.photoUploader.click()" class="aspect-square bg-slate-100/60 rounded-lg flex items-center justify-center text-slate-400 border-2 border-dashed border-slate-300 hover:border-slate-400 hover:text-slate-500 transition-colors w-full h-full"><i class="fas fa-plus text-3xl"></i></button>
                                 <div v-if="isUploading" class="photo-upload-overlay rounded-lg"><i class="fas fa-spinner fa-spin text-slate-600 text-2xl"></i></div>
                             </div>
                         </div>
                         <input type="file" ref="photoUploader" @change="handlePhotoUpload" class="hidden" accept="image/*">
                     </section>
                     
-                    <!-- Catatan Khusus -->
                      <section class="bg-white p-6 rounded-2xl shadow-md">
                         <h2 class="text-2xl font-bold mb-4">Catatan Khusus dari Anda</h2>
                          <p class="text-slate-500 mb-4 text-sm">Tambahkan catatan, permintaan, atau informasi penting lainnya di sini.</p>
@@ -71,7 +65,6 @@
                 </div>
                 
                 <div class="space-y-8">
-                    <!-- Foto Wajib -->
                     <section class="bg-white p-6 rounded-2xl shadow-md">
                         <h2 class="text-2xl font-bold mb-4">Foto Wajib (Must-have Shots)</h2>
                         <p class="text-slate-500 mb-4 text-sm">Daftar momen atau pose yang wajib kami abadikan. Anda bisa menambah atau menghapus dari daftar ini.</p>
@@ -81,16 +74,13 @@
                         </form>
                         <div v-if="clientData.shots && clientData.shots.length > 0" class="space-y-2">
                             <div v-for="(shot, index) in clientData.shots" :key="shot.id" class="flex items-center p-3 bg-slate-50 rounded-lg">
-                                <p class="font-medium flex-grow">{{ shot.title }}</p>
+                                <p class="font-medium flex-grow" :class="{'line-through text-slate-400': shot.completed}">{{ shot.title }}</p>
                                 <button @click="deleteShot(index)" class="ml-2 w-8 h-8 flex-shrink-0 flex items-center justify-center text-slate-400 hover:text-red-500"><i class="fas fa-trash-alt"></i></button>
                             </div>
                         </div>
-                        <div v-else class="text-center py-6 text-slate-400">
-                            <p>Belum ada daftar foto wajib.</p>
-                        </div>
+                        <div v-else class="text-center py-6 text-slate-400"><p>Belum ada daftar foto wajib.</p></div>
                     </section>
 
-                    <!-- Timeline -->
                     <section v-if="wedding.showTimelineInPortal" class="bg-white p-6 rounded-2xl shadow-md">
                         <h2 class="text-2xl font-bold mb-4">Linimasa Acara</h2>
                         <div v-if="wedding.timeline && wedding.timeline.length > 0" class="relative border-l-2 border-slate-200 ml-2">
@@ -103,9 +93,7 @@
                                 </div>
                             </div>
                         </div>
-                         <div v-else class="text-center py-8 text-slate-400">
-                            <p>Belum ada linimasa acara.</p>
-                        </div>
+                         <div v-else class="text-center py-8 text-slate-400"><p>Belum ada linimasa acara.</p></div>
                     </section>
                 </div>
             </div>
@@ -114,15 +102,7 @@
 
     <script>
         const { createApp } = Vue;
-
-        const firebaseConfig = {
-          apiKey: "AIzaSyCBij3UUC9XvrkmrtVB8vZxWg_6685ce1o",
-          authDomain: "amlolist-final.firebaseapp.com",
-          projectId: "amlolist-final",
-          storageBucket: "amlolist-final.firebasestorage.app",
-          messagingSenderId: "25110140647",
-          appId: "1:25110140647:web:740485070c06bfb13b3442"
-        };
+        const firebaseConfig = { apiKey: "AIzaSyCBij3UUC9XvrkmrtVB8vZxWg_6685ce1o", authDomain: "amlolist-final.firebaseapp.com", projectId: "amlolist-final", storageBucket: "amlolist-final.firebasestorage.app", messagingSenderId: "25110140647", appId: "1:25110140647:web:740485070c06bfb13b3442" };
         
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
@@ -131,26 +111,16 @@
         const App = {
             data() {
                 return {
-                    isLoading: true,
-                    errorMessage: '',
-                    weddingId: '',
-                    wedding: null, 
+                    isLoading: true, errorMessage: '', weddingId: '', wedding: null, 
                     clientData: { photos: [], shots: [], notes: '' },
-                    firestoreUnsubscribe: null,
-                    clientDataUnsubscribe: null,
-                    isUploading: false,
-                    newShotTitle: ''
+                    firestoreUnsubscribe: null, clientDataUnsubscribe: null,
+                    isUploading: false, newShotTitle: ''
                 }
             },
             created() {
                 const params = new URLSearchParams(window.location.search);
                 this.weddingId = params.get('id');
-
-                if (!this.weddingId) {
-                    this.isLoading = false;
-                    this.errorMessage = "ID Jadwal tidak ditemukan. Silakan gunakan link yang diberikan.";
-                    return;
-                }
+                if (!this.weddingId) { this.isLoading = false; this.errorMessage = "ID Jadwal tidak ditemukan. Silakan gunakan link yang diberikan."; return; }
                 this.loadWeddingData();
             },
             beforeUnmount() {
@@ -162,59 +132,31 @@
                     this.isLoading = true;
                     this.firestoreUnsubscribe = db.collection('weddings').doc(this.weddingId)
                         .onSnapshot(doc => {
-                            if (doc.exists) {
-                                this.wedding = { id: doc.id, ...doc.data() };
-                                this.loadClientData();
-                            } else {
-                                this.errorMessage = "Jadwal ini tidak lagi tersedia atau link salah.";
-                                this.isLoading = false;
-                            }
-                        }, error => {
-                            console.error("Error fetching wedding:", error);
-                            this.errorMessage = "Gagal memuat data. Pastikan link Anda benar.";
-                            this.isLoading = false;
-                        });
+                            if (doc.exists) { this.wedding = { id: doc.id, ...doc.data() }; this.loadClientData(); } 
+                            else { this.errorMessage = "Jadwal ini tidak lagi tersedia atau link salah."; this.isLoading = false; }
+                        }, error => { console.error("Error fetching wedding:", error); this.errorMessage = "Gagal memuat data. Pastikan link Anda benar."; this.isLoading = false; });
                 },
                 loadClientData() {
-                    this.clientDataUnsubscribe = db.collection('weddings').doc(this.weddingId)
-                        .collection('clientData').doc('portal')
-                        .onSnapshot(doc => {
-                            if (doc.exists) {
-                                this.clientData = doc.data();
-                            }
-                            this.isLoading = false;
-                        });
+                    this.clientDataUnsubscribe = db.collection('weddings').doc(this.weddingId).collection('clientData').doc('portal')
+                        .onSnapshot(doc => { if (doc.exists) { this.clientData = doc.data(); } this.isLoading = false; });
                 },
                 saveClientData() {
                     if (!this.wedding) return;
-                    const clientDataRef = db.collection('weddings').doc(this.wedding.id)
-                        .collection('clientData').doc('portal');
-                    clientDataRef.set(this.clientData, { merge: true })
-                        .catch(err => console.error("Error saving client data:", err));
+                    db.collection('weddings').doc(this.wedding.id).collection('clientData').doc('portal').set(this.clientData, { merge: true }).catch(err => console.error("Error saving client data:", err));
                 },
                 handlePhotoUpload(e) {
-                    const file = e.target.files[0];
-                    if (!file) return;
+                    const file = e.target.files[0]; if (!file) return;
                     this.isUploading = true;
-                    
                     const uniqueFileName = `${Date.now()}-${file.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`;
                     const filePath = `client_uploads/${this.wedding.id}/${uniqueFileName}`;
-                    
                     const storageRef = storage.ref(filePath);
                     const uploadTask = storageRef.put(file);
-
-                    uploadTask.on('state_changed', 
-                        () => {}, 
-                        (error) => {
-                            console.error("Upload failed:", error);
-                            this.isUploading = false;
-                        }, 
+                    uploadTask.on('state_changed', () => {}, (error) => { console.error("Upload failed:", error); this.isUploading = false; }, 
                         () => {
                             uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
                                 if (!this.clientData.photos) { this.clientData.photos = []; }
                                 this.clientData.photos.push({ path: filePath, url: downloadURL });
-                                this.saveClientData();
-                                this.isUploading = false;
+                                this.saveClientData(); this.isUploading = false;
                             });
                         }
                     );
@@ -222,34 +164,21 @@
                 },
                 deletePhoto(index, photo) {
                     if (!confirm("Hapus foto referensi ini?")) return;
-
                     const photoRef = storage.ref(photo.path);
-                    photoRef.delete().then(() => {
-                        this.clientData.photos.splice(index, 1);
-                        this.saveClientData();
-                    }).catch((error) => {
-                        console.error("Error deleting photo:", error);
-                        if (error.code === 'storage/object-not-found') {
-                            this.clientData.photos.splice(index, 1);
-                            this.saveClientData();
-                        }
-                    });
+                    photoRef.delete().then(() => { this.clientData.photos.splice(index, 1); this.saveClientData(); })
+                        .catch((error) => {
+                            console.error("Error deleting photo:", error);
+                            if (error.code === 'storage/object-not-found') { this.clientData.photos.splice(index, 1); this.saveClientData(); }
+                        });
                 },
                 addShot() {
                     if (!this.newShotTitle.trim()) return;
                     if (!this.clientData.shots) { this.clientData.shots = []; }
-                    this.clientData.shots.push({
-                        id: Date.now(),
-                        title: this.newShotTitle,
-                    });
+                    this.clientData.shots.push({ id: Date.now().toString(), title: this.newShotTitle, completed: false });
                     this.newShotTitle = '';
                     this.saveClientData();
                 },
-                deleteShot(index) {
-                    if (!confirm("Hapus foto wajib ini?")) return;
-                    this.clientData.shots.splice(index, 1);
-                    this.saveClientData();
-                },
+                deleteShot(index) { if (!confirm("Hapus foto wajib ini?")) return; this.clientData.shots.splice(index, 1); this.saveClientData(); },
                 formatDate(dateString) {
                     if (!dateString) return "-";
                     const date = new Date(dateString);
@@ -258,7 +187,6 @@
                 }
             }
         };
-
         createApp(App).mount('#app');
     </script>
 </body>
