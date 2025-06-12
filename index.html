@@ -41,13 +41,9 @@
 <body class="text-[var(--text-main)] min-h-screen">
     <div id="app" class="pb-32">
         
-        <!-- Global Loading Spinner -->
-        <div v-if="isLoading" class="min-h-screen flex items-center justify-center bg-[var(--background)]">
-            <i class="fas fa-spinner fa-spin text-slate-500 text-4xl"></i>
-        </div>
+        <div v-if="isLoading" class="min-h-screen flex items-center justify-center bg-[var(--background)]"><i class="fas fa-spinner fa-spin text-slate-500 text-4xl"></i></div>
         
         <div v-else>
-            <!-- Login/Register View -->
             <div v-if="!isLoggedIn" class="min-h-screen flex flex-col lg:grid lg:grid-cols-2">
                 <div class="w-full h-64 lg:h-full bg-cover bg-center" style="background-image: url('https://i.imgur.com/0SAAvVb.jpeg');"></div>
                 <div class="flex flex-grow items-center justify-center p-8 bg-[var(--surface)]">
@@ -60,9 +56,7 @@
                             <div><input v-model="auth.email" type="email" required class="w-full px-4 py-3 bg-slate-100 border-2 border-transparent rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary)]" placeholder="Email"></div>
                             <div class="relative">
                                 <input v-model="auth.password" :type="auth.isPasswordVisible ? 'text' : 'password'" required class="w-full px-4 py-3 pr-12 bg-slate-100 border-2 border-transparent rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary)]" placeholder="Password">
-                                <button type="button" @click="auth.isPasswordVisible = !auth.isPasswordVisible" class="absolute inset-y-0 right-0 flex items-center px-4 text-slate-500 hover:text-slate-700">
-                                    <i class="fas" :class="auth.isPasswordVisible ? 'fa-eye-slash' : 'fa-eye'"></i>
-                                </button>
+                                <button type="button" @click="auth.isPasswordVisible = !auth.isPasswordVisible" class="absolute inset-y-0 right-0 flex items-center px-4 text-slate-500 hover:text-slate-700"><i class="fas" :class="auth.isPasswordVisible ? 'fa-eye-slash' : 'fa-eye'"></i></button>
                             </div>
                             <p v-if="auth.error" class="text-red-500 text-sm text-center">{{ auth.error }}</p>
                             <button type="submit" class="w-full py-3 font-semibold text-slate-900 bg-[var(--primary)] rounded-lg hover:opacity-90 transition-opacity duration-300 flex items-center justify-center" :disabled="auth.loading">
@@ -78,7 +72,6 @@
                 </div>
             </div>
             
-            <!-- Main Application View -->
             <div v-else>
                 <div v-if="!appReady" class="min-h-screen flex items-center justify-center"><i class="fas fa-spinner fa-spin text-slate-500 text-4xl"></i></div>
                 
@@ -87,7 +80,6 @@
                     <div class="container mx-auto px-4 py-6">
                         <transition name="fade" mode="out-in">
                             <div :key="currentView">
-                                <!-- BERANDA VIEW -->
                                 <main v-if="currentView === 'beranda'">
                                     <div class="flex justify-between items-center mb-6">
                                         <h1 class="text-3xl font-extrabold">Ringkasan</h1>
@@ -107,7 +99,7 @@
                                         </div>
                                         <div class="grid grid-cols-7 gap-1 text-center text-sm">
                                             <div v-for="day in ['M', 'S', 'S', 'R', 'K', 'J', 'S']" class="font-semibold text-[var(--text-muted)]">{{ day }}</div>
-                                            <div v-for="day in calendar.days" @click="selectDate(day)" class="relative py-2 rounded-full transition-colors" :class="{'cursor-pointer': day.date, 'bg-lime-300 text-slate-900 font-bold': day.fullDate === selectedDate, 'hover:bg-slate-100': day.date && day.fullDate !== selectedDate }">
+                                            <div v-for="day in calendar.days" class="relative py-2 rounded-full transition-colors" :class="{'cursor-pointer': day.date, 'bg-lime-300 text-slate-900 font-bold': day.fullDate === selectedDate, 'hover:bg-slate-100': day.date && day.fullDate !== selectedDate }" @click="selectDate(day)">
                                                 <span :class="{'opacity-50': !day.date}">{{ day.date }}</span>
                                                 <div v-if="day.hasEvent && day.fullDate !== selectedDate" class="w-1.5 h-1.5 bg-slate-800 rounded-full absolute bottom-1.5 left-1/2 -translate-x-1/2"></div>
                                             </div>
@@ -123,9 +115,7 @@
                                                 <div class="text-sm font-semibold bg-slate-100 px-3 py-1 rounded-full">{{ getTaskProgress(wedding).percent }}%</div>
                                             </div>
                                             <div class="mt-4">
-                                                <div class="w-full bg-slate-100 rounded-full h-2">
-                                                    <div class="bg-slate-800 h-2 rounded-full" :style="{ width: getTaskProgress(wedding).percent + '%' }"></div>
-                                                </div>
+                                                <div class="w-full bg-slate-100 rounded-full h-2"><div class="bg-slate-800 h-2 rounded-full" :style="{ width: getTaskProgress(wedding).percent + '%' }"></div></div>
                                             </div>
                                         </div>
                                     </transition-group>
@@ -136,28 +126,19 @@
                                     </div>
                                 </main>
 
-                                <!-- JADWAL VIEW -->
                                 <main v-if="currentView === 'jadwal'" class="grid grid-cols-1 lg:grid-cols-4 gap-6">
                                     <aside class="lg:col-span-1 bg-[var(--surface)] rounded-2xl shadow-sm border border-[var(--border-color)] p-5 h-fit lg:sticky top-6">
                                         <h2 class="text-xl font-bold flex items-center text-[var(--text-main)] mb-4">Daftar Jadwal</h2>
                                         <div class="space-y-2 max-h-[60vh] overflow-y-auto" v-if="weddings.length > 0">
                                             <template v-for="wedding in weddings" :key="wedding.id">
-                                                <div @click="setActiveWedding(wedding)" class="p-4 rounded-lg border-2 cursor-pointer transition" :class="{'bg-lime-100/50 border-lime-300': activeWedding && activeWedding.id === wedding.id, 'border-transparent bg-slate-100/60 hover:bg-slate-200/60': !activeWedding || activeWedding.id !== wedding.id}">
-                                                    <h3 class="font-semibold text-slate-800">{{ wedding.title }}</h3>
-                                                    <p class="text-sm text-[var(--text-muted)]">{{ formatDateForDisplay(wedding.date) }}</p>
-                                                </div>
+                                                <div @click="setActiveWedding(wedding)" class="p-4 rounded-lg border-2 cursor-pointer transition" :class="{'bg-lime-100/50 border-lime-300': activeWedding && activeWedding.id === wedding.id, 'border-transparent bg-slate-100/60 hover:bg-slate-200/60': !activeWedding || activeWedding.id !== wedding.id}"><h3 class="font-semibold text-slate-800">{{ wedding.title }}</h3><p class="text-sm text-[var(--text-muted)]">{{ formatDateForDisplay(wedding.date) }}</p></div>
                                             </template>
                                         </div>
-                                        <div v-else class="text-center py-8">
-                                            <i class="fas fa-calendar-times text-4xl text-slate-300 mb-3"></i>
-                                            <p class="text-[var(--text-muted)]">Belum ada jadwal.</p>
-                                            <button @click="addWedding" class="mt-4 text-sm text-slate-800 hover:underline font-semibold">+ Tambah Jadwal</button>
-                                        </div>
+                                        <div v-else class="text-center py-8"><i class="fas fa-calendar-times text-4xl text-slate-300 mb-3"></i><p class="text-[var(--text-muted)]">Belum ada jadwal.</p><button @click="addWedding" class="mt-4 text-sm text-slate-800 hover:underline font-semibold">+ Tambah Jadwal</button></div>
                                     </aside>
                                     
                                     <div class="lg:col-span-3 space-y-6">
                                         <template v-if="activeWedding">
-                                            <!-- Details Card -->
                                             <div class="bg-slate-50 rounded-2xl shadow-sm border-t-4 border-slate-200 p-6">
                                                 <div class="flex justify-between items-start mb-6">
                                                     <div>
@@ -167,10 +148,7 @@
                                                     </div>
                                                     <div class="flex-shrink-0 flex flex-col items-center space-y-2">
                                                          <div class="relative w-20 h-20">
-                                                            <svg class="progress-circle w-full h-full" viewBox="0 0 36 36">
-                                                                <path class="text-slate-200" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-width="3"></path>
-                                                                <path class="text-slate-800 transition-all duration-500" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-width="3" :stroke-dasharray="`${getTaskProgress(activeWedding).percent}, 100`"></path>
-                                                            </svg>
+                                                            <svg class="progress-circle w-full h-full" viewBox="0 0 36 36"><path class="text-slate-200" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-width="3"></path><path class="text-slate-800 transition-all duration-500" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-width="3" :stroke-dasharray="`${getTaskProgress(activeWedding).percent}, 100`"></path></svg>
                                                             <div class="absolute inset-0 flex items-center justify-center text-slate-800 font-bold text-xl">{{ getTaskProgress(activeWedding).percent }}<span class="text-xs">%</span></div>
                                                         </div>
                                                         <div class="flex space-x-1">
@@ -179,7 +157,6 @@
                                                         </div>
                                                     </div>
                                                 </div>
-
                                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                                     <div class="bg-white p-4 rounded-lg border border-slate-200 space-y-2">
                                                         <h3 class="font-bold flex items-center text-slate-800"><i class="fas fa-map-marker-alt w-5 mr-2 text-slate-400"></i>Lokasi</h3>
@@ -189,33 +166,19 @@
                                                         <h3 class="font-bold flex items-center text-slate-800"><i class="fas fa-address-book w-5 mr-2 text-slate-400"></i>Kontak</h3>
                                                         <div v-if="activeWedding.contacts.phone" class="flex items-center justify-between pl-7">
                                                             <p class="text-[var(--text-muted)]">{{ activeWedding.contacts.phone }}</p>
-                                                            <div class="flex space-x-2">
-                                                                <a :href="whatsappLink" target="_blank" class="w-7 h-7 flex items-center justify-center rounded-full bg-green-100 text-green-600 hover:bg-green-200" title="Chat di WhatsApp"><i class="fab fa-whatsapp"></i></a>
-                                                                <button @click="copyToClipboard(activeWedding.contacts.phone)" class="w-7 h-7 flex items-center justify-center rounded-full bg-slate-100 text-slate-600 hover:bg-slate-200" title="Salin nomor"><i class="fas fa-copy"></i></button>
-                                                            </div>
+                                                            <div class="flex space-x-2"><a :href="whatsappLink" target="_blank" class="w-7 h-7 flex items-center justify-center rounded-full bg-green-100 text-green-600 hover:bg-green-200" title="Chat di WhatsApp"><i class="fab fa-whatsapp"></i></a><button @click="copyToClipboard(activeWedding.contacts.phone)" class="w-7 h-7 flex items-center justify-center rounded-full bg-slate-100 text-slate-600 hover:bg-slate-200" title="Salin nomor"><i class="fas fa-copy"></i></button></div>
                                                         </div>
                                                         <div v-if="activeWedding.contacts.email" class="flex items-center justify-between pl-7">
                                                             <p class="text-[var(--text-muted)] truncate">{{ activeWedding.contacts.email }}</p>
-                                                            <div class="flex space-x-2">
-                                                                 <a :href="`mailto:${activeWedding.contacts.email}`" class="w-7 h-7 flex items-center justify-center rounded-full bg-red-100 text-red-600 hover:bg-red-200" title="Kirim Email"><i class="fas fa-envelope"></i></a>
-                                                                <button @click="copyToClipboard(activeWedding.contacts.email)" class="w-7 h-7 flex items-center justify-center rounded-full bg-slate-100 text-slate-600 hover:bg-slate-200" title="Salin email"><i class="fas fa-copy"></i></button>
-                                                            </div>
+                                                            <div class="flex space-x-2"><a :href="`mailto:${activeWedding.contacts.email}`" class="w-7 h-7 flex items-center justify-center rounded-full bg-red-100 text-red-600 hover:bg-red-200" title="Kirim Email"><i class="fas fa-envelope"></i></a><button @click="copyToClipboard(activeWedding.contacts.email)" class="w-7 h-7 flex items-center justify-center rounded-full bg-slate-100 text-slate-600 hover:bg-slate-200" title="Salin email"><i class="fas fa-copy"></i></button></div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="mt-4">
-                                                    <h3 class="font-bold mb-2 text-slate-800">Catatan Planner</h3>
-                                                    <textarea v-model="activeWedding.notes" @blur="saveActiveWedding" class="w-full h-24 p-3 bg-white text-slate-700 focus:outline-none rounded-lg resize-none border border-slate-200 focus:ring-2 focus:ring-[var(--primary)]" placeholder="Tambahkan catatan..."></textarea>
-                                                </div>
+                                                <div class="mt-4"><h3 class="font-bold mb-2 text-slate-800">Catatan Planner</h3><textarea v-model="activeWedding.notes" @blur="saveActiveWedding" class="w-full h-24 p-3 bg-white text-slate-700 focus:outline-none rounded-lg resize-none border border-slate-200 focus:ring-2 focus:ring-[var(--primary)]" placeholder="Tambahkan catatan..."></textarea></div>
                                             </div>
 
-                                            <!-- Client Notes Card -->
-                                            <div v-if="activeWedding.clientNotes" class="bg-amber-50 p-6 rounded-2xl border-t-4 border-amber-200">
-                                                 <h3 class="font-bold text-lg text-amber-800 flex items-center mb-2"><i class="fas fa-comment-dots mr-2"></i>Catatan dari Klien</h3>
-                                                 <p class="text-amber-900 whitespace-pre-line">{{ activeWedding.clientNotes }}</p>
-                                            </div>
+                                            <div v-if="activeWedding.clientNotes" class="bg-amber-50 p-6 rounded-2xl border-t-4 border-amber-200"><h3 class="font-bold text-lg text-amber-800 flex items-center mb-2"><i class="fas fa-comment-dots mr-2"></i>Catatan dari Klien</h3><p class="text-amber-900 whitespace-pre-line">{{ activeWedding.clientNotes }}</p></div>
                                             
-                                            <!-- Shot List Card -->
                                             <div class="bg-blue-50 rounded-2xl shadow-sm border-t-4 border-blue-200 p-6">
                                                 <div class="flex items-center justify-between mb-4">
                                                     <h2 class="text-xl font-bold text-blue-900">Foto Wajib</h2>
@@ -225,45 +188,31 @@
                                                     <div v-for="shot in activeWedding.shots" :key="shot.id" class="flex items-center p-3 rounded-lg" :class="shot.isClientShot ? 'bg-amber-100/60' : 'bg-white'">
                                                         <i class="fas fa-grip-vertical drag-handle text-slate-400 mr-3 cursor-grab"></i>
                                                         <label class="flex items-center cursor-pointer flex-grow">
-                                                            <input type="checkbox" v-model="shot.completed" @change="saveActiveWedding" class="hidden">
-                                                            <span class="w-6 h-6 border-2 border-slate-300 rounded-md flex items-center justify-center mr-4 transition-all flex-shrink-0" :class="{'bg-slate-800 border-slate-800': shot.completed}">
-                                                                <i class="fas fa-check text-white text-sm" v-show="shot.completed"></i>
-                                                            </span>
+                                                            <input type="checkbox" v-model="shot.completed" @change="saveClientData" class="hidden">
+                                                            <span class="w-6 h-6 border-2 border-slate-300 rounded-md flex items-center justify-center mr-4 transition-all flex-shrink-0" :class="{'bg-slate-800 border-slate-800': shot.completed}"><i class="fas fa-check text-white text-sm" v-show="shot.completed"></i></span>
                                                             <p class="font-medium" :class="{'line-through text-[var(--text-muted)]': shot.completed}">{{ shot.title }}</p>
                                                         </label>
-                                                        <button @click="deleteShot(shot.id)" class="ml-auto w-8 h-8 flex items-center justify-center text-slate-400 hover:text-red-500 hover:bg-red-100/70 rounded-full flex-shrink-0"><i class="fas fa-times"></i></button>
+                                                        <button @click="deleteShot(shot.id)" class="ml-auto w-8 h-8 flex items-center justify-center text-slate-400 hover:text-red-500 hover:bg-red-100/70 rounded-full flex-shrink-0 disabled:opacity-50 disabled:hover:bg-transparent disabled:cursor-not-allowed" :disabled="shot.isClientShot" :title="shot.isClientShot ? 'Tidak bisa menghapus shot dari klien' : 'Hapus'"><i class="fas fa-times"></i></button>
                                                     </div>
                                                 </div>
-                                                <div v-else class="text-center py-8 text-blue-800/60">
-                                                    <i class="fas fa-camera-slash text-4xl mb-4"></i>
-                                                    <p class="font-semibold text-blue-900">Belum ada foto wajib.</p>
-                                                    <p class="text-sm mt-1">Tambahkan daftar foto yang harus diambil.</p>
-                                                </div>
+                                                <div v-else class="text-center py-8 text-blue-800/60"><i class="fas fa-camera-slash text-4xl mb-4"></i><p class="font-semibold text-blue-900">Belum ada foto wajib.</p><p class="text-sm mt-1">Tambahkan daftar foto yang harus diambil.</p></div>
                                             </div>
 
-                                            <!-- References Card -->
                                             <div class="bg-green-50 rounded-2xl shadow-sm border-t-4 border-green-200 p-6">
                                                 <h2 class="text-xl font-bold text-green-900 mb-4">Referensi Foto Klien</h2>
                                                 <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
                                                     <div v-for="(photo, index) in activeWedding.photos" :key="photo.path" class="group aspect-square bg-slate-100 rounded-lg overflow-hidden relative cursor-pointer" @click="openPhotoPreview(photo.url)">
                                                         <img :src="photo.url" class="w-full h-full object-cover" alt="Wedding preview">
-                                                        <div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                                                            <i class="fas fa-eye text-white text-2xl"></i>
-                                                        </div>
+                                                        <div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center"><i class="fas fa-eye text-white text-2xl"></i></div>
                                                         <button @click.stop="deletePhoto(index, photo)" class="absolute top-1 right-1 bg-black bg-opacity-40 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">×</button>
                                                     </div>
                                                     <div class="relative">
-                                                        <button @click="addPhoto" class="aspect-square bg-white rounded-lg flex items-center justify-center text-slate-400 border-2 border-dashed border-slate-300 hover:border-lime-400 hover:text-lime-500 transition-colors w-full h-full">
-                                                            <i class="fas fa-plus text-3xl"></i>
-                                                        </button>
-                                                        <div v-if="isUploading" class="photo-upload-overlay rounded-lg">
-                                                            <i class="fas fa-spinner fa-spin text-slate-600 text-2xl"></i>
-                                                        </div>
+                                                        <button @click="addPhoto" class="aspect-square bg-white rounded-lg flex items-center justify-center text-slate-400 border-2 border-dashed border-slate-300 hover:border-lime-400 hover:text-lime-500 transition-colors w-full h-full"><i class="fas fa-plus text-3xl"></i></button>
+                                                        <div v-if="isUploading" class="photo-upload-overlay rounded-lg"><i class="fas fa-spinner fa-spin text-slate-600 text-2xl"></i></div>
                                                     </div>
                                                 </div>
                                             </div>
                                             
-                                            <!-- Timeline Card -->
                                             <div class="bg-violet-50 rounded-2xl shadow-sm border-t-4 border-violet-200 p-6">
                                                 <div class="flex items-center justify-between mb-4">
                                                     <h2 class="text-xl font-bold text-violet-900">Linimasa Acara</h2>
@@ -277,48 +226,73 @@
                                                         </div>
                                                         <div class="flex justify-between items-start">
                                                             <div>
-                                                                <p class="font-semibold text-violet-900">{{ item.title }}</p>
-                                                                <span class="text-sm font-semibold bg-violet-800 text-white px-2 py-0.5 rounded-full">{{ item.time }}</span>
+                                                                <p class="font-semibold text-violet-900">{{ item.title }}</p><span class="text-sm font-semibold bg-violet-800 text-white px-2 py-0.5 rounded-full">{{ item.time }}</span>
                                                                 <p class="text-sm text-violet-700 mt-1">{{ item.notes }}</p>
                                                             </div>
                                                             <button @click="deleteTimelineItem(item.id)" class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-red-500"><i class="fas fa-trash-alt text-xs"></i></button>
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div v-else class="text-center py-8 text-violet-800/60">
-                                                    <i class="fas fa-list-ol text-4xl mb-4"></i>
-                                                    <p class="font-semibold text-violet-900">Belum ada linimasa.</p>
-                                                    <p class="text-sm mt-1">Buat jadwal acara dari awal hingga akhir.</p>
-                                                </div>
+                                                <div v-else class="text-center py-8 text-violet-800/60"><i class="fas fa-list-ol text-4xl mb-4"></i><p class="font-semibold text-violet-900">Belum ada linimasa.</p><p class="text-sm mt-1">Buat jadwal acara dari awal hingga akhir.</p></div>
                                             </div>
                                         </template>
-                                        <template v-else>
-                                            <div class="flex flex-col items-center justify-center text-center h-[60vh] bg-[var(--surface)] rounded-2xl shadow-sm border border-[var(--border-color)] p-4">
-                                                <i class="fas fa-mouse-pointer text-5xl text-slate-300 mb-4"></i>
-                                                <h2 class="text-2xl font-bold text-[var(--text-main)]">Pilih Jadwal</h2>
-                                                <p class="text-[var(--text-muted)] mt-2">Pilih sebuah jadwal dari daftar di samping<br>untuk melihat detail lengkapnya.</p>
-                                            </div>
-                                        </template>
+                                        <template v-else><div class="flex flex-col items-center justify-center text-center h-[60vh] bg-[var(--surface)] rounded-2xl shadow-sm border border-[var(--border-color)] p-4"><i class="fas fa-mouse-pointer text-5xl text-slate-300 mb-4"></i><h2 class="text-2xl font-bold text-[var(--text-main)]">Pilih Jadwal</h2><p class="text-[var(--text-muted)] mt-2">Pilih sebuah jadwal dari daftar di samping<br>untuk melihat detail lengkapnya.</p></div></template>
                                     </div>
                                 </main>
 
-                                <!-- INVOICE VIEW -->
                                 <main v-if="currentView === 'invoice'">
-                                    <!-- Invoice content remains the same... -->
+                                    <div class="mb-6 flex justify-between items-center"><h1 class="text-3xl font-extrabold text-[var(--text-main)]">Invoice Maker</h1><p class="text-[var(--text-muted)]">Buat & lihat invoice secara real-time.</p></div>
+                                    <div class="flex items-center space-x-2 mb-6"><button @click="saveInvoiceTemplate" class="bg-slate-200 text-slate-700 font-bold py-2 px-4 rounded-lg hover:bg-slate-300 transition text-sm">Simpan Template</button><button @click="loadInvoiceTemplate" class="bg-slate-200 text-slate-700 font-bold py-2 px-4 rounded-lg hover:bg-slate-300 transition text-sm">Gunakan Template</button><button @click="generatePDF" class="bg-slate-800 text-white font-bold py-2 px-5 rounded-lg hover:bg-slate-900 transition text-sm flex items-center" :disabled="invoice.isGenerating"><i v-if="invoice.isGenerating" class="fas fa-spinner fa-spin mr-2"></i> Ekspor PDF</button></div>
+                                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                                        <div class="space-y-6">
+                                            <div class="bg-white p-5 rounded-xl border border-slate-200"><h3 class="font-bold text-lg mb-4 text-slate-700">Tagihan Dari</h3><div class="space-y-4"><input type="text" class="w-full px-4 py-3 bg-slate-100 border-none rounded-lg" v-model="invoice.invoicerName" placeholder="Nama Anda / Perusahaan"><input type="text" class="w-full px-4 py-3 bg-slate-100 border-none rounded-lg" v-model="invoice.invoicerSlogan" placeholder="Slogan / Deskripsi Singkat"></div></div>
+                                            <div class="bg-white p-5 rounded-xl border border-slate-200"><h3 class="font-bold text-lg mb-4 text-slate-700">Tagihan Untuk</h3><div class="space-y-4"><input type="text" class="w-full px-4 py-3 bg-slate-100 border-none rounded-lg" v-model="invoice.client.name" placeholder="Nama Klien"><textarea class="w-full px-4 py-3 bg-slate-100 border-none rounded-lg resize-none" rows="2" v-model="invoice.client.address" placeholder="Alamat Klien"></textarea></div></div>
+                                            <div class="bg-white p-5 rounded-xl border border-slate-200"><h3 class="font-bold text-lg mb-4 text-slate-700">Detail Invoice</h3><div class="grid grid-cols-1 sm:grid-cols-3 gap-4"><input type="text" class="w-full px-4 py-3 bg-slate-100 border-none rounded-lg" v-model="invoice.number" placeholder="No. Invoice"><input type="date" class="w-full px-4 py-3 bg-slate-100 border-none rounded-lg" v-model="invoice.date"><input type="date" class="w-full px-4 py-3 bg-slate-100 border-none rounded-lg" v-model="invoice.dueDate"></div></div>
+                                            <div class="bg-white p-5 rounded-xl border border-slate-200">
+                                                <h3 class="font-bold text-lg mb-2 text-slate-700">Item Tagihan</h3>
+                                                <div class="grid grid-cols-[1fr,auto,auto,auto] gap-2 text-sm font-semibold text-slate-500 mb-2 px-2 hidden sm:grid"><span>Deskripsi</span><span class="text-right">Jml</span><span class="text-right">Harga</span><span></span></div>
+                                                <div class="space-y-2">
+                                                    <div v-for="(item, index) in invoice.items" :key="index" class="grid grid-cols-[1fr,auto,auto,auto] gap-2 items-center"><input type="text" class="w-full bg-slate-100 px-4 py-2 border-none rounded-lg" v-model="item.description" placeholder="Deskripsi item"><input type="number" class="w-16 bg-slate-100 px-3 py-2 border-none rounded-lg text-right" v-model.number="item.quantity" placeholder="Jml"><input type="number" class="w-28 bg-slate-100 px-3 py-2 border-none rounded-lg text-right" v-model.number="item.rate" placeholder="Harga"><button @click="removeItem(index)" class="text-red-400 hover:text-red-600 p-2 rounded-full w-8 h-8 flex items-center justify-center"><i class="fas fa-trash"></i></button></div>
+                                                </div><button @click="addItem" class="text-slate-800 font-semibold mt-4 hover:underline">+ Tambah Baris</button>
+                                            </div>
+                                            <div class="bg-white p-5 rounded-xl border border-slate-200"><h3 class="font-bold text-lg mb-4 text-slate-700">Catatan & Total</h3><textarea class="w-full px-4 py-3 bg-slate-100 border-none rounded-lg resize-none mb-4" rows="2" v-model="invoice.notes" placeholder="Catatan tambahan (contoh: detail transfer bank)"></textarea><div class="w-full max-w-sm ml-auto space-y-2"><div class="flex justify-between"><span class="text-slate-500">Subtotal</span><span class="font-medium text-slate-700">{{ formatCurrency(invoiceSubtotal) }}</span></div><div class="flex justify-between items-center"><span class="text-slate-500">Pajak (%)</span><input type="number" class="w-20 text-right bg-slate-100 rounded-md py-1 px-2 border-none" v-model.number="invoice.taxRate"></div><div class="flex justify-between font-bold text-xl border-t-2 pt-2 mt-2 border-slate-200"><span class="text-slate-800">Total</span><span class="text-slate-900">{{ formatCurrency(invoiceTotal) }}</span></div></div></div>
+                                        </div>
+                                        <div class="lg:sticky lg:top-6 h-fit">
+                                            <div id="invoice-preview" class="bg-white rounded-xl border border-slate-200 shadow-lg p-8 sm:p-12 text-sm text-slate-700">
+                                                <div class="flex justify-between items-start mb-12"><div><h2 class="text-2xl font-bold uppercase text-slate-800">Invoice</h2><p class="text-slate-500">{{ invoice.number || 'INV-001' }}</p></div><div class="text-right"><h3 class="text-lg font-bold text-slate-800">{{ invoice.invoicerName || 'Nama Perusahaan' }}</h3><p class="text-slate-500 max-w-[200px]">{{ invoice.invoicerSlogan || 'Slogan Anda' }}</p></div></div>
+                                                <div class="grid sm:grid-cols-2 gap-8 mb-12"><div><h4 class="font-bold text-slate-500 uppercase tracking-wider mb-2">Tagihan Untuk</h4><p class="font-semibold text-slate-800">{{ invoice.client.name || 'Nama Klien' }}</p><p class="whitespace-pre-line">{{ invoice.client.address || 'Alamat Klien' }}</p></div><div class="text-left sm:text-right"><h4 class="font-bold text-slate-500 uppercase tracking-wider mb-2">Detail</h4><p><span class="font-semibold">Tanggal Invoice:</span> {{ formatDateForDisplay(invoice.date) }}</p><p><span class="font-semibold">Jatuh Tempo:</span> {{ formatDateForDisplay(invoice.dueDate) }}</p></div></div>
+                                                <table class="w-full mb-8"><thead><tr class="bg-slate-100 text-slate-600 uppercase"><th class="p-3 text-left font-bold">Deskripsi</th><th class="p-3 text-right font-bold hidden sm:table-cell">Jml</th><th class="p-3 text-right font-bold hidden sm:table-cell">Harga</th><th class="p-3 text-right font-bold">Total</th></tr></thead><tbody><tr v-for="(item, index) in invoice.items" :key="index"><td class="p-3 border-b border-slate-100">{{ item.description || 'Item' }}</td><td class="p-3 border-b border-slate-100 text-right hidden sm:table-cell">{{ item.quantity }}</td><td class="p-3 border-b border-slate-100 text-right hidden sm:table-cell">{{ formatCurrency(item.rate) }}</td><td class="p-3 border-b border-slate-100 text-right font-medium text-slate-800">{{ formatCurrency(item.quantity * item.rate) }}</td></tr><tr v-if="invoice.items.length === 0"><td colspan="4" class="p-3 text-center text-slate-400 border-b border-slate-100">Belum ada item.</td></tr></tbody></table>
+                                                <div class="flex justify-end mb-12"><div class="w-full max-w-[250px] space-y-2"><div class="flex justify-between"><span>Subtotal</span><span>{{ formatCurrency(invoiceSubtotal) }}</span></div><div class="flex justify-between"><span>Pajak ({{ invoice.taxRate }}%)</span><span>{{ formatCurrency(invoiceSubtotal * (invoice.taxRate / 100)) }}</span></div><div class="flex justify-between text-lg font-bold text-slate-800 border-t border-slate-300 pt-2 mt-2"><span>Total</span><span>{{ formatCurrency(invoiceTotal) }}</span></div></div></div>
+                                                <div v-if="invoice.notes" class="border-t border-slate-200 pt-6"><h4 class="font-bold text-slate-500 uppercase tracking-wider mb-2">Catatan</h4><p class="whitespace-pre-line">{{ invoice.notes }}</p></div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </main>
 
-                                <!-- PROFIL VIEW -->
                                 <main v-if="currentView === 'profil'">
-                                    <!-- Profile content remains the same... -->
+                                    <div class="bg-[var(--surface)] p-6 rounded-2xl shadow-sm border border-[var(--border-color)]">
+                                        <div class="flex items-center flex-col text-center">
+                                            <div class="w-24 h-24 rounded-full bg-slate-100 flex items-center justify-center mb-4"><i class="fas fa-user text-5xl text-slate-400"></i></div>
+                                            <h1 class="text-2xl font-bold text-[var(--text-main)]">Profil & Akun</h1>
+                                            <p v-if="user" class="text-[var(--text-muted)] mt-1">{{ user.email }}</p>
+                                        </div>
+                                        <div class="mt-8 border-t pt-6 text-center space-y-4">
+                                            <button @click="openChangePasswordModal" class="bg-slate-200/60 text-slate-800 font-bold py-3 px-5 rounded-lg hover:bg-slate-200 transition w-full max-w-xs"><i class="fas fa-key mr-2"></i>Ubah Password</button>
+                                            <button @click="logout" class="bg-red-500/10 text-red-600 font-bold py-3 px-5 rounded-lg hover:bg-red-500/20 transition w-full max-w-xs"><i class="fas fa-sign-out-alt mr-2"></i>Logout</button>
+                                        </div>
+                                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-8 text-center border-t pt-6">
+                                            <div class="bg-slate-100/60 p-4 rounded-lg"><p class="text-3xl font-bold text-slate-800">{{ totalSchedules }}</p><p class="text-sm text-[var(--text-muted)] font-semibold">Total Jadwal</p></div>
+                                            <div class="bg-slate-100/60 p-4 rounded-lg"><p class="text-3xl font-bold text-slate-800">{{ totalTasks }}</p><p class="text-sm text-[var(--text-muted)] font-semibold">Total Tugas</p></div>
+                                            <div class="bg-slate-100/60 p-4 rounded-lg"><p class="text-3xl font-bold text-slate-800">{{ tasksCompleted }}</p><p class="text-sm text-[var(--text-muted)] font-semibold">Tugas Selesai</p></div>
+                                        </div>
+                                    </div>
                                 </main>
                             </div>
                         </transition>
                     </div>
 
-                    <!-- Floating Action Button -->
                     <button v-if="currentView === 'jadwal'" @click="addWedding" class="fixed bottom-24 lg:bottom-6 right-6 w-16 h-16 bg-[var(--primary)] rounded-2xl flex items-center justify-center shadow-lg transform active:scale-90 transition-transform z-40"><i class="fas fa-plus text-2xl text-slate-900"></i></button>
                     
-                    <!-- Bottom Navigation (Mobile) -->
                     <div class="fixed bottom-6 left-1/2 -translate-x-1/2 w-auto bg-[var(--nav-bg)] px-3 py-2 rounded-full shadow-lg flex items-center justify-center space-x-2 z-40 lg:hidden">
                          <button @click="setView('beranda')" class="w-12 h-12 flex items-center justify-center rounded-full transition-colors" :class="currentView === 'beranda' ? 'bg-white/20' : 'hover:bg-white/10'"><i class="fas fa-home text-white text-lg"></i></button>
                          <button @click="setView('jadwal')" class="w-12 h-12 flex items-center justify-center rounded-full transition-colors" :class="currentView === 'jadwal' ? 'bg-white/20' : 'hover:bg-white/10'"><i class="fas fa-list-ul text-white text-lg"></i></button>
@@ -328,21 +302,10 @@
             </div>
         </div>
         
-        <!-- Toast Notifications Container -->
         <div class="fixed bottom-6 right-6 z-50 w-full max-w-sm space-y-3">
             <transition-group name="toast">
-                <div v-for="toast in toasts" :key="toast.id" 
-                    class="p-4 rounded-lg shadow-lg flex items-start"
-                    :class="{ 
-                        'bg-slate-800 text-white': toast.type === 'info',
-                        'bg-green-600 text-white': toast.type === 'success',
-                        'bg-red-600 text-white': toast.type === 'error' 
-                    }">
-                    <i class="fas mr-3 mt-1" :class="{
-                        'fa-check-circle': toast.type === 'success',
-                        'fa-exclamation-circle': toast.type === 'error',
-                        'fa-info-circle': toast.type === 'info'
-                    }"></i>
+                <div v-for="toast in toasts" :key="toast.id" class="p-4 rounded-lg shadow-lg flex items-start" :class="{ 'bg-slate-800 text-white': toast.type === 'info', 'bg-green-600 text-white': toast.type === 'success', 'bg-red-600 text-white': toast.type === 'error' }">
+                    <i class="fas mr-3 mt-1" :class="{ 'fa-check-circle': toast.type === 'success', 'fa-exclamation-circle': toast.type === 'error', 'fa-info-circle': toast.type === 'info' }"></i>
                     <p class="flex-1">{{ toast.message }}</p>
                     <button @click="removeToast(toast.id)" class="ml-4 -mr-2 text-white/70 hover:text-white">×</button>
                 </div>
@@ -351,74 +314,20 @@
 
         <!-- MODALS -->
         <transition name="modal"><div v-if="photoToPreview" @click="closePhotoPreview" class="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 p-4 cursor-pointer"><img :src="photoToPreview" class="max-w-full max-h-full object-contain rounded-lg shadow-2xl" @click.stop><button @click.stop="closePhotoPreview(true)" class="absolute top-4 right-4 text-white text-4xl font-light hover:opacity-75 transition-opacity">×</button></div></transition>
-        
         <transition name="modal"><div v-if="showShotModal" class="fixed inset-0 flex items-center justify-center z-40"><div @click="closeShotModal()" class="absolute inset-0 bg-black bg-opacity-30"></div><div class="bg-white rounded-2xl p-6 w-full max-w-md relative z-10 shadow-xl m-4"><h3 class="text-xl font-bold text-slate-800 mb-4">Tambah Foto Wajib</h3><form @submit.prevent="addShot" class="space-y-4"><div><label class="block text-sm font-medium text-slate-700 mb-1">Judul Foto</label><input v-model="newShot.title" type="text" class="w-full px-4 py-3 bg-slate-100 rounded-lg border-none" required></div><div><label class="block text-sm font-medium text-slate-700 mb-1">Catatan</label><textarea v-model="newShot.description" class="w-full px-4 py-3 bg-slate-100 rounded-lg border-none" rows="3"></textarea></div><div class="flex justify-end space-x-3 pt-2"><button type="button" @click="closeShotModal()" class="px-5 py-2 bg-slate-200 rounded-lg font-semibold">Batal</button><button type="submit" class="px-5 py-2 bg-slate-800 text-white rounded-lg font-semibold">Tambah</button></div></form></div></div></transition>
-
         <transition name="modal"><div v-if="showEditModal && weddingToEdit" class="fixed inset-0 flex items-center justify-center z-40"><div @click="closeEditModal()" class="absolute inset-0 bg-black bg-opacity-30"></div><div class="bg-white rounded-2xl w-full max-w-2xl relative z-10 shadow-xl m-4 max-h-[90vh] overflow-y-auto"><div class="p-6 space-y-4"><h3 class="text-xl font-bold text-slate-800 mb-4">Edit Detail Pernikahan</h3><form @submit.prevent="updateWedding" class="space-y-6 text-slate-700">
-            <fieldset class="border border-slate-200 p-4 rounded-lg">
-                <legend class="px-2 font-bold text-slate-600">Detail Acara</legend>
-                <div class="space-y-4">
-                    <div><label class="block text-sm font-medium">Judul Acara</label><input type="text" v-model="weddingToEdit.title" class="mt-1 w-full px-4 py-3 bg-slate-100 rounded-lg border-none" required></div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div><label class="block text-sm font-medium">Tanggal</label><input type="date" v-model="weddingToEdit.date" class="mt-1 w-full px-4 py-3 bg-slate-100 rounded-lg border-none" required></div>
-                        <div><label class="block text-sm font-medium">Lokasi</label><input type="text" v-model="weddingToEdit.location" class="mt-1 w-full px-4 py-3 bg-slate-100 rounded-lg border-none" placeholder="cth: Gedung ABC, Jakarta"></div>
-                    </div>
-                </div>
-            </fieldset>
-
-            <fieldset class="border border-slate-200 p-4 rounded-lg">
-                <legend class="px-2 font-bold text-slate-600">Kontak Klien</legend>
-                <div class="space-y-4">
-                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div><label class="block text-sm font-medium">Nama Mempelai 1</label><input type="text" v-model="weddingToEdit.contacts.bride" class="mt-1 w-full px-4 py-3 bg-slate-100 rounded-lg border-none"></div>
-                        <div><label class="block text-sm font-medium">Nama Mempelai 2</label><input type="text" v-model="weddingToEdit.contacts.groom" class="mt-1 w-full px-4 py-3 bg-slate-100 rounded-lg border-none"></div>
-                    </div>
-                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div><label class="block text-sm font-medium">No. WhatsApp</label><input type="tel" v-model="weddingToEdit.contacts.phone" class="mt-1 w-full px-4 py-3 bg-slate-100 rounded-lg border-none"></div>
-                        <div><label class="block text-sm font-medium">Email</label><input type="email" v-model="weddingToEdit.contacts.email" class="mt-1 w-full px-4 py-3 bg-slate-100 rounded-lg border-none"></div>
-                    </div>
-                </div>
-            </fieldset>
-
-            <fieldset class="border border-slate-200 p-4 rounded-lg">
-                <legend class="px-2 font-bold text-slate-600">Portal Klien</legend>
-                <div class="flex justify-between items-center">
-                     <h4 class="font-bold text-slate-700">Akses Portal Klien</h4>
-                     <div class="flex items-center space-x-2">
-                        <label for="timelineToggle" class="text-sm font-medium">Tampilkan Linimasa:</label>
-                        <input type="checkbox" id="timelineToggle" v-model="weddingToEdit.showTimelineInPortal" class="h-4 w-4 rounded text-lime-600 focus:ring-lime-500">
-                     </div>
-                </div>
-                <p class="text-sm text-slate-500 mt-1">Bagikan link ini kepada klien Anda untuk akses portal.</p>
-                <div class="mt-2 bg-slate-100 p-3 rounded-lg">
-                    <label class="text-xs font-bold text-slate-500">Link Portal</label>
-                    <div class="flex items-center space-x-2">
-                        <input :value="getClientPortalLink(weddingToEdit.id)" type="text" readonly class="w-full bg-transparent font-mono text-sm p-1">
-                        <button type="button" @click="copyToClipboard(getClientPortalLink(weddingToEdit.id))" class="text-slate-500 hover:text-slate-800 p-1"><i class="fas fa-copy"></i></button>
-                    </div>
-                </div>
-            </fieldset>
-
-        <div class="flex justify-end space-x-3 pt-4"><button type="button" @click="closeEditModal()" class="px-5 py-2 bg-slate-200 rounded-lg font-semibold">Batal</button><button type="submit" class="px-5 py-2 bg-slate-800 text-white rounded-lg font-semibold">Simpan Perubahan</button></div></form></div></div></div></transition>
-
+            <fieldset class="border border-slate-200 p-4 rounded-lg"><legend class="px-2 font-bold text-slate-600">Detail Acara</legend><div class="space-y-4"><div><label class="block text-sm font-medium">Judul Acara</label><input type="text" v-model="weddingToEdit.title" class="mt-1 w-full px-4 py-3 bg-slate-100 rounded-lg border-none" required></div><div class="grid grid-cols-1 md:grid-cols-2 gap-4"><div><label class="block text-sm font-medium">Tanggal</label><input type="date" v-model="weddingToEdit.date" class="mt-1 w-full px-4 py-3 bg-slate-100 rounded-lg border-none" required></div><div><label class="block text-sm font-medium">Lokasi</label><input type="text" v-model="weddingToEdit.location" class="mt-1 w-full px-4 py-3 bg-slate-100 rounded-lg border-none" placeholder="cth: Gedung ABC, Jakarta"></div></div></div></fieldset>
+            <fieldset class="border border-slate-200 p-4 rounded-lg"><legend class="px-2 font-bold text-slate-600">Kontak Klien</legend><div class="space-y-4"><div class="grid grid-cols-1 md:grid-cols-2 gap-4"><div><label class="block text-sm font-medium">Nama Mempelai 1</label><input type="text" v-model="weddingToEdit.contacts.bride" class="mt-1 w-full px-4 py-3 bg-slate-100 rounded-lg border-none"></div><div><label class="block text-sm font-medium">Nama Mempelai 2</label><input type="text" v-model="weddingToEdit.contacts.groom" class="mt-1 w-full px-4 py-3 bg-slate-100 rounded-lg border-none"></div></div><div class="grid grid-cols-1 md:grid-cols-2 gap-4"><div><label class="block text-sm font-medium">No. WhatsApp</label><input type="tel" v-model="weddingToEdit.contacts.phone" class="mt-1 w-full px-4 py-3 bg-slate-100 rounded-lg border-none"></div><div><label class="block text-sm font-medium">Email</label><input type="email" v-model="weddingToEdit.contacts.email" class="mt-1 w-full px-4 py-3 bg-slate-100 rounded-lg border-none"></div></div></div></fieldset>
+            <fieldset class="border border-slate-200 p-4 rounded-lg"><legend class="px-2 font-bold text-slate-600">Portal Klien</legend><div class="flex justify-between items-center"><h4 class="font-bold text-slate-700">Akses Portal Klien</h4><div class="flex items-center space-x-2"><label for="timelineToggle" class="text-sm font-medium">Tampilkan Linimasa:</label><input type="checkbox" id="timelineToggle" v-model="weddingToEdit.showTimelineInPortal" class="h-4 w-4 rounded text-lime-600 focus:ring-lime-500"></div></div><p class="text-sm text-slate-500 mt-1">Bagikan link ini kepada klien Anda untuk akses portal.</p><div class="mt-2 bg-slate-100 p-3 rounded-lg"><label class="text-xs font-bold text-slate-500">Link Portal</label><div class="flex items-center space-x-2"><input :value="getClientPortalLink(weddingToEdit.id)" type="text" readonly class="w-full bg-transparent font-mono text-sm p-1"><button type="button" @click="copyToClipboard(getClientPortalLink(weddingToEdit.id))" class="text-slate-500 hover:text-slate-800 p-1"><i class="fas fa-copy"></i></button></div></div></fieldset>
+            <div class="flex justify-end space-x-3 pt-4"><button type="button" @click="closeEditModal()" class="px-5 py-2 bg-slate-200 rounded-lg font-semibold">Batal</button><button type="submit" class="px-5 py-2 bg-slate-800 text-white rounded-lg font-semibold">Simpan Perubahan</button></div></form></div></div></div></transition>
         <transition name="modal"><div v-if="showTimelineModal" class="fixed inset-0 flex items-center justify-center z-40"><div @click="closeTimelineModal()" class="absolute inset-0 bg-black bg-opacity-30"></div><div class="bg-white rounded-2xl p-6 w-full max-w-md relative z-10 shadow-xl m-4"><h3 class="text-xl font-bold text-slate-800 mb-4">Tambah Linimasa</h3><form @submit.prevent="addTimelineItem" class="space-y-4"><input v-model="newTimelineItem.title" type="text" placeholder="Judul Acara (e.g., Upacara)" class="w-full px-4 py-3 bg-slate-100 rounded-lg border-none" required><input v-model="newTimelineItem.time" type="time" class="w-full px-4 py-3 bg-slate-100 rounded-lg border-none" required><textarea v-model="newTimelineItem.notes" placeholder="Catatan singkat..." class="w-full px-4 py-3 bg-slate-100 rounded-lg border-none" rows="3"></textarea><div class="flex justify-end space-x-3 pt-2"><button type="button" @click="closeTimelineModal()" class="px-5 py-2 bg-slate-200 rounded-lg font-semibold">Batal</button><button type="submit" class="px-5 py-2 bg-slate-800 text-white rounded-lg font-semibold">Tambah</button></div></form></div></div></transition>
-        
-        <!-- Other modals (forgot password, change password) remain the same... -->
-
     </div>
     
     <script>
         const { createApp, nextTick, watch } = Vue;
         const { jsPDF } = window.jspdf;
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyCBij3UUC9XvrkmrtVB8vZxWg_6685ce1o",
-            authDomain: "amlolist-final.firebaseapp.com",
-            projectId: "amlolist-final",
-            storageBucket: "amlolist-final.firebasestorage.app",
-            messagingSenderId: "25110140647",
-            appId: "1:25110140647:web:740485070c06bfb13b3442"
-        };
+        const firebaseConfig = { apiKey: "AIzaSyCBij3UUC9XvrkmrtVB8vZxWg_6685ce1o", authDomain: "amlolist-final.firebaseapp.com", projectId: "amlolist-final", storageBucket: "amlolist-final.firebasestorage.app", messagingSenderId: "25110140647", appId: "1:25110140647:web:740485070c06bfb13b3442" };
         
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
@@ -428,8 +337,6 @@
         const App = {
             data() {
                 return {
-
-                    
                     isLoggedIn: false, isRegisterView: false, user: null, isLoading: true, appReady: false,
                     showForgotPasswordModal: false, showChangePasswordModal: false, showShotModal: false, showEditModal: false, showTimelineModal: false, photoToPreview: null,
                     auth: { email: '', password: '', error: '', isPasswordVisible: false, loading: false },
@@ -439,51 +346,22 @@
                     calendar: { date: new Date(), year: 0, month: 0, monthName: '', days: [] },
                     selectedDate: null,
                     invoice: { number: 'INV-001', date: (new Date).toISOString().split("T")[0], dueDate: '', client: { name: '', address: '' }, items: [{ description: 'Jasa Fotografi Hari-H', quantity: 1, rate: 5000000 }], taxRate: 10, invoicerName: 'Amlo List', invoicerSlogan: 'Jasa Perencanaan Acara Profesional', notes: 'Terima kasih atas kepercayaan Anda.\nPembayaran dapat ditransfer ke rekening:\nBCA 123456789 a/n John Doe', isGenerating: false, },
-                    weddingToEdit: null,
-                    newShot: { title: '', description: '' }, 
-                    newTimelineItem: { title: '', time: '', notes: '' },
-                    toasts: [],
-                    shotListSortable: null,
-                    timelineSortable: null,
-                    firestoreUnsubscribe: null,
-                    clientDataUnsubscribe: null,
-                    isUploading: false
+                    weddingToEdit: null, newShot: { title: '', description: '' }, newTimelineItem: { title: '', time: '', notes: '' },
+                    toasts: [], shotListSortable: null, timelineSortable: null, firestoreUnsubscribe: null, clientDataUnsubscribe: null, isUploading: false
                 }
             },
             created() {
                 this.resetAllModals();
                 auth.onAuthStateChanged(user => {
-                    if (user) { 
-                        this.isLoggedIn = true; 
-                        this.user = user; 
-                        this.loadAppData();
-                    } else { 
-                        this.isLoggedIn = false; 
-                        this.user = null; 
-                        this.isLoading = false;
-                        this.appReady = false; 
-                        if (this.firestoreUnsubscribe) this.firestoreUnsubscribe();
-                        if (this.clientDataUnsubscribe) this.clientDataUnsubscribe();
-                    }
+                    if (user) { this.isLoggedIn = true; this.user = user; this.loadAppData(); } 
+                    else { this.isLoggedIn = false; this.user = null; this.isLoading = false; this.appReady = false; if (this.firestoreUnsubscribe) this.firestoreUnsubscribe(); if (this.clientDataUnsubscribe) this.clientDataUnsubscribe(); }
                 });
                 window.addEventListener('popstate', this.handleBackButton);
             },
             mounted() {
                 watch(() => this.activeWedding, (newWedding, oldWedding) => {
-                    if (oldWedding) {
-                        this.destroySortableInstances();
-                        if (this.clientDataUnsubscribe) {
-                            this.clientDataUnsubscribe();
-                            this.clientDataUnsubscribe = null;
-                        }
-                    }
-                    if (newWedding) {
-                        this.loadClientDataForActiveWedding();
-                        nextTick(() => { 
-                            this.initShotListSortable(); 
-                            this.initTimelineSortable(); 
-                        });
-                    }
+                    if (oldWedding) { this.destroySortableInstances(); if (this.clientDataUnsubscribe) { this.clientDataUnsubscribe(); this.clientDataUnsubscribe = null; } }
+                    if (newWedding) { this.loadClientData(); nextTick(() => { this.initShotListSortable(); this.initTimelineSortable(); }); }
                 }, { deep: true, immediate: true });
             },
             beforeUnmount() {
@@ -495,26 +373,14 @@
             computed: {
                 filteredWeddings() {
                     let weddings = this.weddings;
-                    if (this.selectedDate) {
-                        weddings = weddings.filter(w => w.date === this.selectedDate);
-                    }
+                    if (this.selectedDate) { weddings = weddings.filter(w => w.date === this.selectedDate); }
                     if (this.searchQuery.trim()) {
                         const query = this.searchQuery.toLowerCase();
-                        return weddings.filter(w => 
-                            (w.title && w.title.toLowerCase().includes(query)) ||
-                            (w.location && w.location.toLowerCase().includes(query)) ||
-                            (w.contacts.bride && w.contacts.bride.toLowerCase().includes(query)) ||
-                            (w.contacts.groom && w.contacts.groom.toLowerCase().includes(query)) ||
-                            (w.contacts.phone && w.contacts.phone.toLowerCase().includes(query))
-                        );
+                        return weddings.filter(w => (w.title && w.title.toLowerCase().includes(query)) || (w.location && w.location.toLowerCase().includes(query)) || (w.contacts.bride && w.contacts.bride.toLowerCase().includes(query)) || (w.contacts.groom && w.contacts.groom.toLowerCase().includes(query)) || (w.contacts.phone && w.contacts.phone.toLowerCase().includes(query)));
                     }
                     return weddings;
                 },
-                whatsappLink() {
-                    if (!this.activeWedding || !this.activeWedding.contacts.phone) return '#';
-                    const phone = this.activeWedding.contacts.phone.replace(/[^0-9]/g, '');
-                    return `https://wa.me/${phone}`;
-                },
+                whatsappLink() { if (!this.activeWedding || !this.activeWedding.contacts.phone) return '#'; const phone = this.activeWedding.contacts.phone.replace(/[^0-9]/g, ''); return `https://wa.me/${phone}`; },
                 scheduleDates() { const dates = new Set(); this.weddings.forEach(w => { dates.add(w.date) }); return dates },
                 allTasks() { return this.weddings.flatMap(w => (w.shots || []).map(t => ({ ...t, weddingTitle: w.title }))) },
                 totalSchedules() { return this.weddings.length },
@@ -526,44 +392,18 @@
             methods: {
                 addToast(message, type = 'info', duration = 3000) { const id = Date.now(); this.toasts.push({ id, message, type }); if (duration) { setTimeout(() => this.removeToast(id), duration); } },
                 removeToast(id) { this.toasts = this.toasts.filter(toast => toast.id !== id); },
-                
                 initSortable(containerRef, listName) {
-                    const container = this.$refs[containerRef];
-                    if (!container) return null;
+                    const container = this.$refs[containerRef]; if (!container) return null;
                     return new Sortable(container, {
-                        handle: '.drag-handle',
-                        animation: 150,
-                        ghostClass: 'sortable-ghost',
-                        chosenClass: 'sortable-chosen',
-                        onEnd: (evt) => {
-                            if (!this.activeWedding || !this.activeWedding[listName]) return;
-                            const item = this.activeWedding[listName].splice(evt.oldIndex, 1)[0];
-                            this.activeWedding[listName].splice(evt.newIndex, 0, item);
-                            this.saveActiveWedding();
-                        }
+                        handle: '.drag-handle', animation: 150, ghostClass: 'sortable-ghost', chosenClass: 'sortable-chosen',
+                        onEnd: (evt) => { if (!this.activeWedding || !this.activeWedding[listName]) return; const item = this.activeWedding[listName].splice(evt.oldIndex, 1)[0]; this.activeWedding[listName].splice(evt.newIndex, 0, item); this.saveActiveWedding(); }
                     });
                 },
                 initShotListSortable() { if (this.shotListSortable) this.shotListSortable.destroy(); this.shotListSortable = this.initSortable('shotListContainer', 'shots'); },
                 initTimelineSortable() { if (this.timelineSortable) this.timelineSortable.destroy(); this.timelineSortable = this.initSortable('timelineContainer', 'timeline'); },
-                destroySortableInstances() {
-                    if (this.shotListSortable) { this.shotListSortable.destroy(); this.shotListSortable = null; }
-                    if (this.timelineSortable) { this.timelineSortable.destroy(); this.timelineSortable = null; }
-                },
-
-                handleBackButton(event) {
-                    if (this.photoToPreview) { this.closePhotoPreview(false); return; }
-                    if (this.showShotModal) { this.closeShotModal(false); return; }
-                    if (this.showEditModal) { this.closeEditModal(false); return; }
-                    if (this.showTimelineModal) { this.closeTimelineModal(false); return; }
-                    if (this.showForgotPasswordModal) { this.closeForgotPasswordModal(false); return; }
-                    if (this.showChangePasswordModal) { this.closeChangePasswordModal(false); return; }
-                    if (event.state && event.state.view) { this.setView(event.state.view, false); } 
-                    else if (this.currentView !== 'beranda') { this.setView('beranda', false); }
-                    else { history.back(); }
-                },
+                destroySortableInstances() { if (this.shotListSortable) { this.shotListSortable.destroy(); this.shotListSortable = null; } if (this.timelineSortable) { this.timelineSortable.destroy(); this.timelineSortable = null; } },
+                handleBackButton(event) { if (this.photoToPreview) { this.closePhotoPreview(false); return; } if (this.showShotModal) { this.closeShotModal(false); return; } if (this.showEditModal) { this.closeEditModal(false); return; } if (this.showTimelineModal) { this.closeTimelineModal(false); return; } if (this.showForgotPasswordModal) { this.closeForgotPasswordModal(false); return; } if (this.showChangePasswordModal) { this.closeChangePasswordModal(false); return; } if (event.state && event.state.view) { this.setView(event.state.view, false); } else if (this.currentView !== 'beranda') { this.setView('beranda', false); } else { history.back(); } },
                 resetAllModals() { this.showForgotPasswordModal = false; this.showChangePasswordModal = false; this.showShotModal = false; this.showEditModal = false; this.showTimelineModal = false; this.photoToPreview = null },
-                
-                // --- Modal Controls ---
                 openForgotPasswordModal() { this.forgotPassword = { email: "", error: "", success: "" }; this.showForgotPasswordModal = true; history.pushState({ modal: "forgotPassword" }, "", "#forgot-password") },
                 closeForgotPasswordModal(goBack = true) { this.showForgotPasswordModal = false; goBack && window.history.state?.modal && history.back() },
                 openChangePasswordModal() { this.changePassword = { newPassword: "", error: "", success: "", isPasswordVisible: false }; this.showChangePasswordModal = true; history.pushState({ modal: "changePassword" }, "", "#change-password") },
@@ -576,140 +416,80 @@
                 closeEditModal(goBack = true) { this.showEditModal = false; this.weddingToEdit = null; goBack && window.history.state?.modal && history.back() },
                 openTimelineModal() { if(this.activeWedding) { this.newTimelineItem = { title: "", time: "", notes: "" }; this.showTimelineModal = true; history.pushState({ modal: "timelineModal" }, "", "#add-timeline")} },
                 closeTimelineModal(goBack = true) { this.showTimelineModal = false; goBack && window.history.state?.modal && history.back() },
-                
-                // --- View Navigation ---
                 setView(view, pushState = true) { if(this.currentView === view && pushState) return; this.currentView = view; if (pushState) history.pushState({ view: view }, '', `#${view}`); },
-
-                // --- Auth Methods (unchanged) ---
-                login() { /* ... */ },
-                register() { /* ... */ },
-                logout() { /* ... */ },
-                updateUserPassword() { /* ... */ },
-                sendResetEmail() { /* ... */ },
+                login() { this.auth.error = ""; this.auth.loading = true; auth.signInWithEmailAndPassword(this.auth.email, this.auth.password).catch(e => { this.auth.error = "Email atau password salah."; }).finally(() => { this.auth.loading = false; }); },
+                register() { this.auth.error = ""; this.auth.loading = true; auth.createUserWithEmailAndPassword(this.auth.email, this.auth.password).catch(e => { if (e.code === "auth/email-already-in-use") { this.auth.error = "Email ini sudah terdaftar."; } else if (e.code === "auth/weak-password") { this.auth.error = "Password terlalu lemah."; } else { this.auth.error = "Gagal registrasi."; } }).finally(() => { this.auth.loading = false; }); },
+                logout() { auth.signOut(); this.resetAllModals(); this.addToast("Anda telah logout.", "info"); },
+                updateUserPassword() { this.changePassword.error = ""; this.changePassword.success = ""; const user = auth.currentUser; if (user) { user.updatePassword(this.changePassword.newPassword).then(() => { this.changePassword.success = "Password berhasil diubah!"; this.addToast("Password berhasil diubah!", "success"); setTimeout(() => this.closeChangePasswordModal(), 2000); }).catch(e => { this.changePassword.error = "Password baru terlalu lemah atau perlu login ulang."; this.addToast("Gagal mengubah password.", "error"); }); } },
+                sendResetEmail() { this.forgotPassword.error = ""; this.forgotPassword.success = ""; auth.sendPasswordResetEmail(this.forgotPassword.email).then(() => { this.forgotPassword.success = "Link reset telah dikirim." }).catch(e => { this.forgotPassword.error = "Email tidak ditemukan." }); },
                 
-                // --- Firestore Methods ---
                 loadAppData() { 
                     this.appReady = false;
                     if (this.firestoreUnsubscribe) this.firestoreUnsubscribe();
-                    
-                    this.firestoreUnsubscribe = db.collection('weddings')
-                        .where('ownerId', '==', this.user.uid)
-                        .orderBy('date', 'desc')
+                    this.firestoreUnsubscribe = db.collection('weddings').where('ownerId', '==', this.user.uid).orderBy('date', 'desc')
                         .onSnapshot(querySnapshot => {
                             const oldActiveId = this.activeWedding ? this.activeWedding.id : null;
                             this.weddings = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-
                             if (oldActiveId && this.weddings.some(w => w.id === oldActiveId)) {
-                                const updatedActiveWedding = this.weddings.find(w => w.id === oldActiveId);
-                                if(this.activeWedding) {
-                                    Object.assign(this.activeWedding, updatedActiveWedding);
-                                }
-                            } else if (this.weddings.length > 0) {
-                                this.activeWedding = this.weddings[0];
-                            } else {
-                                this.activeWedding = null;
-                            }
-                            
-                            this.generateCalendar();
-                            this.isLoading = false;
-                            this.appReady = true;
-                        }, (error) => {
-                            console.error("Error fetching weddings:", error); this.addToast("Gagal memuat data jadwal.", "error"); this.isLoading = false;
-                        });
+                                const updatedActiveWeddingData = this.weddings.find(w => w.id === oldActiveId);
+                                if(this.activeWedding) { Object.assign(this.activeWedding, updatedActiveWeddingData); }
+                            } else if (this.weddings.length > 0) { this.activeWedding = this.weddings[0]; } 
+                            else { this.activeWedding = null; }
+                            this.generateCalendar(); this.isLoading = false; this.appReady = true;
+                        }, (error) => { console.error("Error fetching weddings:", error); this.addToast("Gagal memuat data jadwal.", "error"); this.isLoading = false; });
                     this.loadInvoiceTemplate(false);
                 },
-                loadClientDataForActiveWedding() {
+                loadClientData() {
                     if (this.clientDataUnsubscribe) this.clientDataUnsubscribe();
                     if (!this.activeWedding) return;
-
-                    this.clientDataUnsubscribe = db.collection('weddings').doc(this.activeWedding.id)
-                        .collection('clientData').doc('portal')
+                    this.clientDataUnsubscribe = db.collection('weddings').doc(this.activeWedding.id).collection('clientData').doc('portal')
                         .onSnapshot(doc => {
                             if (this.activeWedding) {
                                 const clientData = doc.exists ? doc.data() : { notes: '', shots: [], photos: [] };
                                 this.activeWedding.clientNotes = clientData.notes || '';
                                 this.activeWedding.photos = clientData.photos || [];
-
                                 const plannerShots = (this.activeWedding.shots || []).filter(s => !s.isClientShot);
                                 const clientShots = (clientData.shots || []).map(s => ({ ...s, isClientShot: true }));
                                 this.activeWedding.shots = [...plannerShots, ...clientShots];
                             }
                         }, error => console.error("Error fetching client data: ", error));
                 },
-                addWedding() {
-                    const newWeddingData = { 
-                        ownerId: this.user.uid, 
-                        title:"Jadwal Baru", 
-                        date:(new Date).toISOString().split("T")[0], 
-                        location:"Belum ditentukan", 
-                        notes:"Catatan khusus...", 
-                        shots:[], 
-                        timeline:[], 
-                        contacts: { bride:"", groom:"", email:"", phone:"" }, 
-                        showTimelineInPortal: false 
-                    };
-                    db.collection('weddings').add(newWeddingData)
-                        .then(docRef => {
-                            db.collection('weddings').doc(docRef.id).collection('clientData').doc('portal').set({
-                                photos: [], shots: [], notes: ''
-                            });
-                            this.addToast("Jadwal baru ditambahkan", "success");
-                        })
-                        .catch(error => { console.error("Error adding wedding: ", error); this.addToast("Gagal menambahkan jadwal.", "error"); });
-                },
                 saveActiveWedding() {
                     if (!this.activeWedding || !this.activeWedding.id) return;
-                    
-                    const weddingDataToSave = JSON.parse(JSON.stringify(this.activeWedding));
-                    const weddingId = weddingDataToSave.id;
-                    
-                    const plannerData = {
-                        ...weddingDataToSave,
-                        shots: (weddingDataToSave.shots || []).filter(s => !s.isClientShot)
+                    const weddingId = this.activeWedding.id;
+                    const plannerShots = (this.activeWedding.shots || []).filter(s => !s.isClientShot);
+                    const plannerData = { ...this.activeWedding, shots: plannerShots };
+                    delete plannerData.id; delete plannerData.clientNotes; delete plannerData.photos;
+                    db.collection('weddings').doc(weddingId).set(plannerData, { merge: true }).catch(error => { console.error("Error saving wedding: ", error); this.addToast("Gagal menyimpan perubahan.", "error"); });
+                },
+                saveClientData() {
+                    if (!this.activeWedding || !this.activeWedding.id) return;
+                    const clientShots = (this.activeWedding.shots || []).filter(s => s.isClientShot).map(({ isClientShot, ...rest }) => rest);
+                    const clientDataToSave = {
+                        notes: this.activeWedding.clientNotes || '',
+                        photos: this.activeWedding.photos || [],
+                        shots: clientShots
                     };
-                    delete plannerData.id;
-                    delete plannerData.clientNotes;
-                    delete plannerData.photos;
-                    
-                    db.collection('weddings').doc(weddingId).set(plannerData, { merge: true })
-                        .catch(error => { console.error("Error saving wedding: ", error); this.addToast("Gagal menyimpan perubahan.", "error"); });
+                    db.collection('weddings').doc(this.activeWedding.id).collection('clientData').doc('portal').set(clientDataToSave, { merge: true });
                 },
-                deleteWedding(weddingId) {
-                    if (confirm("Apakah Anda yakin ingin menghapus jadwal ini? Data tidak dapat dikembalikan.")) {
-                        db.collection('weddings').doc(weddingId).delete()
-                            .then(() => { this.addToast("Jadwal dihapus.", "info"); }) 
-                            .catch(error => { console.error("Error deleting wedding: ", error); this.addToast("Gagal menghapus jadwal.", "error"); });
-                    }
+                addWedding() {
+                    const newWeddingData = { ownerId: this.user.uid, title:"Jadwal Baru", date:(new Date).toISOString().split("T")[0], location:"Belum ditentukan", notes:"Catatan khusus...", shots:[], timeline:[], contacts: { bride:"", groom:"", email:"", phone:"" }, showTimelineInPortal: false };
+                    db.collection('weddings').add(newWeddingData).then(docRef => { db.collection('weddings').doc(docRef.id).collection('clientData').doc('portal').set({ photos: [], shots: [], notes: '' }); this.addToast("Jadwal baru ditambahkan", "success"); }).catch(error => { console.error("Error adding wedding: ", error); this.addToast("Gagal menambahkan jadwal.", "error"); });
                 },
-                updateWedding(){ 
-                    if(!this.weddingToEdit || !this.weddingToEdit.id) return;
-                    const weddingData = JSON.parse(JSON.stringify(this.weddingToEdit)); 
-                    const weddingId = weddingData.id; 
-                    delete weddingData.id; 
-                    db.collection('weddings').doc(weddingId).set(weddingData, { merge: true })
-                        .then(() => { this.closeEditModal(true); this.addToast("Detail berhasil disimpan.", "success"); })
-                        .catch(error => { console.error("Error updating wedding: ", error); this.addToast("Gagal menyimpan perubahan.", "error"); }); 
-                },
-                
-                // --- Sub-item Methods ---
+                deleteWedding(weddingId) { if (confirm("Apakah Anda yakin ingin menghapus jadwal ini? Data tidak dapat dikembalikan.")) { db.collection('weddings').doc(weddingId).delete().then(() => { this.addToast("Jadwal dihapus.", "info"); }).catch(error => { console.error("Error deleting wedding: ", error); this.addToast("Gagal menghapus jadwal.", "error"); }); } },
+                updateWedding(){ if(!this.weddingToEdit || !this.weddingToEdit.id) return; const weddingData = JSON.parse(JSON.stringify(this.weddingToEdit)); const weddingId = weddingData.id; delete weddingData.id; db.collection('weddings').doc(weddingId).set(weddingData, { merge: true }).then(() => { this.closeEditModal(true); this.addToast("Detail berhasil disimpan.", "success"); }).catch(error => { console.error("Error updating wedding: ", error); this.addToast("Gagal menyimpan perubahan.", "error"); }); },
                 addShot(){ if(!this.newShot.title.trim()||!this.activeWedding)return; const wasEmpty=!this.activeWedding.shots || this.activeWedding.shots.length===0; this.activeWedding.shots.push({id:Date.now(),...this.newShot,completed:false, isClientShot: false}); this.saveActiveWedding(); this.closeShotModal(true); this.addToast("Foto wajib ditambahkan.","success"); if(wasEmpty){nextTick(()=>this.initShotListSortable());}},
-                deleteShot(shotId){ if(!this.activeWedding)return; this.activeWedding.shots=this.activeWedding.shots.filter(t=>t.id!==shotId); this.saveActiveWedding(); this.addToast("Foto wajib dihapus.","info"); if(!this.activeWedding.shots || this.activeWedding.shots.length===0){this.destroySortableInstances();}},
+                deleteShot(shotId){ if(!this.activeWedding)return; const shot = this.activeWedding.shots.find(s => s.id === shotId); if (shot && shot.isClientShot) { this.addToast("Tidak dapat menghapus shot dari klien.", "error"); return; } this.activeWedding.shots=this.activeWedding.shots.filter(t=>t.id!==shotId); this.saveActiveWedding(); this.addToast("Foto wajib dihapus.","info"); if(!this.activeWedding.shots || this.activeWedding.shots.length===0){this.destroySortableInstances();}},
                 addTimelineItem(){ if(!this.newTimelineItem.title.trim()||!this.activeWedding)return; const wasEmpty=!this.activeWedding.timeline || this.activeWedding.timeline.length===0; this.activeWedding.timeline.push({id:Date.now(),...this.newTimelineItem}); this.activeWedding.timeline.sort((a,b)=>a.time.localeCompare(b.time)); this.saveActiveWedding(); this.closeTimelineModal(true); this.addToast("Linimasa ditambahkan.","success"); if(wasEmpty){nextTick(()=>this.initTimelineSortable());}},
                 deleteTimelineItem(itemId){ if(!this.activeWedding)return; this.activeWedding.timeline=this.activeWedding.timeline.filter(t=>t.id!==itemId); this.saveActiveWedding(); this.addToast("Item linimasa dihapus.","info"); if(!this.activeWedding.timeline || this.activeWedding.timeline.length===0){this.destroySortableInstances();}},
-
-                // --- Photo Methods (unchanged) ---
-                addPhoto() { /* ... */ },
-                handlePhotoUpload(e) { /* ... */ },
-                deletePhoto(index, photo) { /* ... */ },
-
-                // --- Invoice Methods (unchanged) ---
-                saveInvoiceTemplate(){ /* ... */ },
-                loadInvoiceTemplate(showToast = true){ /* ... */ },
-                addItem(){ /* ... */ },
-                removeItem(e){ /* ... */ },
-                generatePDF() { /* ... */ },
-                
-                // --- Helper & UI Methods ---
+                addPhoto() { if (this.isUploading || !this.activeWedding) return; this.$refs.photoUploader.click(); },
+                handlePhotoUpload(e) { const file = e.target.files[0]; if (!file || !this.activeWedding || !this.user) { e.target.value = ""; return; } this.isUploading = true; const uniqueFileName = `${Date.now()}-${file.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`; const filePath = `${this.user.uid}/${this.activeWedding.id}/${uniqueFileName}`; const storageRef = storage.ref(filePath); const uploadTask = storageRef.put(file); uploadTask.on('state_changed', () => {}, (error) => { console.error("Upload failed:", error); this.addToast("Upload foto gagal.", "error"); this.isUploading = false; }, () => { uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => { const clientPhotos = this.activeWedding.photos || []; clientPhotos.push({ path: filePath, url: downloadURL }); db.collection('weddings').doc(this.activeWedding.id).collection('clientData').doc('portal').set({ photos: clientPhotos }, { merge: true }).then(() => this.addToast("Foto berhasil di-upload!", "success")).catch(err => this.addToast("Gagal menyimpan foto.", "error")).finally(() => this.isUploading = false); }); }); e.target.value = ""; },
+                deletePhoto(index, photo) { if (!this.activeWedding || !this.user || !photo || !photo.path) return; if (!confirm("Apakah Anda yakin ingin menghapus foto ini?")) return; const photoRef = storage.ref(photo.path); photoRef.delete().then(() => { const updatedPhotos = [...this.activeWedding.photos]; updatedPhotos.splice(index, 1); db.collection('weddings').doc(this.activeWedding.id).collection('clientData').doc('portal').update({ photos: updatedPhotos }).then(() => this.addToast("Foto berhasil dihapus.", "info")); }).catch((error) => { console.error("Error deleting photo:", error); if (error.code === 'storage/object-not-found') { const updatedPhotos = [...this.activeWedding.photos]; updatedPhotos.splice(index, 1); db.collection('weddings').doc(this.activeWedding.id).collection('clientData').doc('portal').update({ photos: updatedPhotos }); } this.addToast("Gagal menghapus foto.", "error"); }); },
+                saveInvoiceTemplate(){ if(!this.user)return; const templateData = { invoiceTemplate: JSON.parse(JSON.stringify(this.invoice)) }; db.collection('userProfiles').doc(this.user.uid).set(templateData, { merge: true }) .then(() => this.addToast("Template invoice berhasil disimpan!", "success")) .catch(e => { this.addToast("Gagal menyimpan template.", "error"); }); },
+                loadInvoiceTemplate(showToast = true) { if (!this.user) return; db.collection('userProfiles').doc(this.user.uid).get() .then(doc => { if (doc.exists && doc.data().invoiceTemplate) { this.invoice = doc.data().invoiceTemplate; if (showToast) this.addToast("Template invoice berhasil dimuat!", "success"); } else { if (showToast) this.addToast("Tidak ada template yang tersimpan.", "info"); } }) .catch(error => { console.error("Error loading template: ", error); if (showToast) this.addToast("Gagal memuat template.", "error"); }); },
+                addItem(){this.invoice.items.push({description:"",quantity:1,rate:0})},
+                removeItem(e){this.invoice.items.splice(e,1)},
+                generatePDF() { this.invoice.isGenerating = true; this.addToast("Membuat PDF...", "info"); const el = document.getElementById('invoice-preview'); html2canvas(el, { scale: 3, useCORS: true }).then(canvas => { const imgData = canvas.toDataURL('image/png'); const pdf = new jsPDF('p', 'mm', 'a4'); const pdfWidth = pdf.internal.pageSize.getWidth(); const pdfHeight = pdf.internal.pageSize.getHeight(); const canvasWidth = canvas.width; const canvasHeight = canvas.height; const ratio = canvasWidth / canvasHeight; const imgWidth = pdfWidth; const imgHeight = imgWidth / ratio; let heightLeft = imgHeight; let position = 0; pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight); heightLeft -= pdfHeight; while (heightLeft > 0) { position = heightLeft - imgHeight; pdf.addPage(); pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight); heightLeft -= pdfHeight; } pdf.save(`invoice-${this.invoice.number || "001"}.pdf`); this.invoice.isGenerating = false; this.addToast("PDF berhasil diekspor!", "success"); }).catch(err => { this.invoice.isGenerating = false; this.addToast("Gagal membuat PDF.", "error"); console.error(err); }); },
                 getClientPortalLink(id) { const url = new URL('portal.html', window.location.href); url.searchParams.set('id', id); return url.href; },
                 copyToClipboard(text) { navigator.clipboard.writeText(text).then(() => { this.addToast(`'${text}' disalin!`, 'info'); }); },
                 getTaskProgress(wedding){if(!wedding||!wedding.shots||wedding.shots.length===0)return{percent:0,done:0,total:0};const total=wedding.shots.length,done=wedding.shots.filter(t=>t.completed).length;return{percent: total > 0 ? Math.round(done/total*100) : 0,done:done,total:total}},
@@ -717,22 +497,13 @@
                 setActiveWedding(wedding){this.activeWedding=wedding},
                 formatDateForDisplay(dateStr){if(!dateStr)return"-";const date=new Date(dateStr); if(dateStr.length === 10) { date.setUTCHours(0,0,0,0); } return isNaN(date.getTime()) ? dateStr : date.toLocaleDateString("id-ID",{day:"numeric",month:"long",year:"numeric"})},
                 formatCurrency(e){return new Intl.NumberFormat("id-ID",{style:"currency",currency:"IDR",minimumFractionDigits:0}).format(e)},
-
-                // --- Calendar Methods (unchanged) ---
-                generateCalendar(){ /* ... */ },
-                changeMonth(direction){ /* ... */ },
-                selectDate(day){ /* ... */ },
+                generateCalendar(){const date=this.calendar.date,year=date.getFullYear(),month=date.getMonth();this.calendar.year=year;this.calendar.month=month;this.calendar.monthName=date.toLocaleString("id-ID",{month:"long"});const firstDay=new Date(year,month,1).getDay(),numDays=new Date(year,month+1,0).getDate();let days=[];for(let i=0;i<firstDay;i++)days.push({date:""});for(let i=1;i<=numDays;i++){const fullDate=`${year}-${String(month+1).padStart(2,"0")}-${String(i).padStart(2,"0")}`;days.push({date:i,fullDate:fullDate,isToday:(new Date).toDateString()===(new Date(year,month,i)).toDateString(),hasEvent:this.scheduleDates.has(fullDate)})} const totalCells = days.length; for(let i = 0; i < (42 - totalCells); i++) { days.push({date: ''}); } this.calendar.days=days},
+                changeMonth(direction){this.calendar.date.setMonth(this.calendar.date.getMonth()+direction);this.generateCalendar()},
+                selectDate(day){if(day.date){this.selectedDate=this.selectedDate===day.fullDate?null:day.fullDate}},
             }
         };
-
         createApp(App).mount('#app');
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./service-worker.js')
-                    .then(reg => console.log('Service Worker registered.'))
-                    .catch(err => console.log('Service Worker registration failed: ', err));
-            });
-        }
+        if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('./service-worker.js').then(reg => console.log('Service Worker registered.')).catch(err => console.log('Service Worker registration failed: ', err)); }); }
     </script>
 </body>
 </html>
