@@ -277,6 +277,16 @@
                 },
                 addWedding() {
                     const newWeddingData = { ownerId: this.user.uid, title:"Jadwal Baru", date:(new Date).toISOString().split("T")[0], location:"Belum ditentukan", notes:"Catatan khusus...", shots:[], timeline:[], photos:[], tags:[], contacts: {bride:"",groom:"",email:"",phone:""}, details:{guests:0,type:"TBD",package:"TBD"} };
+        portalPassword: Math.random().toString(36).substring(2, 10), // Generates a random 8-char password
+        showTimelineInPortal: false 
+    };
+    db.collection('weddings').add(newWeddingData)
+        .then(docRef => {
+            this.setActiveWedding({ id: docRef.id, ...newWeddingData });
+            this.addToast("Jadwal baru ditambahkan", "success");
+        })
+        .catch(error => { console.error("Error adding wedding: ", error); this.addToast("Gagal menambahkan jadwal.", "error"); });
+},
                     db.collection('weddings').add(newWeddingData)
                         .then(docRef => {
                             this.setActiveWedding({ id: docRef.id, ...newWeddingData });
