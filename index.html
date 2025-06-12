@@ -26,7 +26,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
     <style>
-        :root { --primary: #dfff6e; --background: #f8f8f8; --surface: #ffffff; --text-main: #1a1a1a; --text-muted: #8e8e8e; --border-color: #f0f0f0; --nav-bg: #1a1a1a; }
+        :root { --primary: #dfff6e; --background: #f7f7f9; --surface: #ffffff; --text-main: #1a1a1a; --text-muted: #8e8e8e; --border-color: #f0f0f0; --nav-bg: #1a1a1a; }
         body { font-family: 'Inter', sans-serif; background-color: var(--background); }
         ::-webkit-scrollbar { width: 8px; } ::-webkit-scrollbar-track { background: #f1f5f9; } ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; } ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
         .fade-enter-active, .fade-leave-active { transition: opacity 0.2s ease-out; } .fade-enter-from, .fade-leave-to { opacity: 0; }
@@ -139,107 +139,104 @@
                                     
                                     <div class="lg:col-span-3 space-y-6">
                                         <template v-if="activeWedding">
-                                            <div class="bg-slate-50 rounded-2xl shadow-sm border-t-4 border-slate-200 p-6">
-                                                <div class="flex justify-between items-start mb-6">
+                                            <!-- NEW: Header Section -->
+                                            <div class="bg-white p-6 rounded-2xl shadow-sm">
+                                                <div class="flex justify-between items-start">
                                                     <div>
-                                                        <p class="text-[var(--text-muted)] flex items-center mb-1 text-sm"><i class="fas fa-calendar-day mr-2"></i> {{ formatDateForDisplay(activeWedding.date) }}</p>
-                                                        <h2 class="text-3xl font-extrabold text-[var(--text-main)]">{{ activeWedding.title }}</h2>
-                                                        <p class="text-[var(--text-muted)] mt-1 font-semibold">{{ activeWedding.contacts.bride }} & {{ activeWedding.contacts.groom }}</p>
+                                                        <h2 class="text-3xl font-extrabold text-slate-800">{{ activeWedding.title }}</h2>
+                                                        <div class="flex items-center space-x-4 text-slate-500 mt-2">
+                                                            <span class="flex items-center"><i class="fas fa-user-friends mr-2"></i>{{ activeWedding.contacts.bride }} & {{ activeWedding.contacts.groom }}</span>
+                                                            <span class="flex items-center"><i class="fas fa-calendar-alt mr-2"></i>{{ formatDateForDisplay(activeWedding.date) }}</span>
+                                                        </div>
                                                     </div>
-                                                    <div class="flex-shrink-0 flex flex-col items-center space-y-2">
-                                                         <div class="relative w-20 h-20">
-                                                            <svg class="progress-circle w-full h-full" viewBox="0 0 36 36"><path class="text-slate-200" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-width="3"></path><path class="text-slate-800 transition-all duration-500" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-width="3" :stroke-dasharray="`${getTaskProgress(activeWedding).percent}, 100`"></path></svg>
-                                                            <div class="absolute inset-0 flex items-center justify-center text-slate-800 font-bold text-xl">{{ getTaskProgress(activeWedding).percent }}<span class="text-xs">%</span></div>
-                                                        </div>
-                                                        <div class="flex space-x-1">
-                                                            <button @click="openEditModal(activeWedding)" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-200 transition" title="Edit"><i class="fas fa-edit text-slate-600"></i></button>
-                                                            <button @click="deleteWedding(activeWedding.id)" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-red-100 transition" title="Delete"><i class="fas fa-trash-alt text-red-500"></i></button>
-                                                        </div>
+                                                    <div class="flex space-x-2">
+                                                        <button @click="openEditModal(activeWedding)" class="w-10 h-10 flex items-center justify-center rounded-full bg-slate-100 hover:bg-slate-200 transition" title="Edit Detail"><i class="fas fa-edit text-slate-600"></i></button>
+                                                        <button @click="deleteWedding(activeWedding.id)" class="w-10 h-10 flex items-center justify-center rounded-full bg-red-100 hover:bg-red-200 transition" title="Hapus Jadwal"><i class="fas fa-trash-alt text-red-500"></i></button>
                                                     </div>
                                                 </div>
-                                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                                    <div class="bg-white p-4 rounded-lg border border-slate-200 space-y-2">
-                                                        <h3 class="font-bold flex items-center text-slate-800"><i class="fas fa-map-marker-alt w-5 mr-2 text-slate-400"></i>Lokasi</h3>
-                                                        <p class="text-[var(--text-muted)] pl-7">{{ activeWedding.location || 'Belum diatur' }}</p>
-                                                    </div>
-                                                    <div class="bg-white p-4 rounded-lg border border-slate-200 space-y-3">
-                                                        <h3 class="font-bold flex items-center text-slate-800"><i class="fas fa-address-book w-5 mr-2 text-slate-400"></i>Kontak</h3>
-                                                        <div v-if="activeWedding.contacts.phone" class="flex items-center justify-between pl-7">
-                                                            <p class="text-[var(--text-muted)]">{{ activeWedding.contacts.phone }}</p>
-                                                            <div class="flex space-x-2"><a :href="whatsappLink" target="_blank" class="w-7 h-7 flex items-center justify-center rounded-full bg-green-100 text-green-600 hover:bg-green-200" title="Chat di WhatsApp"><i class="fab fa-whatsapp"></i></a><button @click="copyToClipboard(activeWedding.contacts.phone)" class="w-7 h-7 flex items-center justify-center rounded-full bg-slate-100 text-slate-600 hover:bg-slate-200" title="Salin nomor"><i class="fas fa-copy"></i></button></div>
-                                                        </div>
-                                                        <div v-if="activeWedding.contacts.email" class="flex items-center justify-between pl-7">
-                                                            <p class="text-[var(--text-muted)] truncate">{{ activeWedding.contacts.email }}</p>
-                                                            <div class="flex space-x-2"><a :href="`mailto:${activeWedding.contacts.email}`" class="w-7 h-7 flex items-center justify-center rounded-full bg-red-100 text-red-600 hover:bg-red-200" title="Kirim Email"><i class="fas fa-envelope"></i></a><button @click="copyToClipboard(activeWedding.contacts.email)" class="w-7 h-7 flex items-center justify-center rounded-full bg-slate-100 text-slate-600 hover:bg-slate-200" title="Salin email"><i class="fas fa-copy"></i></button></div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="mt-4"><h3 class="font-bold mb-2 text-slate-800">Catatan Planner</h3><textarea v-model="activeWedding.notes" @blur="saveActiveWedding" class="w-full h-24 p-3 bg-white text-slate-700 focus:outline-none rounded-lg resize-none border border-slate-200 focus:ring-2 focus:ring-[var(--primary)]" placeholder="Tambahkan catatan..."></textarea></div>
                                             </div>
+
+                                            <!-- NEW: Info Dashboard -->
+                                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                                <div class="bg-white p-4 rounded-2xl shadow-sm flex items-start space-x-4">
+                                                    <div class="w-10 h-10 rounded-full bg-blue-100 text-blue-500 flex items-center justify-center flex-shrink-0"><i class="fas fa-map-marker-alt"></i></div>
+                                                    <div>
+                                                        <p class="text-sm text-slate-500">Lokasi</p>
+                                                        <p class="font-semibold text-slate-700">{{ activeWedding.location || 'Belum diatur' }}</p>
+                                                    </div>
+                                                </div>
+                                                <div class="bg-white p-4 rounded-2xl shadow-sm flex items-start space-x-4">
+                                                    <div class="w-10 h-10 rounded-full bg-green-100 text-green-500 flex items-center justify-center flex-shrink-0"><i class="fas fa-phone-alt"></i></div>
+                                                    <div>
+                                                        <p class="text-sm text-slate-500">Kontak</p>
+                                                        <a v-if="activeWedding.contacts.phone" :href="whatsappLink" target="_blank" class="font-semibold text-slate-700 hover:underline">{{ activeWedding.contacts.phone }}</a>
+                                                        <p v-else class="font-semibold text-slate-700">Belum diatur</p>
+                                                    </div>
+                                                </div>
+                                                <div class="bg-white p-4 rounded-2xl shadow-sm flex items-start space-x-4">
+                                                    <div class="relative w-10 h-10 flex-shrink-0">
+                                                        <svg class="progress-circle w-full h-full" viewBox="0 0 36 36"><path class="text-slate-200" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-width="4"></path><path class="text-lime-500 transition-all duration-500" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-width="4" :stroke-dasharray="`${getTaskProgress(activeWedding).percent}, 100`"></path></svg>
+                                                        <div class="absolute inset-0 flex items-center justify-center text-lime-600 font-bold text-xs">{{ getTaskProgress(activeWedding).percent }}%</div>
+                                                    </div>
+                                                    <div>
+                                                        <p class="text-sm text-slate-500">Tugas Selesai</p>
+                                                        <p class="font-semibold text-slate-700">{{ getTaskProgress(activeWedding).done }} dari {{ getTaskProgress(activeWedding).total }}</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- NEW: Tabbed Interface -->
+                                            <div>
+                                                <div class="flex space-x-2 p-1 bg-slate-200 rounded-full mb-4">
+                                                    <button @click="setActiveTab('tugas')" class="flex-1 py-2 rounded-full font-semibold transition-colors" :class="activeTab === 'tugas' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-600'">Tugas</button>
+                                                    <button @click="setActiveTab('linimasa')" class="flex-1 py-2 rounded-full font-semibold transition-colors" :class="activeTab === 'linimasa' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-600'">Linimasa</button>
+                                                    <button @click="setActiveTab('files')" class="flex-1 py-2 rounded-full font-semibold transition-colors" :class="activeTab === 'files' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-600'">File Klien</button>
+                                                    <button @click="setActiveTab('catatan')" class="flex-1 py-2 rounded-full font-semibold transition-colors" :class="activeTab === 'catatan' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-600'">Catatan</button>
+                                                </div>
 
-                                            <div v-if="activeWedding.clientNotes" class="bg-amber-50 p-6 rounded-2xl border-t-4 border-amber-200"><h3 class="font-bold text-lg text-amber-800 flex items-center mb-2"><i class="fas fa-comment-dots mr-2"></i>Catatan dari Klien</h3><p class="text-amber-900 whitespace-pre-line">{{ activeWedding.clientNotes }}</p></div>
-                                            
-                                            <div class="bg-blue-50 rounded-2xl shadow-sm border-t-4 border-blue-200 p-6">
-                                                <div class="flex items-center justify-between mb-4">
-                                                    <h2 class="text-xl font-bold text-blue-900">Foto Wajib</h2>
-                                                    <button @click="openShotModal" class="font-semibold text-slate-900 bg-lime-300 px-4 py-1.5 rounded-lg text-sm transition hover:opacity-90">Tambah</button>
-                                                </div>
-                                                <div ref="shotListContainer" class="mt-4 space-y-3" v-if="activeWedding.shots && activeWedding.shots.length > 0">
-                                                    <div v-for="shot in activeWedding.shots" :key="shot.id" class="flex items-center p-3 rounded-lg" :class="shot.isClientShot ? 'bg-amber-100/60' : 'bg-white'">
-                                                        <i class="fas fa-grip-vertical drag-handle text-slate-400 mr-3 cursor-grab"></i>
-                                                        <label class="flex items-center cursor-pointer flex-grow">
-                                                            <input type="checkbox" v-model="shot.completed" @change="saveClientData" class="hidden">
-                                                            <span class="w-6 h-6 border-2 border-slate-300 rounded-md flex items-center justify-center mr-4 transition-all flex-shrink-0" :class="{'bg-slate-800 border-slate-800': shot.completed}"><i class="fas fa-check text-white text-sm" v-show="shot.completed"></i></span>
-                                                            <p class="font-medium" :class="{'line-through text-[var(--text-muted)]': shot.completed}">{{ shot.title }}</p>
-                                                        </label>
-                                                        <button @click="deleteShot(shot.id)" class="ml-auto w-8 h-8 flex items-center justify-center text-slate-400 hover:text-red-500 hover:bg-red-100/70 rounded-full flex-shrink-0 disabled:opacity-50 disabled:hover:bg-transparent disabled:cursor-not-allowed" :disabled="shot.isClientShot" :title="shot.isClientShot ? 'Tidak bisa menghapus shot dari klien' : 'Hapus'"><i class="fas fa-times"></i></button>
-                                                    </div>
-                                                </div>
-                                                <div v-else class="text-center py-8 text-blue-800/60"><i class="fas fa-camera-slash text-4xl mb-4"></i><p class="font-semibold text-blue-900">Belum ada foto wajib.</p><p class="text-sm mt-1">Tambahkan daftar foto yang harus diambil.</p></div>
-                                            </div>
-
-                                            <div class="bg-green-50 rounded-2xl shadow-sm border-t-4 border-green-200 p-6">
-                                                <h2 class="text-xl font-bold text-green-900 mb-4">Referensi Foto Klien</h2>
-                                                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-                                                    <div v-for="(photo, index) in activeWedding.photos" :key="photo.path" class="group aspect-square bg-slate-100 rounded-lg overflow-hidden relative cursor-pointer" @click="openPhotoPreview(photo.url)">
-                                                        <img :src="photo.url" class="w-full h-full object-cover" alt="Wedding preview">
-                                                        <div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center"><i class="fas fa-eye text-white text-2xl"></i></div>
-                                                        <button @click.stop="deletePhoto(index, photo)" class="absolute top-1 right-1 bg-black bg-opacity-40 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">×</button>
-                                                    </div>
-                                                    <div class="relative">
-                                                        <button @click="addPhoto" class="aspect-square bg-white rounded-lg flex items-center justify-center text-slate-400 border-2 border-dashed border-slate-300 hover:border-lime-400 hover:text-lime-500 transition-colors w-full h-full"><i class="fas fa-plus text-3xl"></i></button>
-                                                        <div v-if="isUploading" class="photo-upload-overlay rounded-lg"><i class="fas fa-spinner fa-spin text-slate-600 text-2xl"></i></div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            
-                                            <div class="bg-violet-50 rounded-2xl shadow-sm border-t-4 border-violet-200 p-6">
-                                                <div class="flex items-center justify-between mb-4">
-                                                    <h2 class="text-xl font-bold text-violet-900">Linimasa Acara</h2>
-                                                    <button @click="openTimelineModal" class="font-semibold text-slate-900 bg-lime-300 px-4 py-1.5 rounded-lg text-sm transition hover:opacity-90">Tambah</button>
-                                                </div>
-                                                <div ref="timelineContainer" class="relative border-l-2 border-violet-200 ml-2" v-if="activeWedding.timeline && activeWedding.timeline.length > 0">
-                                                    <div v-for="(item, index) in activeWedding.timeline" :key="item.id" class="relative pl-8 pb-8">
-                                                        <div class="absolute -left-2.5 top-1 flex items-center">
-                                                            <i class="fas fa-grip-vertical drag-handle text-slate-400 -ml-5 mr-1 cursor-grab"></i>
-                                                            <div class="w-4 h-4 bg-violet-100 border-4 border-violet-800 rounded-full z-10"></div>
-                                                        </div>
-                                                        <div class="flex justify-between items-start">
-                                                            <div>
-                                                                <p class="font-semibold text-violet-900">{{ item.title }}</p><span class="text-sm font-semibold bg-violet-800 text-white px-2 py-0.5 rounded-full">{{ item.time }}</span>
-                                                                <p class="text-sm text-violet-700 mt-1">{{ item.notes }}</p>
+                                                <!-- Tab Content -->
+                                                <div class="bg-white p-6 rounded-2xl shadow-sm min-h-[300px]">
+                                                    <div v-if="activeTab === 'tugas'">
+                                                        <div ref="shotListContainer" class="space-y-3" v-if="activeWedding.shots && activeWedding.shots.length > 0">
+                                                            <div v-for="shot in activeWedding.shots" :key="shot.id" class="flex items-center p-3 rounded-lg" :class="shot.isClientShot ? 'bg-amber-100/50' : 'bg-slate-100/60'">
+                                                                <i class="fas fa-grip-vertical drag-handle text-slate-400 mr-3 cursor-grab"></i>
+                                                                <label class="flex items-center cursor-pointer flex-grow"><input type="checkbox" v-model="shot.completed" @change="saveData" class="hidden"><span class="w-6 h-6 border-2 border-slate-300 rounded-md flex items-center justify-center mr-4 transition-all flex-shrink-0" :class="{'bg-slate-800 border-slate-800': shot.completed}"><i class="fas fa-check text-white text-sm" v-show="shot.completed"></i></span><p class="font-medium" :class="{'line-through text-slate-500': shot.completed}">{{ shot.title }}</p></label>
+                                                                <button @click="deleteShot(shot.id)" class="ml-auto w-8 h-8 flex items-center justify-center text-slate-400 hover:text-red-500 hover:bg-red-100/70 rounded-full flex-shrink-0 disabled:opacity-30 disabled:hover:bg-transparent disabled:cursor-not-allowed" :disabled="shot.isClientShot" :title="shot.isClientShot ? 'Tidak bisa menghapus shot dari klien' : 'Hapus'"><i class="fas fa-times"></i></button>
                                                             </div>
-                                                            <button @click="deleteTimelineItem(item.id)" class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-red-500"><i class="fas fa-trash-alt text-xs"></i></button>
                                                         </div>
+                                                        <div v-else class="text-center py-16 text-slate-400"><i class="fas fa-check-circle text-4xl mb-4"></i><p class="font-semibold text-slate-600">Belum ada tugas.</p><p class="text-sm mt-1">Tambahkan daftar foto wajib atau tugas lainnya.</p></div>
                                                     </div>
+
+                                                    <div v-if="activeTab === 'linimasa'">
+                                                        <div ref="timelineContainer" class="relative border-l-2 border-slate-200 ml-2" v-if="activeWedding.timeline && activeWedding.timeline.length > 0">
+                                                            <div v-for="(item, index) in activeWedding.timeline" :key="item.id" class="relative pl-8 pb-8"><div class="absolute -left-2.5 top-1 flex items-center"><i class="fas fa-grip-vertical drag-handle text-slate-400 -ml-5 mr-1 cursor-grab"></i><div class="w-4 h-4 bg-white border-4 border-slate-800 rounded-full z-10"></div></div><div class="flex justify-between items-start"><div><p class="font-semibold text-slate-800">{{ item.title }}</p><span class="text-sm font-semibold bg-slate-800 text-white px-2 py-0.5 rounded-full">{{ item.time }}</span><p class="text-sm text-slate-500 mt-1">{{ item.notes }}</p></div><button @click="deleteTimelineItem(item.id)" class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-red-500"><i class="fas fa-trash-alt text-xs"></i></button></div></div>
+                                                        </div>
+                                                        <div v-else class="text-center py-16 text-slate-400"><i class="fas fa-list-ol text-4xl mb-4"></i><p class="font-semibold text-slate-600">Belum ada linimasa.</p><p class="text-sm mt-1">Buat jadwal acara dari awal hingga akhir.</p></div>
+                                                    </div>
+
+                                                    <div v-if="activeTab === 'files'">
+                                                        <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-4" v-if="activeWedding.photos && activeWedding.photos.length > 0">
+                                                            <div v-for="(photo, index) in activeWedding.photos" :key="photo.path" class="group aspect-square bg-slate-100 rounded-lg overflow-hidden relative cursor-pointer" @click="openPhotoPreview(photo.url)"><img :src="photo.url" class="w-full h-full object-cover" alt="Wedding preview"><div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center"><i class="fas fa-eye text-white text-2xl"></i></div><button @click.stop="deletePhoto(index, photo)" class="absolute top-1 right-1 bg-black bg-opacity-40 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">×</button></div>
+                                                            <div class="relative"><button @click="addPhoto" class="aspect-square bg-slate-100/60 rounded-lg flex items-center justify-center text-slate-400 border-2 border-dashed border-slate-300 hover:border-lime-400 hover:text-lime-500 transition-colors w-full h-full"><i class="fas fa-plus text-3xl"></i></button><div v-if="isUploading" class="photo-upload-overlay rounded-lg"><i class="fas fa-spinner fa-spin text-slate-600 text-2xl"></i></div></div>
+                                                        </div>
+                                                        <div v-else class="text-center py-16 text-slate-400"><i class="fas fa-folder-open text-4xl mb-4"></i><p class="font-semibold text-slate-600">Belum ada file dari klien.</p><p class="text-sm mt-1">Klien dapat mengunggah file referensi dari portal mereka.</p></div>
+                                                    </div>
+
+                                                    <div v-if="activeTab === 'catatan'" class="space-y-6">
+                                                        <div><h3 class="font-bold mb-2 text-slate-800">Catatan Planner</h3><textarea v-model="activeWedding.notes" @blur="saveActiveWedding" class="w-full h-24 p-3 bg-slate-100 text-slate-700 focus:outline-none rounded-lg resize-none border border-slate-200 focus:ring-2 focus:ring-lime-500" placeholder="Tambahkan catatan..."></textarea></div>
+                                                        <div v-if="activeWedding.clientNotes"><h3 class="font-bold text-lg text-amber-800 flex items-center mb-2"><i class="fas fa-comment-dots mr-2"></i>Catatan dari Klien</h3><p class="text-amber-900 whitespace-pre-line bg-amber-50 p-4 rounded-lg">{{ activeWedding.clientNotes }}</p></div>
+                                                        <div v-else class="text-center py-8 text-slate-400"><p>Klien belum menambahkan catatan.</p></div>
+                                                    </div>
+
                                                 </div>
-                                                <div v-else class="text-center py-8 text-violet-800/60"><i class="fas fa-list-ol text-4xl mb-4"></i><p class="font-semibold text-violet-900">Belum ada linimasa.</p><p class="text-sm mt-1">Buat jadwal acara dari awal hingga akhir.</p></div>
                                             </div>
+
                                         </template>
                                         <template v-else><div class="flex flex-col items-center justify-center text-center h-[60vh] bg-[var(--surface)] rounded-2xl shadow-sm border border-[var(--border-color)] p-4"><i class="fas fa-mouse-pointer text-5xl text-slate-300 mb-4"></i><h2 class="text-2xl font-bold text-[var(--text-main)]">Pilih Jadwal</h2><p class="text-[var(--text-muted)] mt-2">Pilih sebuah jadwal dari daftar di samping<br>untuk melihat detail lengkapnya.</p></div></template>
                                     </div>
                                 </main>
 
+                                <!-- INVOICE VIEW -->
                                 <main v-if="currentView === 'invoice'">
                                     <div class="mb-6 flex justify-between items-center"><h1 class="text-3xl font-extrabold text-[var(--text-main)]">Invoice Maker</h1><p class="text-[var(--text-muted)]">Buat & lihat invoice secara real-time.</p></div>
                                     <div class="flex items-center space-x-2 mb-6"><button @click="saveInvoiceTemplate" class="bg-slate-200 text-slate-700 font-bold py-2 px-4 rounded-lg hover:bg-slate-300 transition text-sm">Simpan Template</button><button @click="loadInvoiceTemplate" class="bg-slate-200 text-slate-700 font-bold py-2 px-4 rounded-lg hover:bg-slate-300 transition text-sm">Gunakan Template</button><button @click="generatePDF" class="bg-slate-800 text-white font-bold py-2 px-5 rounded-lg hover:bg-slate-900 transition text-sm flex items-center" :disabled="invoice.isGenerating"><i v-if="invoice.isGenerating" class="fas fa-spinner fa-spin mr-2"></i> Ekspor PDF</button></div>
@@ -291,7 +288,9 @@
                         </transition>
                     </div>
 
-                    <button v-if="currentView === 'jadwal'" @click="addWedding" class="fixed bottom-24 lg:bottom-6 right-6 w-16 h-16 bg-[var(--primary)] rounded-2xl flex items-center justify-center shadow-lg transform active:scale-90 transition-transform z-40"><i class="fas fa-plus text-2xl text-slate-900"></i></button>
+                    <button v-if="currentView === 'beranda'" @click="addWedding" class="fixed bottom-24 lg:bottom-6 right-6 w-16 h-16 bg-[var(--primary)] rounded-full flex items-center justify-center shadow-lg transform active:scale-95 transition-transform z-40"><i class="fas fa-plus text-2xl text-slate-900"></i></button>
+                    <button v-if="currentView === 'jadwal' && activeTab === 'tugas'" @click="openShotModal" class="fixed bottom-24 lg:bottom-6 right-6 w-16 h-16 bg-slate-800 text-white rounded-full flex items-center justify-center shadow-lg transform active:scale-95 transition-transform z-40"><i class="fas fa-check text-2xl"></i></button>
+                    <button v-if="currentView === 'jadwal' && activeTab === 'linimasa'" @click="openTimelineModal" class="fixed bottom-24 lg:bottom-6 right-6 w-16 h-16 bg-slate-800 text-white rounded-full flex items-center justify-center shadow-lg transform active:scale-95 transition-transform z-40"><i class="fas fa-list-ol text-2xl"></i></button>
                     
                     <div class="fixed bottom-6 left-1/2 -translate-x-1/2 w-auto bg-[var(--nav-bg)] px-3 py-2 rounded-full shadow-lg flex items-center justify-center space-x-2 z-40 lg:hidden">
                          <button @click="setView('beranda')" class="w-12 h-12 flex items-center justify-center rounded-full transition-colors" :class="currentView === 'beranda' ? 'bg-white/20' : 'hover:bg-white/10'"><i class="fas fa-home text-white text-lg"></i></button>
@@ -312,9 +311,8 @@
             </transition-group>
         </div>
 
-        <!-- MODALS -->
         <transition name="modal"><div v-if="photoToPreview" @click="closePhotoPreview" class="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 p-4 cursor-pointer"><img :src="photoToPreview" class="max-w-full max-h-full object-contain rounded-lg shadow-2xl" @click.stop><button @click.stop="closePhotoPreview(true)" class="absolute top-4 right-4 text-white text-4xl font-light hover:opacity-75 transition-opacity">×</button></div></transition>
-        <transition name="modal"><div v-if="showShotModal" class="fixed inset-0 flex items-center justify-center z-40"><div @click="closeShotModal()" class="absolute inset-0 bg-black bg-opacity-30"></div><div class="bg-white rounded-2xl p-6 w-full max-w-md relative z-10 shadow-xl m-4"><h3 class="text-xl font-bold text-slate-800 mb-4">Tambah Foto Wajib</h3><form @submit.prevent="addShot" class="space-y-4"><div><label class="block text-sm font-medium text-slate-700 mb-1">Judul Foto</label><input v-model="newShot.title" type="text" class="w-full px-4 py-3 bg-slate-100 rounded-lg border-none" required></div><div><label class="block text-sm font-medium text-slate-700 mb-1">Catatan</label><textarea v-model="newShot.description" class="w-full px-4 py-3 bg-slate-100 rounded-lg border-none" rows="3"></textarea></div><div class="flex justify-end space-x-3 pt-2"><button type="button" @click="closeShotModal()" class="px-5 py-2 bg-slate-200 rounded-lg font-semibold">Batal</button><button type="submit" class="px-5 py-2 bg-slate-800 text-white rounded-lg font-semibold">Tambah</button></div></form></div></div></transition>
+        <transition name="modal"><div v-if="showShotModal" class="fixed inset-0 flex items-center justify-center z-40"><div @click="closeShotModal()" class="absolute inset-0 bg-black bg-opacity-30"></div><div class="bg-white rounded-2xl p-6 w-full max-w-md relative z-10 shadow-xl m-4"><h3 class="text-xl font-bold text-slate-800 mb-4">Tambah Tugas</h3><form @submit.prevent="addShot" class="space-y-4"><div><label class="block text-sm font-medium text-slate-700 mb-1">Judul Tugas</label><input v-model="newShot.title" type="text" class="w-full px-4 py-3 bg-slate-100 rounded-lg border-none" required></div><div><label class="block text-sm font-medium text-slate-700 mb-1">Catatan</label><textarea v-model="newShot.description" class="w-full px-4 py-3 bg-slate-100 rounded-lg border-none" rows="3"></textarea></div><div class="flex justify-end space-x-3 pt-2"><button type="button" @click="closeShotModal()" class="px-5 py-2 bg-slate-200 rounded-lg font-semibold">Batal</button><button type="submit" class="px-5 py-2 bg-slate-800 text-white rounded-lg font-semibold">Tambah</button></div></form></div></div></transition>
         <transition name="modal"><div v-if="showEditModal && weddingToEdit" class="fixed inset-0 flex items-center justify-center z-40"><div @click="closeEditModal()" class="absolute inset-0 bg-black bg-opacity-30"></div><div class="bg-white rounded-2xl w-full max-w-2xl relative z-10 shadow-xl m-4 max-h-[90vh] overflow-y-auto"><div class="p-6 space-y-4"><h3 class="text-xl font-bold text-slate-800 mb-4">Edit Detail Pernikahan</h3><form @submit.prevent="updateWedding" class="space-y-6 text-slate-700">
             <fieldset class="border border-slate-200 p-4 rounded-lg"><legend class="px-2 font-bold text-slate-600">Detail Acara</legend><div class="space-y-4"><div><label class="block text-sm font-medium">Judul Acara</label><input type="text" v-model="weddingToEdit.title" class="mt-1 w-full px-4 py-3 bg-slate-100 rounded-lg border-none" required></div><div class="grid grid-cols-1 md:grid-cols-2 gap-4"><div><label class="block text-sm font-medium">Tanggal</label><input type="date" v-model="weddingToEdit.date" class="mt-1 w-full px-4 py-3 bg-slate-100 rounded-lg border-none" required></div><div><label class="block text-sm font-medium">Lokasi</label><input type="text" v-model="weddingToEdit.location" class="mt-1 w-full px-4 py-3 bg-slate-100 rounded-lg border-none" placeholder="cth: Gedung ABC, Jakarta"></div></div></div></fieldset>
             <fieldset class="border border-slate-200 p-4 rounded-lg"><legend class="px-2 font-bold text-slate-600">Kontak Klien</legend><div class="space-y-4"><div class="grid grid-cols-1 md:grid-cols-2 gap-4"><div><label class="block text-sm font-medium">Nama Mempelai 1</label><input type="text" v-model="weddingToEdit.contacts.bride" class="mt-1 w-full px-4 py-3 bg-slate-100 rounded-lg border-none"></div><div><label class="block text-sm font-medium">Nama Mempelai 2</label><input type="text" v-model="weddingToEdit.contacts.groom" class="mt-1 w-full px-4 py-3 bg-slate-100 rounded-lg border-none"></div></div><div class="grid grid-cols-1 md:grid-cols-2 gap-4"><div><label class="block text-sm font-medium">No. WhatsApp</label><input type="tel" v-model="weddingToEdit.contacts.phone" class="mt-1 w-full px-4 py-3 bg-slate-100 rounded-lg border-none"></div><div><label class="block text-sm font-medium">Email</label><input type="email" v-model="weddingToEdit.contacts.email" class="mt-1 w-full px-4 py-3 bg-slate-100 rounded-lg border-none"></div></div></div></fieldset>
@@ -343,6 +341,7 @@
                     forgotPassword: { email: '', error: '', success: '' },
                     changePassword: { newPassword: '', error: '', success: '', isPasswordVisible: false },
                     currentView: 'beranda', activeWedding: null, weddings: [], searchQuery: '',
+                    activeTab: 'tugas',
                     calendar: { date: new Date(), year: 0, month: 0, monthName: '', days: [] },
                     selectedDate: null,
                     invoice: { number: 'INV-001', date: (new Date).toISOString().split("T")[0], dueDate: '', client: { name: '', address: '' }, items: [{ description: 'Jasa Fotografi Hari-H', quantity: 1, rate: 5000000 }], taxRate: 10, invoicerName: 'Amlo List', invoicerSlogan: 'Jasa Perencanaan Acara Profesional', notes: 'Terima kasih atas kepercayaan Anda.\nPembayaran dapat ditransfer ke rekening:\nBCA 123456789 a/n John Doe', isGenerating: false, },
@@ -390,13 +389,14 @@
                 invoiceTotal() { const taxAmount = this.invoiceSubtotal * (this.invoice.taxRate / 100); return this.invoiceSubtotal + taxAmount }
             },
             methods: {
+                setActiveTab(tabName) { this.activeTab = tabName; },
                 addToast(message, type = 'info', duration = 3000) { const id = Date.now(); this.toasts.push({ id, message, type }); if (duration) { setTimeout(() => this.removeToast(id), duration); } },
                 removeToast(id) { this.toasts = this.toasts.filter(toast => toast.id !== id); },
                 initSortable(containerRef, listName) {
                     const container = this.$refs[containerRef]; if (!container) return null;
                     return new Sortable(container, {
                         handle: '.drag-handle', animation: 150, ghostClass: 'sortable-ghost', chosenClass: 'sortable-chosen',
-                        onEnd: (evt) => { if (!this.activeWedding || !this.activeWedding[listName]) return; const item = this.activeWedding[listName].splice(evt.oldIndex, 1)[0]; this.activeWedding[listName].splice(evt.newIndex, 0, item); this.saveActiveWedding(); }
+                        onEnd: (evt) => { if (!this.activeWedding || !this.activeWedding[listName]) return; const item = this.activeWedding[listName].splice(evt.oldIndex, 1)[0]; this.activeWedding[listName].splice(evt.newIndex, 0, item); this.saveData(); }
                     });
                 },
                 initShotListSortable() { if (this.shotListSortable) this.shotListSortable.destroy(); this.shotListSortable = this.initSortable('shotListContainer', 'shots'); },
@@ -454,6 +454,10 @@
                             }
                         }, error => console.error("Error fetching client data: ", error));
                 },
+                saveData() {
+                    this.saveActiveWedding();
+                    this.saveClientData();
+                },
                 saveActiveWedding() {
                     if (!this.activeWedding || !this.activeWedding.id) return;
                     const weddingId = this.activeWedding.id;
@@ -478,8 +482,8 @@
                 },
                 deleteWedding(weddingId) { if (confirm("Apakah Anda yakin ingin menghapus jadwal ini? Data tidak dapat dikembalikan.")) { db.collection('weddings').doc(weddingId).delete().then(() => { this.addToast("Jadwal dihapus.", "info"); }).catch(error => { console.error("Error deleting wedding: ", error); this.addToast("Gagal menghapus jadwal.", "error"); }); } },
                 updateWedding(){ if(!this.weddingToEdit || !this.weddingToEdit.id) return; const weddingData = JSON.parse(JSON.stringify(this.weddingToEdit)); const weddingId = weddingData.id; delete weddingData.id; db.collection('weddings').doc(weddingId).set(weddingData, { merge: true }).then(() => { this.closeEditModal(true); this.addToast("Detail berhasil disimpan.", "success"); }).catch(error => { console.error("Error updating wedding: ", error); this.addToast("Gagal menyimpan perubahan.", "error"); }); },
-                addShot(){ if(!this.newShot.title.trim()||!this.activeWedding)return; const wasEmpty=!this.activeWedding.shots || this.activeWedding.shots.length===0; this.activeWedding.shots.push({id:Date.now(),...this.newShot,completed:false, isClientShot: false}); this.saveActiveWedding(); this.closeShotModal(true); this.addToast("Foto wajib ditambahkan.","success"); if(wasEmpty){nextTick(()=>this.initShotListSortable());}},
-                deleteShot(shotId){ if(!this.activeWedding)return; const shot = this.activeWedding.shots.find(s => s.id === shotId); if (shot && shot.isClientShot) { this.addToast("Tidak dapat menghapus shot dari klien.", "error"); return; } this.activeWedding.shots=this.activeWedding.shots.filter(t=>t.id!==shotId); this.saveActiveWedding(); this.addToast("Foto wajib dihapus.","info"); if(!this.activeWedding.shots || this.activeWedding.shots.length===0){this.destroySortableInstances();}},
+                addShot(){ if(!this.newShot.title.trim()||!this.activeWedding)return; const wasEmpty=!this.activeWedding.shots || this.activeWedding.shots.length===0; this.activeWedding.shots.push({id:Date.now(),...this.newShot,completed:false, isClientShot: false}); this.saveActiveWedding(); this.closeShotModal(true); this.addToast("Tugas ditambahkan.","success"); if(wasEmpty){nextTick(()=>this.initShotListSortable());}},
+                deleteShot(shotId){ if(!this.activeWedding)return; const shot = this.activeWedding.shots.find(s => s.id === shotId); if (shot && shot.isClientShot) { this.addToast("Tidak dapat menghapus shot dari klien.", "error"); return; } this.activeWedding.shots=this.activeWedding.shots.filter(t=>t.id!==shotId); this.saveActiveWedding(); this.addToast("Tugas dihapus.","info"); if(!this.activeWedding.shots || this.activeWedding.shots.length===0){this.destroySortableInstances();}},
                 addTimelineItem(){ if(!this.newTimelineItem.title.trim()||!this.activeWedding)return; const wasEmpty=!this.activeWedding.timeline || this.activeWedding.timeline.length===0; this.activeWedding.timeline.push({id:Date.now(),...this.newTimelineItem}); this.activeWedding.timeline.sort((a,b)=>a.time.localeCompare(b.time)); this.saveActiveWedding(); this.closeTimelineModal(true); this.addToast("Linimasa ditambahkan.","success"); if(wasEmpty){nextTick(()=>this.initTimelineSortable());}},
                 deleteTimelineItem(itemId){ if(!this.activeWedding)return; this.activeWedding.timeline=this.activeWedding.timeline.filter(t=>t.id!==itemId); this.saveActiveWedding(); this.addToast("Item linimasa dihapus.","info"); if(!this.activeWedding.timeline || this.activeWedding.timeline.length===0){this.destroySortableInstances();}},
                 addPhoto() { if (this.isUploading || !this.activeWedding) return; this.$refs.photoUploader.click(); },
@@ -493,11 +497,11 @@
                 getClientPortalLink(id) { const url = new URL('portal.html', window.location.href); url.searchParams.set('id', id); return url.href; },
                 copyToClipboard(text) { navigator.clipboard.writeText(text).then(() => { this.addToast(`'${text}' disalin!`, 'info'); }); },
                 getTaskProgress(wedding){if(!wedding||!wedding.shots||wedding.shots.length===0)return{percent:0,done:0,total:0};const total=wedding.shots.length,done=wedding.shots.filter(t=>t.completed).length;return{percent: total > 0 ? Math.round(done/total*100) : 0,done:done,total:total}},
-                goToJadwal(wedding){this.setActiveWedding(wedding);this.setView("jadwal")},
+                goToJadwal(wedding){this.activeTab = 'tugas'; this.setActiveWedding(wedding);this.setView("jadwal")},
                 setActiveWedding(wedding){this.activeWedding=wedding},
                 formatDateForDisplay(dateStr){if(!dateStr)return"-";const date=new Date(dateStr); if(dateStr.length === 10) { date.setUTCHours(0,0,0,0); } return isNaN(date.getTime()) ? dateStr : date.toLocaleDateString("id-ID",{day:"numeric",month:"long",year:"numeric"})},
                 formatCurrency(e){return new Intl.NumberFormat("id-ID",{style:"currency",currency:"IDR",minimumFractionDigits:0}).format(e)},
-                generateCalendar(){const date=this.calendar.date,year=date.getFullYear(),month=date.getMonth();this.calendar.year=year;this.calendar.month=month;this.calendar.monthName=date.toLocaleString("id-ID",{month:"long"});const firstDay=new Date(year,month,1).getDay(),numDays=new Date(year,month+1,0).getDate();let days=[];for(let i=0;i<firstDay;i++)days.push({date:""});for(let i=1;i<=numDays;i++){const fullDate=`${year}-${String(month+1).padStart(2,"0")}-${String(i).padStart(2,"0")}`;days.push({date:i,fullDate:fullDate,isToday:(new Date).toDateString()===(new Date(year,month,i)).toDateString(),hasEvent:this.scheduleDates.has(fullDate)})} const totalCells = days.length; for(let i = 0; i < (42 - totalCells); i++) { days.push({date: ''}); } this.calendar.days=days},
+                generateCalendar(){const date=this.calendar.date,year=date.getFullYear(),month=date.getMonth();this.calendar.year=year;this.calendar.month=month;this.calendar.monthName=date.toLocaleString("id-ID",{month:"long"});const firstDay=new Date(year,month,1).getDay(),numDays=new Date(year,month+1,0).getDate();let days=[];for(let i=0;i<firstDay;i++)days.push({date:""});for(let i=1;i<=numDays;i++){const fullDate=`${year}-${String(month+1).padStart(2,"0")}-${String(i).padStart(2,"0")}`;days.push({date:i,fullDate:fullDate,isToday:(new Date).toDateString()===(new Date(year,month,i)).toDateString(),hasEvent:this.scheduleDates.has(fullDate)})} const totalCells = days.length; const remainingCells = 42 - totalCells; for(let i = 0; i < remainingCells; i++) { days.push({date: ''}); } this.calendar.days=days},
                 changeMonth(direction){this.calendar.date.setMonth(this.calendar.date.getMonth()+direction);this.generateCalendar()},
                 selectDate(day){if(day.date){this.selectedDate=this.selectedDate===day.fullDate?null:day.fullDate}},
             }
