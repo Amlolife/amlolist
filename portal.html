@@ -134,8 +134,8 @@
                     isLoading: true,
                     errorMessage: '',
                     weddingId: '',
-                    wedding: null, // This will hold the planner's data (read-only)
-                    clientData: { photos: [], shots: [], notes: '' }, // This holds the data the client can edit
+                    wedding: null, 
+                    clientData: { photos: [], shots: [], notes: '' },
                     firestoreUnsubscribe: null,
                     clientDataUnsubscribe: null,
                     isUploading: false,
@@ -160,12 +160,11 @@
             methods: {
                 loadWeddingData() {
                     this.isLoading = true;
-                    // Listener for read-only planner data
                     this.firestoreUnsubscribe = db.collection('weddings').doc(this.weddingId)
                         .onSnapshot(doc => {
                             if (doc.exists) {
                                 this.wedding = { id: doc.id, ...doc.data() };
-                                this.loadClientData(); // Now load the client's editable data
+                                this.loadClientData();
                             } else {
                                 this.errorMessage = "Jadwal ini tidak lagi tersedia atau link salah.";
                                 this.isLoading = false;
@@ -177,7 +176,6 @@
                         });
                 },
                 loadClientData() {
-                    // Listener for the client's data subcollection
                     this.clientDataUnsubscribe = db.collection('weddings').doc(this.weddingId)
                         .collection('clientData').doc('portal')
                         .onSnapshot(doc => {
@@ -194,8 +192,49 @@
                     clientDataRef.set(this.clientData, { merge: true })
                         .catch(err => console.error("Error saving client data:", err));
                 },
-                handlePhotoUpload(e) { /* ... same as before ... */ },
-                deletePhoto(index, photo) { /* ... same as before ... */ },
+                handlePhotoUpload(e) {
+                    const file = e.target.files[0];
+                    if (!file) return;
+                    this.isUploading = true;
+                    
+                    const uniqueFileName = `${Date.now()}-${file.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`;
+                    const filePath = `client_uploads/${this.wedding.id}/${uniqueFileName}`;
+                    
+                    const storageRef = storage.ref(filePath);
+                    const uploadTask = storageRef.put(file);
+
+                    uploadTask.on('state_changed', 
+                        () => {}, 
+                        (error) => {
+                            console.error("Upload failed:", error);
+                            this.isUploading = false;
+                        }, 
+                        () => {
+                            uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
+                                if (!this.clientData.photos) { this.clientData.photos = []; }
+                                this.clientData.photos.push({ path: filePath, url: downloadURL });
+                                this.saveClientData();
+                                this.isUploading = false;
+                            });
+                        }
+                    );
+                    e.target.value = "";
+                },
+                deletePhoto(index, photo) {
+                    if (!confirm("Hapus foto referensi ini?")) return;
+
+                    const photoRef = storage.ref(photo.path);
+                    photoRef.delete().then(() => {
+                        this.clientData.photos.splice(index, 1);
+                        this.saveClientData();
+                    }).catch((error) => {
+                        console.error("Error deleting photo:", error);
+                        if (error.code === 'storage/object-not-found') {
+                            this.clientData.photos.splice(index, 1);
+                            this.saveClientData();
+                        }
+                    });
+                },
                 addShot() {
                     if (!this.newShotTitle.trim()) return;
                     if (!this.clientData.shots) { this.clientData.shots = []; }
@@ -211,7 +250,12 @@
                     this.clientData.shots.splice(index, 1);
                     this.saveClientData();
                 },
-                formatDate(dateString) { /* ... same as before ... */ }
+                formatDate(dateString) {
+                    if (!dateString) return "-";
+                    const date = new Date(dateString);
+                    if (dateString.length === 10) { date.setUTCHours(0,0,0,0); }
+                    return isNaN(date.getTime()) ? dateString : date.toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" });
+                }
             }
         };
 
