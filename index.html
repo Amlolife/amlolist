@@ -16,7 +16,6 @@
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
-    <!-- ADDED: Firebase Storage SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-storage-compat.js"></script>
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -219,7 +218,6 @@
                 closeTimelineModal(goBack = true) { this.showTimelineModal = false; goBack && history.back() },
                 setView(view, pushState = true) { if(this.currentView === view && pushState) { return; } this.currentView = view; if (pushState) { history.pushState({ view: view }, '', `#${view}`); } },
 
-                // Auth Methods
                 login() { 
                     this.auth.error = ""; this.auth.loading = true;
                     auth.signInWithEmailAndPassword(this.auth.email, this.auth.password)
@@ -255,7 +253,6 @@
                         .catch(e => { this.forgotPassword.error = "Email tidak ditemukan." });
                 },
                 
-                // Firestore Data Methods
                 loadAppData() { 
                     this.appReady = false;
                     if (this.firestoreUnsubscribe) { this.firestoreUnsubscribe(); }
@@ -320,7 +317,6 @@
                         .catch(error => { console.error("Error loading template: ", error); if (showToast) this.addToast("Gagal memuat template.", "error"); });
                 },
                 
-                // Other App Methods
                 updateWedding(){ 
                     if(!this.weddingToEdit || !this.weddingToEdit.id)return; 
                     const weddingData = JSON.parse(JSON.stringify(this.weddingToEdit)); 
@@ -338,7 +334,7 @@
                 setActiveWedding(e){this.activeWedding=e,window.innerWidth<1024&&(this.currentView="jadwal")},
                 addTag(){if(!this.newTag.trim()||!this.weddingToEdit)return;this.weddingToEdit.tags.push({text:this.newTag,color:this.tagColors[this.weddingToEdit.tags.length%this.tagColors.length]}),this.newTag=""},
                 removeTag(e){this.weddingToEdit&&this.weddingToEdit.tags.splice(e,1)},
-
+                
                 addPhoto() {
                     if (this.isUploading) return;
                     this.activeWedding && this.$refs.photoUploader.click();
@@ -351,7 +347,9 @@
                     }
 
                     this.isUploading = true;
-                    const filePath = `${this.user.uid}/${this.activeWedding.id}/${Date.now()}-${file.name}`;
+                    // FIX: Create a valid path without slashes from the Firestore ID
+                    const uniqueFileName = `${Date.now()}-${file.name.replace(/[/]/g, '_')}`;
+                    const filePath = `${this.user.uid}/${this.activeWedding.id}/${uniqueFileName}`;
                     const storageRef = storage.ref(filePath);
                     const uploadTask = storageRef.put(file);
 
@@ -368,7 +366,7 @@
                                     this.activeWedding.photos = [];
                                 }
                                 this.activeWedding.photos.push({
-                                    name: `${Date.now()}-${file.name}`, // Use the same unique name for deletion
+                                    name: uniqueFileName, // Save the unique name for deletion
                                     url: downloadURL
                                 });
                                 this.saveActiveWedding();
