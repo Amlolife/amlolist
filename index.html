@@ -310,6 +310,9 @@
                         contacts: {bride:"",groom:"",email:"",phone:""}, 
                         details:{guests:0,type:"TBD",package:"TBD"},
                         showTimelineInPortal: false 
+                        portalPassword: Math.random().toString(36).substring(2, 10),
+        showTimelineInPortal: false,
+        clientNotes: ''
                     };
                     db.collection('weddings').add(newWeddingData)
                         .then(docRef => {
