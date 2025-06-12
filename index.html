@@ -13,7 +13,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
-    <!-- NEW: Using modern, modular Firebase JS SDK via ESM -->
     <script type="importmap">
     {
       "imports": {
@@ -46,7 +45,6 @@
         ::-webkit-scrollbar-track { background: #f1f5f9; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
-        .glass { background: rgba(255, 255, 255, 0.8); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); border: 1px solid var(--border-color); }
         .fade-enter-active, .fade-leave-active { transition: opacity 0.2s ease-out; }
         .fade-enter-from, .fade-leave-to { opacity: 0; }
         .modal-enter-active { transition: all 0.3s cubic-bezier(0.52, 0.02, 0.19, 1.02); }
@@ -224,7 +222,6 @@
             },
             mounted() { watch(() => this.activeWedding, (newWedding, oldWedding) => { if (oldWedding) { this.destroySortableInstances(); } if (newWedding) { nextTick(() => { this.initShotListSortable(); this.initTimelineSortable(); }); } }, { immediate: true }); },
             beforeUnmount() { window.removeEventListener('popstate', this.handleBackButton); this.destroySortableInstances(); if (this.firestoreUnsubscribe) { this.firestoreUnsubscribe(); } },
-
             computed: {
                 shotCompletionProgress() { if (!this.activeWedding || !this.activeWedding.shots.length) return 0; const e = this.activeWedding.shots.filter(e => e.completed).length; return Math.round(e / this.activeWedding.shots.length * 100) },
                 filteredWeddings() { let e = this.weddings; if (this.selectedDate && (e = e.filter(e => e.date === this.selectedDate)), this.searchQuery.trim()) { const t = this.searchQuery.toLowerCase(); return e.filter(e => e.title && e.title.toLowerCase().includes(t) || e.location && e.location.toLowerCase().includes(t) || e.contacts.bride && e.contacts.bride.toLowerCase().includes(t) || e.contacts.groom && e.contacts.groom.toLowerCase().includes(t) || e.contacts.phone && e.contacts.phone.toLowerCase().includes(t)) } return e },
@@ -237,7 +234,6 @@
                 invoiceTotal() { const e = this.invoiceSubtotal * (this.invoice.taxRate / 100); return this.invoiceSubtotal + e }
             },
             methods: {
-                // UI & Modal Methods
                 addToast(message, type = 'info', duration = 3000) { const id = Date.now(); this.toasts.push({ id, message, type }); if (duration) { setTimeout(() => this.removeToast(id), duration); } },
                 removeToast(id) { this.toasts = this.toasts.filter(toast => toast.id !== id); },
                 initShotListSortable() { if (this.shotListSortable) this.shotListSortable.destroy(); if (this.$refs.shotListContainer) { this.shotListSortable = new Sortable(this.$refs.shotListContainer, { handle: '.drag-handle', animation: 150, ghostClass: 'sortable-ghost', chosenClass: 'sortable-chosen', onEnd: (evt) => { const item = this.activeWedding.shots.splice(evt.oldIndex, 1)[0]; this.activeWedding.shots.splice(evt.newIndex, 0, item); this.saveActiveWedding(); } }); } },
@@ -246,17 +242,30 @@
                 handleBackButton(event) { if (this.photoToPreview) { this.closePhotoPreview(false); return; } if (this.showShotModal) { this.closeShotModal(false); return; } if (this.showEditModal) { this.closeEditModal(false); return; } if (this.showTimelineModal) { this.closeTimelineModal(false); return; } if (this.showForgotPasswordModal) { this.closeForgotPasswordModal(false); return; } if (this.showChangePasswordModal) { this.closeChangePasswordModal(false); return; } if (event.state && event.state.view) { this.setView(event.state.view, false); } else if (this.currentView !== 'beranda') { this.setView('beranda', false); } else { history.back(); } },
                 resetAllModals() { this.showForgotPasswordModal = !1, this.showChangePasswordModal = !1, this.showShotModal = !1, this.showEditModal = !1, this.showTimelineModal = !1, this.photoToPreview = null },
                 
+                // --- FIX: Restoring the missing modal methods ---
+                openForgotPasswordModal() { this.forgotPassword = { email: "", error: "", success: "" }; this.showForgotPasswordModal = true; history.pushState({ modal: "forgotPassword" }, "", "#forgot-password") },
+                closeForgotPasswordModal(goBack = true) { this.showForgotPasswordModal = false; goBack && history.back() },
+                openChangePasswordModal() { this.changePassword = { newPassword: "", error: "", success: "", isPasswordVisible: false }; this.showChangePasswordModal = true; history.pushState({ modal: "changePassword" }, "", "#change-password") },
+                closeChangePasswordModal(goBack = true) { this.showChangePasswordModal = false; goBack && history.back() },
+                openPhotoPreview(e) { this.photoToPreview = e; history.pushState({ modal: "photoPreview" }, "", "#preview") },
+                closePhotoPreview(goBack = true) { this.photoToPreview = null; goBack && history.back() },
+                openShotModal() { if(this.activeWedding) { this.newShot = { title: "", description: "" }; this.showShotModal = true; history.pushState({ modal: "shotModal" }, "", "#add-shot")} },
+                closeShotModal(goBack = true) { this.showShotModal = false; goBack && history.back() },
+                openEditModal(e) { this.weddingToEdit = JSON.parse(JSON.stringify(e)); this.showEditModal = true; history.pushState({ modal: "editModal" }, "", "#edit") },
+                closeEditModal(goBack = true) { this.showEditModal = false; this.weddingToEdit = null; goBack && history.back() },
+                openTimelineModal() { if(this.activeWedding) { this.newTimelineItem = { title: "", time: "", notes: "" }; this.showTimelineModal = true; history.pushState({ modal: "timelineModal" }, "", "#add-timeline")} },
+                closeTimelineModal(goBack = true) { this.showTimelineModal = false; goBack && history.back() },
+                setView(view, pushState = true) { if(this.currentView === view && pushState) { return; } this.currentView = view; if (pushState) { history.pushState({ view: view }, '', `#${view}`); } },
+
                 // Auth Methods
                 login() { 
-                    this.auth.error = "";
-                    this.auth.loading = true;
+                    this.auth.error = ""; this.auth.loading = true;
                     signInWithEmailAndPassword(auth, this.auth.email, this.auth.password)
                         .catch(e => { this.auth.error = "Email atau password salah."; })
                         .finally(() => { this.auth.loading = false; });
                 },
                 register() { 
-                    this.auth.error = "";
-                    this.auth.loading = true;
+                    this.auth.error = ""; this.auth.loading = true;
                     createUserWithEmailAndPassword(auth, this.auth.email, this.auth.password)
                         .catch(e => { 
                             if (e.code === "auth/email-already-in-use") { this.auth.error = "Email ini sudah terdaftar."; } 
@@ -266,21 +275,15 @@
                         })
                         .finally(() => { this.auth.loading = false; });
                 },
-                logout() { 
-                    signOut(auth);
-                    this.resetAllModals();
-                    this.addToast("Anda telah logout.", "info");
-                },
+                logout() { signOut(auth); this.resetAllModals(); this.addToast("Anda telah logout.", "info"); },
                 updateUserPassword() { 
                     this.changePassword.error = ""; this.changePassword.success = ""; const user = auth.currentUser; 
                     if (user) {
                         updatePassword(user, this.changePassword.newPassword).then(() => { 
-                            this.changePassword.success = "Password berhasil diubah!"; 
-                            this.addToast("Password berhasil diubah!", "success");
+                            this.changePassword.success = "Password berhasil diubah!"; this.addToast("Password berhasil diubah!", "success");
                             setTimeout(() => this.closeChangePasswordModal(), 2000);
                         }).catch(e => { 
-                            this.changePassword.error = "Password baru terlalu lemah atau perlu login ulang.";
-                            this.addToast("Gagal mengubah password.", "error");
+                            this.changePassword.error = "Password baru terlalu lemah atau perlu login ulang."; this.addToast("Gagal mengubah password.", "error");
                         });
                     }
                 },
@@ -299,18 +302,13 @@
                     const q = query(weddingsRef, where('ownerId', '==', this.user.uid), orderBy('date', 'desc'));
                     this.firestoreUnsubscribe = onSnapshot(q, (querySnapshot) => {
                         this.weddings = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                        if (this.activeWedding && !this.weddings.some(w => w.id === this.activeWedding.id)) {
-                            this.activeWedding = this.weddings.length > 0 ? this.weddings[0] : null;
-                        } else if (!this.activeWedding && this.weddings.length > 0) {
-                            this.activeWedding = this.weddings[0];
-                        }
+                        if (this.activeWedding && !this.weddings.some(w => w.id === this.activeWedding.id)) { this.activeWedding = this.weddings.length > 0 ? this.weddings[0] : null; } 
+                        else if (!this.activeWedding && this.weddings.length > 0) { this.activeWedding = this.weddings[0]; }
                         this.generateCalendar();
                         this.isLoading = false;
                         this.appReady = true;
                     }, (error) => {
-                        console.error("Error fetching weddings:", error);
-                        this.addToast("Gagal memuat data jadwal.", "error");
-                        this.isLoading = false;
+                        console.error("Error fetching weddings:", error); this.addToast("Gagal memuat data jadwal.", "error"); this.isLoading = false;
                     });
                     await this.loadInvoiceTemplate(false);
                 },
@@ -320,10 +318,7 @@
                         const docRef = await addDoc(collection(db, 'weddings'), newWeddingData);
                         this.setActiveWedding({ id: docRef.id, ...newWeddingData });
                         this.addToast("Jadwal baru ditambahkan", "success");
-                    } catch (error) {
-                        console.error("Error adding wedding: ", error);
-                        this.addToast("Gagal menambahkan jadwal.", "error");
-                    }
+                    } catch (error) { console.error("Error adding wedding: ", error); this.addToast("Gagal menambahkan jadwal.", "error"); }
                 },
                 async saveActiveWedding() {
                     if (!this.activeWedding || !this.activeWedding.id) return;
@@ -331,33 +326,20 @@
                     const weddingId = weddingData.id;
                     delete weddingData.id;
                     const weddingRef = doc(db, 'weddings', weddingId);
-                    try {
-                        await setDoc(weddingRef, weddingData, { merge: true });
-                    } catch (error) {
-                        console.error("Error saving wedding: ", error);
-                        this.addToast("Gagal menyimpan perubahan.", "error");
-                    }
+                    try { await setDoc(weddingRef, weddingData, { merge: true }); } 
+                    catch (error) { console.error("Error saving wedding: ", error); this.addToast("Gagal menyimpan perubahan.", "error"); }
                 },
                 async deleteWedding(weddingId) {
                     if (confirm("Apakah Anda yakin ingin menghapus jadwal ini? Data tidak dapat dikembalikan.")) {
-                        try {
-                            await deleteDoc(doc(db, 'weddings', weddingId));
-                            this.addToast("Jadwal dihapus.", "info");
-                        } catch (error) {
-                            console.error("Error deleting wedding: ", error);
-                            this.addToast("Gagal menghapus jadwal.", "error");
-                        }
+                        try { await deleteDoc(doc(db, 'weddings', weddingId)); this.addToast("Jadwal dihapus.", "info"); } 
+                        catch (error) { console.error("Error deleting wedding: ", error); this.addToast("Gagal menghapus jadwal.", "error"); }
                     }
                 },
                 async saveInvoiceTemplate(){
                     if(!this.user)return;
                     const templateData = { invoiceTemplate: JSON.parse(JSON.stringify(this.invoice)) };
-                    try {
-                        await setDoc(doc(db, 'userProfiles', this.user.uid), templateData, { merge: true });
-                        this.addToast("Template invoice berhasil disimpan!", "success");
-                    } catch (error) {
-                        this.addToast("Gagal menyimpan template: "+error, "error");
-                    }
+                    try { await setDoc(doc(db, 'userProfiles', this.user.uid), templateData, { merge: true }); this.addToast("Template invoice berhasil disimpan!", "success"); } 
+                    catch (error) { this.addToast("Gagal menyimpan template: "+error, "error"); }
                 },
                 async loadInvoiceTemplate(showToast = true) {
                     if (!this.user) return;
@@ -366,16 +348,11 @@
                         if (docSnap.exists() && docSnap.data().invoiceTemplate) {
                             this.invoice = docSnap.data().invoiceTemplate;
                             if (showToast) this.addToast("Template invoice berhasil dimuat!", "success");
-                        } else {
-                            if (showToast) this.addToast("Tidak ada template yang tersimpan.", "error");
-                        }
-                    } catch (error) {
-                        console.error("Error loading template: ", error);
-                        if (showToast) this.addToast("Gagal memuat template.", "error");
-                    }
+                        } else { if (showToast) this.addToast("Tidak ada template yang tersimpan.", "error"); }
+                    } catch (error) { console.error("Error loading template: ", error); if (showToast) this.addToast("Gagal memuat template.", "error"); }
                 },
                 
-                // All other methods, which now rely on the above Firestore methods
+                // Other App Methods
                 formatDateForDisplay(e){if(!e)return"-";const t=new Date(e); if(e.length === 10) { t.setUTCHours(0,0,0,0); } return isNaN(t.getTime()) ? e : t.toLocaleDateString("id-ID",{day:"numeric",month:"long",year:"numeric"})},
                 setActiveWedding(e){this.activeWedding=e,window.innerWidth<1024&&(this.currentView="jadwal")},
                 updateWedding(){ if(!this.weddingToEdit || !this.weddingToEdit.id)return; const weddingData = JSON.parse(JSON.stringify(this.weddingToEdit)); const weddingId = weddingData.id; delete weddingData.id; setDoc(doc(db, 'weddings', weddingId), weddingData, { merge: true }).then(() => { this.closeEditModal(!0); this.addToast("Detail berhasil disimpan.", "success"); }).catch(error => { console.error("Error updating wedding: ", error); this.addToast("Gagal menyimpan perubahan.", "error"); }); },
@@ -398,8 +375,7 @@
                 removeItem(e){this.invoice.items.splice(e,1)},
                 formatCurrency(e){return new Intl.NumberFormat("id-ID",{style:"currency",currency:"IDR",minimumFractionDigits:0}).format(e)},
                 generatePDF() {
-                    this.invoice.isGenerating = true;
-                    this.addToast("Membuat PDF...", "info");
+                    this.invoice.isGenerating = true; this.addToast("Membuat PDF...", "info");
                     const doc = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' });
                     doc.setFont("helvetica", "normal"); 
                     const MARGIN = 15; const PAGE_WIDTH = doc.internal.pageSize.getWidth(); const PAGE_HEIGHT = doc.internal.pageSize.getHeight(); const CONTENT_WIDTH = PAGE_WIDTH - (MARGIN * 2); let y = MARGIN;
@@ -428,6 +404,13 @@
         };
 
         createApp(App).mount('#app');
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./service-worker.js')
+                    .then(reg => console.log('SW registered.'))
+                    .catch(err => console.log('SW registration failed: ', err));
+            });
+        }
     </script>
 </body>
 </html>
