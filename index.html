@@ -174,7 +174,18 @@
             deleteDoc
         } from "firebase/firestore";
 
-        const firebaseConfig = { apiKey: "AIzaSyB1bkUfIggcgcgTHGPGyY8zOaCgnR7wtFU", authDomain: "amlolist.firebaseapp.com", projectId: "amlolist", storageBucket: "amlolist.appspot.com", messagingSenderId: "550013427934", appId: "1:550013427934:web:86f32dfcbeb49de1b1e24f", measurementId: "G-TKK5Q8VL3M" };
+        // =======================================================================
+        // PASTE YOUR **NEW** FIREBASE CONFIG OBJECT HERE
+        // This is from your new Firebase project, not the old one.
+        // =======================================================================
+const firebaseConfig = {
+  apiKey: "AIzaSyCBij3UUC9XvrkmrtVB8vZxWg_6685ce1o",
+  authDomain: "amlolist-final.firebaseapp.com",
+  projectId: "amlolist-final",
+  storageBucket: "amlolist-final.firebasestorage.app",
+  messagingSenderId: "25110140647",
+  appId: "1:25110140647:web:740485070c06bfb13b3442"
+};
         
         const firebaseApp = initializeApp(firebaseConfig);
         const auth = getAuth(firebaseApp);
@@ -241,8 +252,6 @@
                 destroySortableInstances() { if (this.shotListSortable) { this.shotListSortable.destroy(); this.shotListSortable = null; } if (this.timelineSortable) { this.timelineSortable.destroy(); this.timelineSortable = null; } },
                 handleBackButton(event) { if (this.photoToPreview) { this.closePhotoPreview(false); return; } if (this.showShotModal) { this.closeShotModal(false); return; } if (this.showEditModal) { this.closeEditModal(false); return; } if (this.showTimelineModal) { this.closeTimelineModal(false); return; } if (this.showForgotPasswordModal) { this.closeForgotPasswordModal(false); return; } if (this.showChangePasswordModal) { this.closeChangePasswordModal(false); return; } if (event.state && event.state.view) { this.setView(event.state.view, false); } else if (this.currentView !== 'beranda') { this.setView('beranda', false); } else { history.back(); } },
                 resetAllModals() { this.showForgotPasswordModal = !1, this.showChangePasswordModal = !1, this.showShotModal = !1, this.showEditModal = !1, this.showTimelineModal = !1, this.photoToPreview = null },
-                
-                // --- FIX: Restoring the missing modal methods ---
                 openForgotPasswordModal() { this.forgotPassword = { email: "", error: "", success: "" }; this.showForgotPasswordModal = true; history.pushState({ modal: "forgotPassword" }, "", "#forgot-password") },
                 closeForgotPasswordModal(goBack = true) { this.showForgotPasswordModal = false; goBack && history.back() },
                 openChangePasswordModal() { this.changePassword = { newPassword: "", error: "", success: "", isPasswordVisible: false }; this.showChangePasswordModal = true; history.pushState({ modal: "changePassword" }, "", "#change-password") },
