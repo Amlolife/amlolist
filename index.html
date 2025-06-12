@@ -31,32 +31,14 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
     <style>
-        :root {
-            --primary: #dfff6e;
-            --background: #f8f8f8;
-            --surface: #ffffff;
-            --text-main: #1a1a1a;
-            --text-muted: #8e8e8e;
-            --border-color: #f0f0f0;
-            --nav-bg: #1a1a1a;
-        }
+        :root { --primary: #dfff6e; --background: #f8f8f8; --surface: #ffffff; --text-main: #1a1a1a; --text-muted: #8e8e8e; --border-color: #f0f0f0; --nav-bg: #1a1a1a; }
         body { font-family: 'Inter', sans-serif; background-color: var(--background); }
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #f1f5f9; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
-        .fade-enter-active, .fade-leave-active { transition: opacity 0.2s ease-out; }
-        .fade-enter-from, .fade-leave-to { opacity: 0; }
-        .modal-enter-active { transition: all 0.3s cubic-bezier(0.52, 0.02, 0.19, 1.02); }
-        .modal-leave-active { transition: all 0.3s cubic-bezier(0.52, 0.02, 0.19, 1.02); }
-        .modal-enter-from, .modal-leave-to { transform: scale(0.95); opacity: 0; }
-        .list-enter-active, .list-leave-active { transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); }
-        .list-enter-from, .list-leave-to { opacity: 0; transform: scale(0.95); }
-        .toast-enter-active, .toast-leave-active { transition: all 0.3s cubic-bezier(0.52, 0.02, 0.19, 1.02); }
-        .toast-enter-from, .toast-leave-to { transform: translateY(20px) scale(0.95); opacity: 0; }
-        .sortable-ghost { opacity: 0.4; background-color: #e2e8f0; }
-        .sortable-chosen { cursor: grabbing; }
-        .drag-handle { cursor: grab; }
+        ::-webkit-scrollbar { width: 8px; } ::-webkit-scrollbar-track { background: #f1f5f9; } ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; } ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        .fade-enter-active, .fade-leave-active { transition: opacity 0.2s ease-out; } .fade-enter-from, .fade-leave-to { opacity: 0; }
+        .modal-enter-active { transition: all 0.3s cubic-bezier(0.52, 0.02, 0.19, 1.02); } .modal-leave-active { transition: all 0.3s cubic-bezier(0.52, 0.02, 0.19, 1.02); } .modal-enter-from, .modal-leave-to { transform: scale(0.95); opacity: 0; }
+        .list-enter-active, .list-leave-active { transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); } .list-enter-from, .list-leave-to { opacity: 0; transform: scale(0.95); }
+        .toast-enter-active, .toast-leave-active { transition: all 0.3s cubic-bezier(0.52, 0.02, 0.19, 1.02); } .toast-enter-from, .toast-leave-to { transform: translateY(20px) scale(0.95); opacity: 0; }
+        .sortable-ghost { opacity: 0.4; background-color: #e2e8f0; } .sortable-chosen { cursor: grabbing; } .drag-handle { cursor: grab; }
     </style>
 </head>
 <body class="text-[var(--text-main)] min-h-screen">
@@ -174,18 +156,14 @@
             deleteDoc
         } from "firebase/firestore";
 
-        // =======================================================================
-        // PASTE YOUR **NEW** FIREBASE CONFIG OBJECT HERE
-        // This is from your new Firebase project, not the old one.
-        // =======================================================================
-const firebaseConfig = {
-  apiKey: "AIzaSyCBij3UUC9XvrkmrtVB8vZxWg_6685ce1o",
-  authDomain: "amlolist-final.firebaseapp.com",
-  projectId: "amlolist-final",
-  storageBucket: "amlolist-final.firebasestorage.app",
-  messagingSenderId: "25110140647",
-  appId: "1:25110140647:web:740485070c06bfb13b3442"
-};
+        const firebaseConfig = {
+          apiKey: "AIzaSyCBij3UUC9XvrkmrtVB8vZxWg_6685ce1o",
+          authDomain: "amlolist-final.firebaseapp.com",
+          projectId: "amlolist-final",
+          storageBucket: "amlolist-final.appspot.com",
+          messagingSenderId: "25110140647",
+          appId: "1:25110140647:web:740485070c06bfb13b3442"
+        };
         
         const firebaseApp = initializeApp(firebaseConfig);
         const auth = getAuth(firebaseApp);
