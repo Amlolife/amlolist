@@ -10,17 +10,20 @@
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-    <!-- REMOVED: idb-keyval is no longer needed -->
-    <!-- <script src="https://unpkg.com/idb-keyval@6/dist/umd.js"></script> -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
-    <!-- Firebase SDKs -->
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
-    <!-- NEW: Firestore SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
-
+    <!-- NEW: Using modern, modular Firebase JS SDK via ESM -->
+    <script type="importmap">
+    {
+      "imports": {
+        "firebase/app": "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js",
+        "firebase/auth": "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js",
+        "firebase/firestore": "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"
+      }
+    }
+    </script>
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
     
@@ -51,10 +54,8 @@
         .modal-enter-from, .modal-leave-to { transform: scale(0.95); opacity: 0; }
         .list-enter-active, .list-leave-active { transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); }
         .list-enter-from, .list-leave-to { opacity: 0; transform: scale(0.95); }
-        
         .toast-enter-active, .toast-leave-active { transition: all 0.3s cubic-bezier(0.52, 0.02, 0.19, 1.02); }
         .toast-enter-from, .toast-leave-to { transform: translateY(20px) scale(0.95); opacity: 0; }
-        
         .sortable-ghost { opacity: 0.4; background-color: #e2e8f0; }
         .sortable-chosen { cursor: grabbing; }
         .drag-handle { cursor: grab; }
@@ -67,7 +68,6 @@
         </div>
         
         <div v-else>
-            <!-- Login/Auth UI remains the same -->
             <div v-if="!isLoggedIn" class="min-h-screen flex flex-col lg:grid lg:grid-cols-2">
                 <div class="w-full h-64 lg:h-full bg-cover bg-center" style="background-image: url('https://i.imgur.com/0SAAvVb.jpeg');"></div>
                 <div class="flex flex-grow items-center justify-center p-8 bg-[var(--surface)]">
@@ -99,7 +99,6 @@
             </div>
             
             <div v-else>
-                <!-- Main App UI remains the same -->
                 <div v-if="!appReady" class="min-h-screen flex items-center justify-center"><i class="fas fa-spinner fa-spin text-slate-500 text-4xl"></i></div>
                 <div v-show="appReady">
                     <input type="file" ref="photoUploader" @change="handlePhotoUpload" class="hidden" accept="image/*">
@@ -121,7 +120,6 @@
             </div>
         </div>
         
-        <!-- Toast and Modal UI remains the same -->
         <div class="fixed bottom-6 right-6 z-50 w-full max-w-sm space-y-3">
             <transition-group name="toast">
                 <div v-for="toast in toasts" :key="toast.id" 
@@ -141,6 +139,7 @@
                 </div>
             </transition-group>
         </div>
+
         <transition name="modal"><div v-if="photoToPreview" @click="closePhotoPreview" class="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 p-4 cursor-pointer"><img :src="photoToPreview" class="max-w-full max-h-full object-contain rounded-lg shadow-2xl" @click.stop><button @click.stop="closePhotoPreview(true)" class="absolute top-4 right-4 text-white text-4xl font-light hover:opacity-75 transition-opacity">×</button></div></transition>
         <transition name="modal"><div v-if="showShotModal" class="fixed inset-0 flex items-center justify-center z-40"><div @click="closeShotModal()" class="absolute inset-0 bg-black bg-opacity-30"></div><div class="bg-white rounded-2xl p-6 w-full max-w-md relative z-10 shadow-xl m-4"><h3 class="text-xl font-bold text-slate-800 mb-4">Tambah Foto Wajib</h3><form @submit.prevent="addShot" class="space-y-4"><div><label class="block text-sm font-medium text-slate-700 mb-1">Judul Foto</label><input v-model="newShot.title" type="text" class="w-full px-4 py-3 bg-slate-100 rounded-lg border-none" required></div><div><label class="block text-sm font-medium text-slate-700 mb-1">Catatan</label><textarea v-model="newShot.description" class="w-full px-4 py-3 bg-slate-100 rounded-lg border-none" rows="3"></textarea></div><div class="flex justify-end space-x-3 pt-2"><button type="button" @click="closeShotModal()" class="px-5 py-2 bg-slate-200 rounded-lg font-semibold">Batal</button><button type="submit" class="px-5 py-2 bg-slate-800 text-white rounded-lg font-semibold">Tambah</button></div></form></div></div></transition>
         <transition name="modal"><div v-if="showEditModal && weddingToEdit" class="fixed inset-0 flex items-center justify-center z-40"><div @click="closeEditModal()" class="absolute inset-0 bg-black bg-opacity-30"></div><div class="bg-white rounded-2xl w-full max-w-2xl relative z-10 shadow-xl m-4 max-h-[90vh] overflow-y-auto"><div class="p-6 space-y-4"><h3 class="text-xl font-bold text-slate-800 mb-4">Edit Detail Pernikahan</h3><form @submit.prevent="updateWedding" class="space-y-4 text-slate-700"><div><label class="block text-sm font-medium">Judul</label><input type="text" v-model="weddingToEdit.title" class="mt-1 w-full px-4 py-3 bg-slate-100 rounded-lg border-none" required></div><div class="flex justify-end space-x-3 pt-4"><button type="button" @click="closeEditModal()" class="px-5 py-2 bg-slate-200 rounded-lg font-semibold">Batal</button><button type="submit" class="px-5 py-2 bg-slate-800 text-white rounded-lg font-semibold">Simpan</button></div></form></div></div></div></transition>
@@ -149,19 +148,42 @@
         <transition name="modal"><div v-if="showChangePasswordModal" class="fixed inset-0 flex items-center justify-center z-40"><div @click="closeChangePasswordModal()" class="absolute inset-0 bg-black bg-opacity-30"></div><div class="bg-white rounded-2xl p-6 w-full max-w-md relative z-10 shadow-xl m-4"><h3 class="text-xl font-bold">Ubah Password</h3><form @submit.prevent="updateUserPassword" class="space-y-4"><div class="relative"><input v-model="changePassword.newPassword" :type="changePassword.isPasswordVisible ? 'text' : 'password'" class="w-full px-4 py-3 pr-12 bg-slate-100 rounded-lg border-none" placeholder="Masukkan password baru" required><button type="button" @click="changePassword.isPasswordVisible = !changePassword.isPasswordVisible" class="absolute inset-y-0 right-0 flex items-center px-4 text-slate-500 hover:text-slate-700"><i class="fas" :class="changePassword.isPasswordVisible ? 'fa-eye-slash' : 'fa-eye'"></i></button></div><p v-if="changePassword.error" class="text-red-500 text-sm text-center">{{ changePassword.error }}</p><p v-if="changePassword.success" class="text-green-600 text-sm text-center">{{ changePassword.success }}</p><div class="flex justify-end space-x-3 pt-2"><button type="button" @click="closeChangePasswordModal()" class="px-5 py-2 bg-slate-200 rounded-lg font-semibold">Batal</button><button type="submit" class="px-5 py-2 bg-slate-800 text-white rounded-lg font-semibold">Simpan</button></div></form></div></div></transition>
     </div>
     
-    <script>
+    <script type="module">
         const { createApp, nextTick, watch } = Vue;
         const { jsPDF } = window.jspdf;
+        
+        import { initializeApp } from "firebase/app";
+        import { 
+            getAuth, 
+            onAuthStateChanged,
+            createUserWithEmailAndPassword,
+            signInWithEmailAndPassword,
+            signOut,
+            sendPasswordResetEmail,
+            updatePassword
+        } from "firebase/auth";
+        import { 
+            getFirestore,
+            collection,
+            query,
+            where,
+            orderBy,
+            onSnapshot,
+            addDoc,
+            setDoc,
+            getDoc,
+            doc,
+            deleteDoc
+        } from "firebase/firestore";
+
         const firebaseConfig = { apiKey: "AIzaSyB1bkUfIggcgcgTHGPGyY8zOaCgnR7wtFU", authDomain: "amlolist.firebaseapp.com", projectId: "amlolist", storageBucket: "amlolist.appspot.com", messagingSenderId: "550013427934", appId: "1:550013427934:web:86f32dfcbeb49de1b1e24f", measurementId: "G-TKK5Q8VL3M" };
         
-        firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
-        // NEW: Initialize Firestore
-        const db = firebase.firestore();
+        const firebaseApp = initializeApp(firebaseConfig);
+        const auth = getAuth(firebaseApp);
+        const db = getFirestore(firebaseApp);
 
         const App = {
             data() {
-                // ... same data properties as before
                 return {
                     isLoggedIn: false, isRegisterView: false, user: null, isLoading: true, appReady: false,
                     showForgotPasswordModal: false, showChangePasswordModal: false, showShotModal: false, showEditModal: false, showTimelineModal: false, photoToPreview: null,
@@ -178,27 +200,21 @@
                     toasts: [],
                     shotListSortable: null,
                     timelineSortable: null,
-                    // NEW: To hold the unsubscribe function for the real-time listener
                     firestoreUnsubscribe: null,
                 }
             },
-            // ... all other sections like mounted, beforeUnmount, computed are the same as the previous response.
-            // The significant changes are in the `methods` section below.
-
-            // LIFECYCLE HOOKS... (Same as before)
             created() {
                 this.resetAllModals();
-                auth.onAuthStateChanged(user => {
+                onAuthStateChanged(auth, user => {
                     if (user) { 
                         this.isLoggedIn = true; 
                         this.user = user; 
-                        this.loadAppData(); // This will now use Firestore
+                        this.loadAppData();
                     } else { 
                         this.isLoggedIn = false; 
                         this.user = null; 
                         this.isLoading = false;
                         this.appReady = false; 
-                        // NEW: Unsubscribe from Firestore listener on logout
                         if (this.firestoreUnsubscribe) {
                             this.firestoreUnsubscribe();
                         }
@@ -209,7 +225,6 @@
             mounted() { watch(() => this.activeWedding, (newWedding, oldWedding) => { if (oldWedding) { this.destroySortableInstances(); } if (newWedding) { nextTick(() => { this.initShotListSortable(); this.initTimelineSortable(); }); } }, { immediate: true }); },
             beforeUnmount() { window.removeEventListener('popstate', this.handleBackButton); this.destroySortableInstances(); if (this.firestoreUnsubscribe) { this.firestoreUnsubscribe(); } },
 
-            // COMPUTED PROPERTIES... (Same as before)
             computed: {
                 shotCompletionProgress() { if (!this.activeWedding || !this.activeWedding.shots.length) return 0; const e = this.activeWedding.shots.filter(e => e.completed).length; return Math.round(e / this.activeWedding.shots.length * 100) },
                 filteredWeddings() { let e = this.weddings; if (this.selectedDate && (e = e.filter(e => e.date === this.selectedDate)), this.searchQuery.trim()) { const t = this.searchQuery.toLowerCase(); return e.filter(e => e.title && e.title.toLowerCase().includes(t) || e.location && e.location.toLowerCase().includes(t) || e.contacts.bride && e.contacts.bride.toLowerCase().includes(t) || e.contacts.groom && e.contacts.groom.toLowerCase().includes(t) || e.contacts.phone && e.contacts.phone.toLowerCase().includes(t)) } return e },
@@ -222,7 +237,7 @@
                 invoiceTotal() { const e = this.invoiceSubtotal * (this.invoice.taxRate / 100); return this.invoiceSubtotal + e }
             },
             methods: {
-                // UI & Modal Methods (Same as before)
+                // UI & Modal Methods
                 addToast(message, type = 'info', duration = 3000) { const id = Date.now(); this.toasts.push({ id, message, type }); if (duration) { setTimeout(() => this.removeToast(id), duration); } },
                 removeToast(id) { this.toasts = this.toasts.filter(toast => toast.id !== id); },
                 initShotListSortable() { if (this.shotListSortable) this.shotListSortable.destroy(); if (this.$refs.shotListContainer) { this.shotListSortable = new Sortable(this.$refs.shotListContainer, { handle: '.drag-handle', animation: 150, ghostClass: 'sortable-ghost', chosenClass: 'sortable-chosen', onEnd: (evt) => { const item = this.activeWedding.shots.splice(evt.oldIndex, 1)[0]; this.activeWedding.shots.splice(evt.newIndex, 0, item); this.saveActiveWedding(); } }); } },
@@ -231,152 +246,125 @@
                 handleBackButton(event) { if (this.photoToPreview) { this.closePhotoPreview(false); return; } if (this.showShotModal) { this.closeShotModal(false); return; } if (this.showEditModal) { this.closeEditModal(false); return; } if (this.showTimelineModal) { this.closeTimelineModal(false); return; } if (this.showForgotPasswordModal) { this.closeForgotPasswordModal(false); return; } if (this.showChangePasswordModal) { this.closeChangePasswordModal(false); return; } if (event.state && event.state.view) { this.setView(event.state.view, false); } else if (this.currentView !== 'beranda') { this.setView('beranda', false); } else { history.back(); } },
                 resetAllModals() { this.showForgotPasswordModal = !1, this.showChangePasswordModal = !1, this.showShotModal = !1, this.showEditModal = !1, this.showTimelineModal = !1, this.photoToPreview = null },
                 
-                // Auth Methods (Same as before)
-                login() { this.auth.error = ""; this.auth.loading = true; auth.signInWithEmailAndPassword(this.auth.email, this.auth.password).catch(e => { "auth/invalid-credential" === e.code || "auth/wrong-password" === e.code || "auth/user-not-found" === e.code ? this.auth.error = "Email atau password salah." : this.auth.error = "Terjadi kesalahan. Silakan coba lagi." }).finally(() => { this.auth.loading = false; }); },
-                register() { this.auth.error = ""; this.auth.loading = true; auth.createUserWithEmailAndPassword(this.auth.email, this.auth.password).catch(e => { "auth/email-already-in-use" === e.code ? this.auth.error = "Email ini sudah terdaftar." : "auth/weak-password" === e.code ? this.auth.error = "Password terlalu lemah." : this.auth.error = "Gagal registrasi."; this.addToast(this.auth.error, 'error'); }).finally(() => { this.auth.loading = false; }); },
-                logout() { auth.signOut(), this.resetAllModals(), this.addToast("Anda telah logout.", "info") },
-                updateUserPassword() { this.changePassword.error = "", this.changePassword.success = ""; const e = auth.currentUser; e && e.updatePassword(this.changePassword.newPassword).then(() => { this.changePassword.success = "Password berhasil diubah!", this.addToast("Password berhasil diubah!", "success"), setTimeout(() => this.closeChangePasswordModal(), 2e3) }).catch(e => { this.changePassword.error = "Password baru terlalu lemah.", this.addToast("Gagal mengubah password.", "error") }) },
-
-                // FIX: Main Data Loading Method - now using Firestore real-time listener
+                // Auth Methods
+                login() { 
+                    this.auth.error = "";
+                    this.auth.loading = true;
+                    signInWithEmailAndPassword(auth, this.auth.email, this.auth.password)
+                        .catch(e => { this.auth.error = "Email atau password salah."; })
+                        .finally(() => { this.auth.loading = false; });
+                },
+                register() { 
+                    this.auth.error = "";
+                    this.auth.loading = true;
+                    createUserWithEmailAndPassword(auth, this.auth.email, this.auth.password)
+                        .catch(e => { 
+                            if (e.code === "auth/email-already-in-use") { this.auth.error = "Email ini sudah terdaftar."; } 
+                            else if (e.code === "auth/weak-password") { this.auth.error = "Password terlalu lemah."; } 
+                            else { this.auth.error = "Gagal registrasi."; }
+                            this.addToast(this.auth.error, 'error');
+                        })
+                        .finally(() => { this.auth.loading = false; });
+                },
+                logout() { 
+                    signOut(auth);
+                    this.resetAllModals();
+                    this.addToast("Anda telah logout.", "info");
+                },
+                updateUserPassword() { 
+                    this.changePassword.error = ""; this.changePassword.success = ""; const user = auth.currentUser; 
+                    if (user) {
+                        updatePassword(user, this.changePassword.newPassword).then(() => { 
+                            this.changePassword.success = "Password berhasil diubah!"; 
+                            this.addToast("Password berhasil diubah!", "success");
+                            setTimeout(() => this.closeChangePasswordModal(), 2000);
+                        }).catch(e => { 
+                            this.changePassword.error = "Password baru terlalu lemah atau perlu login ulang.";
+                            this.addToast("Gagal mengubah password.", "error");
+                        });
+                    }
+                },
+                sendResetEmail() { 
+                    this.forgotPassword.error = ""; this.forgotPassword.success = ""; 
+                    sendPasswordResetEmail(auth, this.forgotPassword.email)
+                        .then(() => { this.forgotPassword.success = "Link reset telah dikirim." })
+                        .catch(e => { this.forgotPassword.error = "Email tidak ditemukan." });
+                },
+                
+                // Firestore Data Methods
                 async loadAppData() { 
                     this.appReady = false;
-
-                    // Detach any existing listener
-                    if (this.firestoreUnsubscribe) {
-                        this.firestoreUnsubscribe();
+                    if (this.firestoreUnsubscribe) { this.firestoreUnsubscribe(); }
+                    const weddingsRef = collection(db, 'weddings');
+                    const q = query(weddingsRef, where('ownerId', '==', this.user.uid), orderBy('date', 'desc'));
+                    this.firestoreUnsubscribe = onSnapshot(q, (querySnapshot) => {
+                        this.weddings = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                        if (this.activeWedding && !this.weddings.some(w => w.id === this.activeWedding.id)) {
+                            this.activeWedding = this.weddings.length > 0 ? this.weddings[0] : null;
+                        } else if (!this.activeWedding && this.weddings.length > 0) {
+                            this.activeWedding = this.weddings[0];
+                        }
+                        this.generateCalendar();
+                        this.isLoading = false;
+                        this.appReady = true;
+                    }, (error) => {
+                        console.error("Error fetching weddings:", error);
+                        this.addToast("Gagal memuat data jadwal.", "error");
+                        this.isLoading = false;
+                    });
+                    await this.loadInvoiceTemplate(false);
+                },
+                async addWedding() {
+                    const newWeddingData = { ownerId: this.user.uid, title:"Jadwal Baru", date:(new Date).toISOString().split("T")[0], location:"Belum ditentukan", notes:"Catatan khusus...", shots:[], timeline:[], photos:[], tags:[], contacts: {bride:"",groom:"",email:"",phone:""}, details:{guests:0,type:"TBD",package:"TBD"} };
+                    try {
+                        const docRef = await addDoc(collection(db, 'weddings'), newWeddingData);
+                        this.setActiveWedding({ id: docRef.id, ...newWeddingData });
+                        this.addToast("Jadwal baru ditambahkan", "success");
+                    } catch (error) {
+                        console.error("Error adding wedding: ", error);
+                        this.addToast("Gagal menambahkan jadwal.", "error");
                     }
-
-                    // Set up the real-time listener for weddings
-                    this.firestoreUnsubscribe = db.collection('weddings')
-                        .where('ownerId', '==', this.user.uid)
-                        .orderBy('date', 'desc')
-                        .onSnapshot(snapshot => {
-                            this.weddings = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                            
-                            // If active wedding is deleted, reset it
-                            if (this.activeWedding && !this.weddings.some(w => w.id === this.activeWedding.id)) {
-                                this.activeWedding = this.weddings.length > 0 ? this.weddings[0] : null;
-                            } else if (!this.activeWedding && this.weddings.length > 0) {
-                                // If no active wedding, set to first one
-                                this.activeWedding = this.weddings[0];
-                            }
-                            
-                            this.generateCalendar();
-                            this.isLoading = false;
-                            this.appReady = true;
-                        }, error => {
-                            console.error("Error fetching weddings:", error);
-                            this.addToast("Gagal memuat data jadwal.", "error");
-                            this.isLoading = false;
-                        });
-
-                    // Load invoice template
-                    await this.loadInvoiceTemplate(false); // Load without showing a toast
                 },
-
-                // FIX: Create wedding in Firestore
-                addWedding() {
-                    const newWeddingData = {
-                        ownerId: this.user.uid, // Crucial for security rules
-                        title:"Jadwal Baru",
-                        date:(new Date).toISOString().split("T")[0],
-                        location:"Belum ditentukan",
-                        address:"",
-                        contacts:{bride:"",groom:"",email:"",phone:""},
-                        details:{guests:0,type:"TBD",package:"TBD"},
-                        notes:"Catatan khusus...",
-                        shots:[],
-                        timeline:[],
-                        photos:[],
-                        tags:[]
-                    };
-
-                    db.collection('weddings').add(newWeddingData)
-                        .then(docRef => {
-                            // No need to manually push to array, onSnapshot handles it.
-                            // We can set the new wedding as active.
-                            this.setActiveWedding({ id: docRef.id, ...newWeddingData });
-                            this.addToast("Jadwal baru ditambahkan", "success");
-                        })
-                        .catch(error => {
-                            console.error("Error adding wedding: ", error);
-                            this.addToast("Gagal menambahkan jadwal.", "error");
-                        });
-                },
-
-                // FIX: Update wedding in Firestore
-                saveActiveWedding() {
+                async saveActiveWedding() {
                     if (!this.activeWedding || !this.activeWedding.id) return;
-                    
-                    // Create a clean copy to avoid saving Vue-internal properties
                     const weddingData = JSON.parse(JSON.stringify(this.activeWedding));
-                    // The ID is the document name, so it should not be in the document data.
                     const weddingId = weddingData.id;
                     delete weddingData.id;
-
-                    db.collection('weddings').doc(weddingId).set(weddingData, { merge: true })
-                        .catch(error => {
-                            console.error("Error saving wedding: ", error);
-                            this.addToast("Gagal menyimpan perubahan.", "error");
-                        });
-                },
-                 updateWedding(){
-                    if(!this.weddingToEdit || !this.weddingToEdit.id)return;
-                    
-                    const weddingData = JSON.parse(JSON.stringify(this.weddingToEdit));
-                    const weddingId = weddingData.id;
-                    delete weddingData.id;
-                    
-                    db.collection('weddings').doc(weddingId).set(weddingData, { merge: true })
-                        .then(() => {
-                            // onSnapshot will update the local data automatically
-                            this.closeEditModal(!0);
-                            this.addToast("Detail berhasil disimpan.", "success");
-                        })
-                        .catch(error => {
-                             console.error("Error updating wedding: ", error);
-                             this.addToast("Gagal menyimpan perubahan.", "error");
-                        });
-                 },
-
-                // FIX: Delete wedding from Firestore
-                deleteWedding(weddingId) {
-                    if (confirm("Apakah Anda yakin ingin menghapus jadwal ini? Data tidak dapat dikembalikan.")) {
-                        db.collection('weddings').doc(weddingId).delete()
-                            .then(() => {
-                                this.addToast("Jadwal dihapus.", "info");
-                                // onSnapshot will update the list automatically.
-                                // The watcher will handle resetting activeWedding if needed.
-                            })
-                            .catch(error => {
-                                console.error("Error deleting wedding: ", error);
-                                this.addToast("Gagal menghapus jadwal.", "error");
-                            });
+                    const weddingRef = doc(db, 'weddings', weddingId);
+                    try {
+                        await setDoc(weddingRef, weddingData, { merge: true });
+                    } catch (error) {
+                        console.error("Error saving wedding: ", error);
+                        this.addToast("Gagal menyimpan perubahan.", "error");
                     }
                 },
-                
-                // Other methods using saveActiveWedding (addShot, deleteShot, etc.) now implicitly use Firestore.
-                // Their logic does not need to change.
-                addShot(){ if(!this.newShot.title.trim()||!this.activeWedding)return; const wasEmpty=this.activeWedding.shots.length===0; this.activeWedding.shots.push({id:Date.now(),...this.newShot,completed:!1}); this.saveActiveWedding(); this.closeShotModal(!0); this.addToast("Foto wajib ditambahkan.","success"); if(wasEmpty){nextTick(()=>this.initShotListSortable());}},
-                deleteShot(e){ if(!this.activeWedding)return; this.activeWedding.shots=this.activeWedding.shots.filter(t=>t.id!==e); this.saveActiveWedding(); this.addToast("Foto wajib dihapus.","info"); if(this.activeWedding.shots.length===0){this.destroySortableInstances();}},
-                addTimelineItem(){ if(!this.newTimelineItem.title.trim()||!this.activeWedding)return; const wasEmpty=this.activeWedding.timeline.length===0; this.activeWedding.timeline.push({id:Date.now(),...this.newTimelineItem}); this.activeWedding.timeline.sort((e,t)=>e.time.localeCompare(t.time)); this.saveActiveWedding(); this.closeTimelineModal(!0); this.addToast("Linimasa ditambahkan.","success"); if(wasEmpty){nextTick(()=>this.initTimelineSortable());}},
-                deleteTimelineItem(e){ if(!this.activeWedding)return; this.activeWedding.timeline=this.activeWedding.timeline.filter(t=>t.id!==e); this.saveActiveWedding(); this.addToast("Item linimasa dihapus.","info"); if(this.activeWedding.timeline.length===0){this.destroySortableInstances();}},
-                handlePhotoUpload(e){const t=e.target.files[0];if(!t||!this.activeWedding)return;const i=new FileReader;i.onload=e=>{this.activeWedding.photos.push({url:e.target.result}),this.saveActiveWedding(),this.addToast("Foto berhasil diupload.", "success")},i.readAsDataURL(t),e.target.value=""/*... more methods remain the same ...*/},
-                
-                // FIX: Invoice Template methods now use Firestore
-                saveInvoiceTemplate(){
+                async deleteWedding(weddingId) {
+                    if (confirm("Apakah Anda yakin ingin menghapus jadwal ini? Data tidak dapat dikembalikan.")) {
+                        try {
+                            await deleteDoc(doc(db, 'weddings', weddingId));
+                            this.addToast("Jadwal dihapus.", "info");
+                        } catch (error) {
+                            console.error("Error deleting wedding: ", error);
+                            this.addToast("Gagal menghapus jadwal.", "error");
+                        }
+                    }
+                },
+                async saveInvoiceTemplate(){
                     if(!this.user)return;
                     const templateData = { invoiceTemplate: JSON.parse(JSON.stringify(this.invoice)) };
-                    db.collection('userProfiles').doc(this.user.uid).set(templateData, { merge: true })
-                        .then(() => this.addToast("Template invoice berhasil disimpan!", "success"))
-                        .catch(e => this.addToast("Gagal menyimpan template: "+e, "error"));
+                    try {
+                        await setDoc(doc(db, 'userProfiles', this.user.uid), templateData, { merge: true });
+                        this.addToast("Template invoice berhasil disimpan!", "success");
+                    } catch (error) {
+                        this.addToast("Gagal menyimpan template: "+error, "error");
+                    }
                 },
                 async loadInvoiceTemplate(showToast = true) {
                     if (!this.user) return;
                     try {
-                        const doc = await db.collection('userProfiles').doc(this.user.uid).get();
-                        if (doc.exists && doc.data().invoiceTemplate) {
-                            this.invoice = doc.data().invoiceTemplate;
+                        const docSnap = await getDoc(doc(db, 'userProfiles', this.user.uid));
+                        if (docSnap.exists() && docSnap.data().invoiceTemplate) {
+                            this.invoice = docSnap.data().invoiceTemplate;
                             if (showToast) this.addToast("Template invoice berhasil dimuat!", "success");
                         } else {
                             if (showToast) this.addToast("Tidak ada template yang tersimpan.", "error");
@@ -387,12 +375,18 @@
                     }
                 },
                 
-                // All other non-data-related methods remain the same
+                // All other methods, which now rely on the above Firestore methods
                 formatDateForDisplay(e){if(!e)return"-";const t=new Date(e); if(e.length === 10) { t.setUTCHours(0,0,0,0); } return isNaN(t.getTime()) ? e : t.toLocaleDateString("id-ID",{day:"numeric",month:"long",year:"numeric"})},
                 setActiveWedding(e){this.activeWedding=e,window.innerWidth<1024&&(this.currentView="jadwal")},
+                updateWedding(){ if(!this.weddingToEdit || !this.weddingToEdit.id)return; const weddingData = JSON.parse(JSON.stringify(this.weddingToEdit)); const weddingId = weddingData.id; delete weddingData.id; setDoc(doc(db, 'weddings', weddingId), weddingData, { merge: true }).then(() => { this.closeEditModal(!0); this.addToast("Detail berhasil disimpan.", "success"); }).catch(error => { console.error("Error updating wedding: ", error); this.addToast("Gagal menyimpan perubahan.", "error"); }); },
+                addShot(){ if(!this.newShot.title.trim()||!this.activeWedding)return; const wasEmpty=this.activeWedding.shots.length===0; this.activeWedding.shots.push({id:Date.now(),...this.newShot,completed:!1}); this.saveActiveWedding(); this.closeShotModal(!0); this.addToast("Foto wajib ditambahkan.","success"); if(wasEmpty){nextTick(()=>this.initShotListSortable());}},
+                deleteShot(e){ if(!this.activeWedding)return; this.activeWedding.shots=this.activeWedding.shots.filter(t=>t.id!==e); this.saveActiveWedding(); this.addToast("Foto wajib dihapus.","info"); if(this.activeWedding.shots.length===0){this.destroySortableInstances();}},
+                addTimelineItem(){ if(!this.newTimelineItem.title.trim()||!this.activeWedding)return; const wasEmpty=this.activeWedding.timeline.length===0; this.activeWedding.timeline.push({id:Date.now(),...this.newTimelineItem}); this.activeWedding.timeline.sort((e,t)=>e.time.localeCompare(t.time)); this.saveActiveWedding(); this.closeTimelineModal(!0); this.addToast("Linimasa ditambahkan.","success"); if(wasEmpty){nextTick(()=>this.initTimelineSortable());}},
+                deleteTimelineItem(e){ if(!this.activeWedding)return; this.activeWedding.timeline=this.activeWedding.timeline.filter(t=>t.id!==e); this.saveActiveWedding(); this.addToast("Item linimasa dihapus.","info"); if(this.activeWedding.timeline.length===0){this.destroySortableInstances();}},
                 addTag(){if(!this.newTag.trim()||!this.weddingToEdit)return;this.weddingToEdit.tags.push({text:this.newTag,color:this.tagColors[this.weddingToEdit.tags.length%this.tagColors.length]}),this.newTag=""},
                 removeTag(e){this.weddingToEdit&&this.weddingToEdit.tags.splice(e,1)},
                 addPhoto(){this.activeWedding&&this.$refs.photoUploader.click()},
+                handlePhotoUpload(e){const t=e.target.files[0];if(!t||!this.activeWedding)return;const i=new FileReader;i.onload=e=>{this.activeWedding.photos.push({url:e.target.result}),this.saveActiveWedding(),this.addToast("Foto berhasil diupload.", "success")},i.readAsDataURL(t),e.target.value=""},
                 deletePhoto(e){this.activeWedding&&this.activeWedding.photos.splice(e,1)},
                 getTaskProgress(e){if(!e||!e.shots||0===e.shots.length)return{percent:0,done:0,total:0};const t=e.shots.length,i=e.shots.filter(e=>e.completed).length;return{percent:Math.round(i/t*100),done:i,total:t}},
                 goToJadwal(e){this.setActiveWedding(e),this.setView("jadwal")},
@@ -406,118 +400,34 @@
                 generatePDF() {
                     this.invoice.isGenerating = true;
                     this.addToast("Membuat PDF...", "info");
-                    
                     const doc = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' });
                     doc.setFont("helvetica", "normal"); 
-
-                    const MARGIN = 15;
-                    const PAGE_WIDTH = doc.internal.pageSize.getWidth();
-                    const PAGE_HEIGHT = doc.internal.pageSize.getHeight();
-                    const CONTENT_WIDTH = PAGE_WIDTH - (MARGIN * 2);
-                    let y = MARGIN;
-
-                    // Header
-                    doc.setFontSize(20);
-                    doc.setFont("helvetica", "bold");
-                    doc.text("INVOICE", MARGIN, y);
-                    
-                    doc.setFontSize(10);
-                    doc.setFont("helvetica", "normal");
-                    doc.text(this.invoice.invoicerName, PAGE_WIDTH - MARGIN, y, { align: 'right' });
-                    y += 5;
-                    doc.text(this.invoice.invoicerSlogan, PAGE_WIDTH - MARGIN, y, { align: 'right' });
-                    y += 15;
-
-                    // Bill To / Details
-                    doc.setLineWidth(0.5);
-                    doc.line(MARGIN, y, PAGE_WIDTH - MARGIN, y);
-                    y += 10;
-                    
-                    doc.setFont("helvetica", "bold");
-                    doc.text("Tagihan Untuk:", MARGIN, y);
-                    doc.text("Detail:", PAGE_WIDTH / 2, y);
-
-                    doc.setFont("helvetica", "normal");
-                    y += 6;
-                    doc.text(this.invoice.client.name, MARGIN, y);
-                    const clientAddress = doc.splitTextToSize(this.invoice.client.address, (PAGE_WIDTH / 2) - MARGIN - 5);
-                    doc.text(clientAddress, MARGIN, y + 5);
-                    
-                    let rightY = y;
-                    doc.text(`No. Invoice: ${this.invoice.number}`, PAGE_WIDTH / 2, rightY);
-                    rightY += 5;
-                    doc.text(`Tanggal: ${this.formatDateForDisplay(this.invoice.date)}`, PAGE_WIDTH / 2, rightY);
-                    rightY += 5;
-                    doc.text(`Jatuh Tempo: ${this.formatDateForDisplay(this.invoice.dueDate)}`, PAGE_WIDTH / 2, rightY);
-
-                    y += clientAddress.length * 5 + 10;
-                    if (y < rightY + 10) y = rightY + 10;
-
-                    const drawTableHeader = () => {
-                        doc.setFillColor(230, 230, 230);
-                        doc.rect(MARGIN, y, CONTENT_WIDTH, 8, 'F');
-                        doc.setFont("helvetica", "bold");
-                        doc.setTextColor(50, 50, 50);
-                        doc.text("Deskripsi", MARGIN + 2, y + 6);
-                        doc.text("Jml", PAGE_WIDTH - MARGIN - 60, y + 6, { align: 'right' });
-                        doc.text("Harga", PAGE_WIDTH - MARGIN - 35, y + 6, { align: 'right' });
-                        doc.text("Total", PAGE_WIDTH - MARGIN - 2, y + 6, { align: 'right' });
-                        y += 12;
-                    };
+                    const MARGIN = 15; const PAGE_WIDTH = doc.internal.pageSize.getWidth(); const PAGE_HEIGHT = doc.internal.pageSize.getHeight(); const CONTENT_WIDTH = PAGE_WIDTH - (MARGIN * 2); let y = MARGIN;
+                    doc.setFontSize(20); doc.setFont("helvetica", "bold"); doc.text("INVOICE", MARGIN, y);
+                    doc.setFontSize(10); doc.setFont("helvetica", "normal"); doc.text(this.invoice.invoicerName, PAGE_WIDTH - MARGIN, y, { align: 'right' }); y += 5; doc.text(this.invoice.invoicerSlogan, PAGE_WIDTH - MARGIN, y, { align: 'right' }); y += 15;
+                    doc.setLineWidth(0.5); doc.line(MARGIN, y, PAGE_WIDTH - MARGIN, y); y += 10;
+                    doc.setFont("helvetica", "bold"); doc.text("Tagihan Untuk:", MARGIN, y); doc.text("Detail:", PAGE_WIDTH / 2, y);
+                    doc.setFont("helvetica", "normal"); y += 6; doc.text(this.invoice.client.name, MARGIN, y); const clientAddress = doc.splitTextToSize(this.invoice.client.address, (PAGE_WIDTH / 2) - MARGIN - 5); doc.text(clientAddress, MARGIN, y + 5);
+                    let rightY = y; doc.text(`No. Invoice: ${this.invoice.number}`, PAGE_WIDTH / 2, rightY); rightY += 5; doc.text(`Tanggal: ${this.formatDateForDisplay(this.invoice.date)}`, PAGE_WIDTH / 2, rightY); rightY += 5; doc.text(`Jatuh Tempo: ${this.formatDateForDisplay(this.invoice.dueDate)}`, PAGE_WIDTH / 2, rightY);
+                    y += clientAddress.length * 5 + 10; if (y < rightY + 10) y = rightY + 10;
+                    const drawTableHeader = () => { doc.setFillColor(230, 230, 230); doc.rect(MARGIN, y, CONTENT_WIDTH, 8, 'F'); doc.setFont("helvetica", "bold"); doc.setTextColor(50, 50, 50); doc.text("Deskripsi", MARGIN + 2, y + 6); doc.text("Jml", PAGE_WIDTH - MARGIN - 60, y + 6, { align: 'right' }); doc.text("Harga", PAGE_WIDTH - MARGIN - 35, y + 6, { align: 'right' }); doc.text("Total", PAGE_WIDTH - MARGIN - 2, y + 6, { align: 'right' }); y += 12; };
                     drawTableHeader();
-                    
                     this.invoice.items.forEach(item => {
-                        const itemDescription = doc.splitTextToSize(item.description, CONTENT_WIDTH - 90);
-                        const rowHeight = itemDescription.length * 5 + 4;
+                        const itemDescription = doc.splitTextToSize(item.description, CONTENT_WIDTH - 90); const rowHeight = itemDescription.length * 5 + 4;
                         if (y + rowHeight > PAGE_HEIGHT - MARGIN - 40) { doc.addPage(); y = MARGIN; drawTableHeader(); }
-                        
-                        doc.setFont("helvetica", "normal");
-                        doc.setTextColor(0, 0, 0);
-                        doc.text(itemDescription, MARGIN + 2, y);
-                        doc.text(item.quantity.toString(), PAGE_WIDTH - MARGIN - 60, y, { align: 'right' });
-                        doc.text(this.formatCurrency(item.rate), PAGE_WIDTH - MARGIN - 35, y, { align: 'right' });
-                        doc.text(this.formatCurrency(item.rate * item.quantity), PAGE_WIDTH - MARGIN - 2, y, { align: 'right' });
-                        y += rowHeight;
-                        doc.setLineWidth(0.2);
-                        doc.line(MARGIN, y - 2, PAGE_WIDTH - MARGIN, y - 2);
+                        doc.setFont("helvetica", "normal"); doc.setTextColor(0, 0, 0); doc.text(itemDescription, MARGIN + 2, y); doc.text(item.quantity.toString(), PAGE_WIDTH - MARGIN - 60, y, { align: 'right' }); doc.text(this.formatCurrency(item.rate), PAGE_WIDTH - MARGIN - 35, y, { align: 'right' }); doc.text(this.formatCurrency(item.rate * item.quantity), PAGE_WIDTH - MARGIN - 2, y, { align: 'right' }); y += rowHeight; doc.setLineWidth(0.2); doc.line(MARGIN, y - 2, PAGE_WIDTH - MARGIN, y - 2);
                     });
-
-                    y += 5;
-                    if (y > PAGE_HEIGHT - MARGIN - 40) { doc.addPage(); y = MARGIN; }
-                    const totalsX = PAGE_WIDTH - MARGIN - 50;
-                    doc.text("Subtotal:", totalsX, y);
-                    doc.text(this.formatCurrency(this.invoiceSubtotal), PAGE_WIDTH - MARGIN, y, { align: 'right' });
-                    y += 6;
-                    doc.text(`Pajak (${this.invoice.taxRate}%):`, totalsX, y);
-                    doc.text(this.formatCurrency(this.invoiceSubtotal * (this.invoice.taxRate / 100)), PAGE_WIDTH - MARGIN, y, { align: 'right' });
-                    y += 2;
-                    doc.line(totalsX - 2, y, PAGE_WIDTH - MARGIN, y);
-                    y += 5;
-                    doc.setFont("helvetica", "bold");
-                    doc.text("Total:", totalsX, y);
-                    doc.text(this.formatCurrency(this.invoiceTotal), PAGE_WIDTH - MARGIN, y, { align: 'right' });
-                    
-                    y += 15;
-                     if (this.invoice.notes && y < PAGE_HEIGHT - MARGIN - 20) {
-                        doc.setFont("helvetica", "bold");
-                        doc.text("Catatan:", MARGIN, y);
-                        y += 5;
-                        doc.setFont("helvetica", "normal");
-                        const notesText = doc.splitTextToSize(this.invoice.notes, CONTENT_WIDTH);
-                        doc.text(notesText, MARGIN, y);
-                    }
-
-                    const pageCount = doc.internal.getNumberOfPages();
-                    for(let i = 1; i <= pageCount; i++) { doc.setPage(i); doc.setFontSize(8); doc.text(`Halaman ${i} dari ${pageCount}`, PAGE_WIDTH / 2, PAGE_HEIGHT - 10, { align: 'center' }); }
-
-                    doc.save(`invoice-${this.invoice.number || "001"}.pdf`);
-                    this.invoice.isGenerating = false;
-                    this.addToast("PDF berhasil diekspor!", "success");
-                }
+                    y += 5; if (y > PAGE_HEIGHT - MARGIN - 40) { doc.addPage(); y = MARGIN; }
+                    const totalsX = PAGE_WIDTH - MARGIN - 50; doc.text("Subtotal:", totalsX, y); doc.text(this.formatCurrency(this.invoiceSubtotal), PAGE_WIDTH - MARGIN, y, { align: 'right' }); y += 6; doc.text(`Pajak (${this.invoice.taxRate}%):`, totalsX, y); doc.text(this.formatCurrency(this.invoiceSubtotal * (this.invoice.taxRate / 100)), PAGE_WIDTH - MARGIN, y, { align: 'right' }); y += 2; doc.line(totalsX - 2, y, PAGE_WIDTH - MARGIN, y); y += 5;
+                    doc.setFont("helvetica", "bold"); doc.text("Total:", totalsX, y); doc.text(this.formatCurrency(this.invoiceTotal), PAGE_WIDTH - MARGIN, y, { align: 'right' });
+                    y += 15; if (this.invoice.notes && y < PAGE_HEIGHT - MARGIN - 20) { doc.setFont("helvetica", "bold"); doc.text("Catatan:", MARGIN, y); y += 5; doc.setFont("helvetica", "normal"); const notesText = doc.splitTextToSize(this.invoice.notes, CONTENT_WIDTH); doc.text(notesText, MARGIN, y); }
+                    const pageCount = doc.internal.getNumberOfPages(); for(let i = 1; i <= pageCount; i++) { doc.setPage(i); doc.setFontSize(8); doc.text(`Halaman ${i} dari ${pageCount}`, PAGE_WIDTH / 2, PAGE_HEIGHT - 10, { align: 'center' }); }
+                    doc.save(`invoice-${this.invoice.number || "001"}.pdf`); this.invoice.isGenerating = false; this.addToast("PDF berhasil diekspor!", "success");
+                },
             }
         };
+
         createApp(App).mount('#app');
-        if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('./service-worker.js').then(reg => console.log('SW registered.')).catch(err => console.log('SW registration failed: ', err)); }); }
     </script>
 </body>
 </html>
