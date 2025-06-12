@@ -119,7 +119,7 @@
           apiKey: "AIzaSyCBij3UUC9XvrkmrtVB8vZxWg_6685ce1o",
           authDomain: "amlolist-final.firebaseapp.com",
           projectId: "amlolist-final",
-          storageBucket: "amlolist-final.appspot.com",
+          storageBucket: "amlolist-final.firebasestorage.app",
           messagingSenderId: "25110140647",
           appId: "1:25110140647:web:740485070c06bfb13b3442"
         };
@@ -176,15 +176,55 @@
                 saveWeddingData() {
                     if (!this.wedding) return;
                     const weddingRef = db.collection('weddings').doc(this.wedding.id);
-                    // We only save the fields clients are allowed to edit
                     weddingRef.update({
-                        photos: this.wedding.photos,
-                        shots: this.wedding.shots,
+                        photos: this.wedding.photos || [],
+                        shots: this.wedding.shots || [],
                         clientNotes: this.wedding.clientNotes || ''
                     }).catch(err => console.error("Error saving data:", err));
                 },
-                handlePhotoUpload(e) { /* ... same as before ... */ },
-                deletePhoto(index, photo) { /* ... same as before ... */ },
+                handlePhotoUpload(e) {
+                    const file = e.target.files[0];
+                    if (!file) return;
+                    this.isUploading = true;
+                    
+                    const uniqueFileName = `${Date.now()}-${file.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`;
+                    const filePath = `client_uploads/${this.wedding.id}/${uniqueFileName}`;
+                    
+                    const storageRef = storage.ref(filePath);
+                    const uploadTask = storageRef.put(file);
+
+                    uploadTask.on('state_changed', 
+                        () => {}, 
+                        (error) => {
+                            console.error("Upload failed:", error);
+                            this.isUploading = false;
+                        }, 
+                        () => {
+                            uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
+                                if (!this.wedding.photos) { this.wedding.photos = []; }
+                                this.wedding.photos.push({ path: filePath, url: downloadURL });
+                                this.saveWeddingData(); // <-- THIS LINE WAS MISSING
+                                this.isUploading = false;
+                            });
+                        }
+                    );
+                    e.target.value = "";
+                },
+                deletePhoto(index, photo) {
+                    if (!confirm("Hapus foto referensi ini?")) return;
+
+                    const photoRef = storage.ref(photo.path);
+                    photoRef.delete().then(() => {
+                        this.wedding.photos.splice(index, 1);
+                        this.saveWeddingData(); // <-- THIS LINE WAS MISSING
+                    }).catch((error) => {
+                        console.error("Error deleting photo:", error);
+                        if (error.code === 'storage/object-not-found') {
+                            this.wedding.photos.splice(index, 1);
+                            this.saveWeddingData(); // <-- THIS LINE WAS MISSING
+                        }
+                    });
+                },
                 addShot() {
                     if (!this.newShotTitle.trim()) return;
                     if (!this.wedding.shots) { this.wedding.shots = []; }
