@@ -60,7 +60,7 @@
                      <section class="bg-white p-6 rounded-2xl shadow-md">
                         <h2 class="text-2xl font-bold mb-4">Catatan Khusus dari Anda</h2>
                          <p class="text-slate-500 mb-4 text-sm">Tambahkan catatan, permintaan, atau informasi penting lainnya di sini.</p>
-                         <textarea v-model="clientData.notes" @blur="saveClientData" class="w-full h-32 p-3 bg-slate-100 text-slate-700 rounded-lg resize-none focus:ring-2 focus:ring-slate-400 focus:outline-none" placeholder="Tulis catatan Anda..."></textarea>
+                         <textarea v-model="clientData.notes" @blur="saveNotes" class="w-full h-32 p-3 bg-slate-100 text-slate-700 rounded-lg resize-none focus:ring-2 focus:ring-slate-400 focus:outline-none" placeholder="Tulis catatan Anda..."></textarea>
                     </section>
                 </div>
                 
@@ -128,6 +128,20 @@
                 if (this.clientDataUnsubscribe) this.clientDataUnsubscribe();
             },
             methods: {
+                createNotification(message) {
+                    if (!this.wedding || !this.wedding.ownerId) return;
+                    
+                    const notification = {
+                        message: message,
+                        weddingId: this.wedding.id,
+                        weddingTitle: this.wedding.title,
+                        isRead: false,
+                        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                    };
+
+                    db.collection('users').doc(this.wedding.ownerId).collection('notifications').add(notification)
+                      .catch(err => console.error("Error creating notification:", err));
+                },
                 loadWeddingData() {
                     this.isLoading = true;
                     this.firestoreUnsubscribe = db.collection('weddings').doc(this.weddingId)
@@ -140,9 +154,14 @@
                     this.clientDataUnsubscribe = db.collection('weddings').doc(this.weddingId).collection('clientData').doc('portal')
                         .onSnapshot(doc => { if (doc.exists) { this.clientData = doc.data(); } this.isLoading = false; });
                 },
-                saveClientData() {
+                saveNotes() {
                     if (!this.wedding) return;
-                    db.collection('weddings').doc(this.wedding.id).collection('clientData').doc('portal').set(this.clientData, { merge: true }).catch(err => console.error("Error saving client data:", err));
+                    db.collection('weddings').doc(this.wedding.id).collection('clientData').doc('portal')
+                        .set({ notes: this.clientData.notes }, { merge: true })
+                        .then(() => {
+                            this.createNotification(`Klien memperbarui catatan untuk proyek "${this.wedding.title}".`);
+                        })
+                        .catch(err => console.error("Error saving notes:", err));
                 },
                 handlePhotoUpload(e) {
                     const file = e.target.files[0]; if (!file) return;
@@ -156,7 +175,13 @@
                             uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
                                 if (!this.clientData.photos) { this.clientData.photos = []; }
                                 this.clientData.photos.push({ path: filePath, url: downloadURL });
-                                this.saveClientData(); this.isUploading = false;
+                                
+                                const updatedData = { photos: this.clientData.photos };
+                                db.collection('weddings').doc(this.wedding.id).collection('clientData').doc('portal').set(updatedData, { merge: true })
+                                  .then(() => {
+                                      this.createNotification(`Klien menambahkan foto referensi baru ke "${this.wedding.title}".`);
+                                  });
+                                this.isUploading = false;
                             });
                         }
                     );
@@ -165,20 +190,43 @@
                 deletePhoto(index, photo) {
                     if (!confirm("Hapus foto referensi ini?")) return;
                     const photoRef = storage.ref(photo.path);
-                    photoRef.delete().then(() => { this.clientData.photos.splice(index, 1); this.saveClientData(); })
-                        .catch((error) => {
-                            console.error("Error deleting photo:", error);
-                            if (error.code === 'storage/object-not-found') { this.clientData.photos.splice(index, 1); this.saveClientData(); }
-                        });
+                    photoRef.delete().then(() => {
+                        this.clientData.photos.splice(index, 1);
+                        db.collection('weddings').doc(this.wedding.id).collection('clientData').doc('portal').update({ photos: this.clientData.photos })
+                           .then(() => {
+                               this.createNotification(`Klien menghapus sebuah foto dari "${this.wedding.title}".`);
+                           });
+                    }).catch((error) => {
+                        console.error("Error deleting photo:", error);
+                        if (error.code === 'storage/object-not-found') {
+                            this.clientData.photos.splice(index, 1);
+                             db.collection('weddings').doc(this.wedding.id).collection('clientData').doc('portal').update({ photos: this.clientData.photos })
+                                .then(() => {
+                                    this.createNotification(`Klien menghapus sebuah foto dari "${this.wedding.title}".`);
+                                });
+                        }
+                    });
                 },
                 addShot() {
                     if (!this.newShotTitle.trim()) return;
                     if (!this.clientData.shots) { this.clientData.shots = []; }
-                    this.clientData.shots.push({ id: Date.now().toString(), title: this.newShotTitle, completed: false });
+                    const newShot = { id: Date.now().toString(), title: this.newShotTitle, completed: false };
+                    this.clientData.shots.push(newShot);
                     this.newShotTitle = '';
-                    this.saveClientData();
+                    db.collection('weddings').doc(this.wedding.id).collection('clientData').doc('portal').update({ shots: this.clientData.shots })
+                        .then(() => {
+                            this.createNotification(`Klien menambahkan tugas baru: "${newShot.title}" ke "${this.wedding.title}".`);
+                        });
                 },
-                deleteShot(index) { if (!confirm("Hapus foto wajib ini?")) return; this.clientData.shots.splice(index, 1); this.saveClientData(); },
+                deleteShot(index) {
+                    if (!confirm("Hapus foto wajib ini?")) return;
+                    const deletedShot = this.clientData.shots[index];
+                    this.clientData.shots.splice(index, 1);
+                    db.collection('weddings').doc(this.wedding.id).collection('clientData').doc('portal').update({ shots: this.clientData.shots })
+                        .then(() => {
+                             this.createNotification(`Klien menghapus tugas: "${deletedShot.title}" dari "${this.wedding.title}".`);
+                        });
+                },
                 formatDate(dateString) {
                     if (!dateString) return "-";
                     const date = new Date(dateString);
